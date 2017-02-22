@@ -21,4 +21,4 @@ Using Armips Run: make.bat<br />
 Howto Run:<br />
 I only test with a real PSX.<br />
 <br />
-You can also use N64 emulators like NO$PSX.
+You can also use PSX emulators like NO$PSX.
