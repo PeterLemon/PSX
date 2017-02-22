@@ -9,6 +9,8 @@ http://buildbot.orphis.net/armips/<br />
 I have included binaries & executables of all the demos.<br />
 <br />
 Special thanks to the Hitmen demo group, who with their asm sources, helped me get into PSX Coding =D<br />
+http://hitmen.c02.at/html/psx_sources.html<br />
+<br />
 Please check out NO$PSX, a PSX Emulator by Martin Korth:<br />
 http://problemkaputt.de/psx.htm<br />
 <br />
