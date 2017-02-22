@@ -11,6 +11,9 @@ I have included binaries & executables of all the demos.<br />
 Special thanks to the Hitmen demo group, who with their asm sources, helped me get into PSX Coding =D<br />
 http://hitmen.c02.at/html/psx_sources.html<br />
 <br />
+Also I'd like to thank ARM9, who made the bin2exe.py file, to convert my PSX binaries into PSX exectuables.<br />
+https://github.com/ARM9/psxdev/blob/master/libpsx/tools/bin2exe.py<br />
+<br />
 Please check out NO$PSX, a PSX Emulator by Martin Korth:<br />
 http://problemkaputt.de/psx.htm<br />
 <br />
