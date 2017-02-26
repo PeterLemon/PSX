@@ -396,3 +396,32 @@ BIOS_BASE equ 0x1FC00000 ; $1FC00000..$1FC001FF BIOS Region: BIOS ROM (Reset Ent
 
 ; Memory Control 3 (Cache Control)
 CACHE_CTRL equ 0xFFFE0130 ; $FFFE0130..$FFFE0133 Memory Control 3: Cache Control                                             4B/RW
+
+; Macros
+.macro CLIOH,IOREG ; Clear I/O Port Register Half (A0 = IO_BASE 0x1F800000)
+  sh r0,IOREG(a0) ; I/O Port Register Half = 0
+.endmacro
+
+.macro CLIOW,IOREG ; Clear I/O Port Register Word (A0 = IO_BASE 0x1F800000)
+  sw r0,IOREG(a0) ; I/O Port Register Word = 0
+.endmacro
+
+.macro RDIOH,IOREG,REG ; Read I/O Port Register Half (A0 = IO_BASE 0x1F800000)
+  lhu REG,IOREG(a0) ; Register = I/O Port Register Half
+  nop ; Delay Slot
+.endmacro
+
+.macro RDIOW,IOREG,REG ; Read I/O Port Register Word (A0 = IO_BASE 0x1F800000)
+  lw REG,IOREG(a0) ; Register = I/O Port Register Word
+  nop ; Delay Slot
+.endmacro
+
+.macro WRIOH,IOREG,DATA ; Write I/O Port Register Half (A0 = IO_BASE 0x1F800000)
+  li t0,DATA      ; T0 = DATA Half
+  sh t0,IOREG(a0) ; I/O Port Register Half = T0
+.endmacro
+
+.macro WRIOW,IOREG,DATA ; Write I/O Port Register Word (A0 = IO_BASE 0x1F800000)
+  li t0,DATA      ; T0 = DATA Word
+  sw t0,IOREG(a0) ; I/O Port Register Word = T0
+.endmacro
