@@ -399,20 +399,20 @@ CACHE_CTRL equ 0xFFFE0130 ; $FFFE0130..$FFFE0133 Memory Control 3: Cache Control
 
 ; Macros
 .macro CLIOH,IOREG ; Clear I/O Port Register Half (A0 = IO_BASE 0x1F800000)
-  sh r0,IOREG(a0) ; I/O Port Register Half = 0
+  sh r0,IOREG(a0)  ; I/O Port Register Half = 0
 .endmacro
 
 .macro CLIOW,IOREG ; Clear I/O Port Register Word (A0 = IO_BASE 0x1F800000)
-  sw r0,IOREG(a0) ; I/O Port Register Word = 0
+  sw r0,IOREG(a0)  ; I/O Port Register Word = 0
 .endmacro
 
 .macro RDIOH,IOREG,REG ; Read I/O Port Register Half (A0 = IO_BASE 0x1F800000)
-  lhu REG,IOREG(a0) ; Register = I/O Port Register Half
+  lhu REG,IOREG(a0)    ; Register = I/O Port Register Half
   nop ; Delay Slot
 .endmacro
 
 .macro RDIOW,IOREG,REG ; Read I/O Port Register Word (A0 = IO_BASE 0x1F800000)
-  lw REG,IOREG(a0) ; Register = I/O Port Register Word
+  lw REG,IOREG(a0)     ; Register = I/O Port Register Word
   nop ; Delay Slot
 .endmacro
 
