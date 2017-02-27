@@ -1,4 +1,4 @@
-; PSX 'Bare Metal' Render Polygon Demo by krom (Peter Lemon):
+; PSX 'Bare Metal' 16BPP Render Polygon Demo by krom (Peter Lemon):
 .psx
 .create "RenderPolygon16BPP.bin", 0
 
@@ -22,7 +22,7 @@ WRGP0 GPUDRAWATL,0x000000 ; Write GP0 Command Word (Set Drawing Area Top Left X1
 WRGP0 GPUDRAWABR,0x03BD3F ; Write GP0 Command Word (Set Drawing Area Bottom Right X2=319, Y2=239)
 WRGP0 GPUDRAWOFS,0x000000 ; Write GP0 Command Word (Set Drawing Offset X=0, Y=0)
 
-; Draw Primitives
+; Render Polygons
 FillTri 0x0000FF, 64,8, 96,56, 32,56    ; Fill Triangle: Color, X1,Y1, X2,Y2, X3,Y3
 FillTri 0x00FF00, 160,8, 192,56, 128,56 ; Fill Triangle: Color, X1,Y1, X2,Y2, X3,Y3
 FillTri 0xFF0000, 256,8, 288,56, 224,56 ; Fill Triangle: Color, X1,Y1, X2,Y2, X3,Y3
