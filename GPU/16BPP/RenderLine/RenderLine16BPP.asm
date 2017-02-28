@@ -1,4 +1,4 @@
-; PSX 'Bare Metal' 16BPP Render Line Demo by krom (Peter Lemon):
+; PSX 'Bare Metal' GPU 16BPP Render Line Demo by krom (Peter Lemon):
 .psx
 .create "RenderLine16BPP.bin", 0
 
