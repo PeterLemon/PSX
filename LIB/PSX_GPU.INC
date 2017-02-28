@@ -1,6 +1,44 @@
 ;=========
 ; PSX GPU
 ;=========
+; GPU Other Commands (GP0)
+GPUNOP                equ 0x00 ; GPU Other Commands (GP0): $00 - NOP
+GPUIRQREQ             equ 0x1F ; GPU Other Commands (GP0): $1F - Interrupt Request (IRQ1)
+
+; GPU Memory Transfer Commands (GP0)
+GPUCLRCACHE           equ 0x01 ; GPU Memory Transfer Commands (GP0): $01 - Clear Cache
+
+GPUFILLRECTVRAM       equ 0x02 ; GPU Memory Transfer Commands (GP0): $02 - Fill Rectangle In VRAM
+.macro FillRectVRAM,COLOR,X,Y,WIDTH,HEIGHT ; GP0($02) - Fill Rectangle In VRAM
+  WRIOW GP0,(0x02<<24)+COLOR   ; Write GP0 Command Word (Color+Command)
+  WRIOW GP0,(Y<<16)+X          ; Write GP0  Packet Word (Top Left Corner:  X Counted In Halfwords, Steps Of $10)
+  WRIOW GP0,(HEIGHT<<16)+WIDTH ; Write GP0  Packet Word (Width+Height: Width Counted In Halfwords, Steps Of $10)
+.endmacro
+
+GPUCOPYRECTVRAM       equ 0x80 ; GPU Memory Transfer Commands (GP0): $80 - Copy Rectangle (VRAM To VRAM)
+.macro CopyRectVRAM,X1,Y1,X2,Y2,WIDTH,HEIGHT ; GP0($80) - Copy Rectangle (VRAM To VRAM)
+  WRIOW GP0,0x80<<24           ; Write GP0 Command Word (Command)
+  WRIOW GP0,(Y1<<16)+X1        ; Write GP0  Packet Word (Source Coord:      X Counted In Halfwords)
+  WRIOW GP0,(Y2<<16)+X2        ; Write GP0  Packet Word (Destination Coord: X Counted In Halfwords)
+  WRIOW GP0,(HEIGHT<<16)+WIDTH ; Write GP0  Packet Word (Width+Height:  Width Counted In Halfwords)
+.endmacro
+
+GPUCOPYRECTCPU        equ 0xA0 ; GPU Memory Transfer Commands (GP0): $A0 - Copy Rectangle (CPU To VRAM)
+.macro CopyRectCPU,X,Y,WIDTH,HEIGHT ; GP0($A0) - Copy Rectangle (CPU To VRAM)
+  WRIOW GP0,0xA0<<24           ; Write GP0 Command Word (Command)
+  WRIOW GP0,(Y<<16)+X          ; Write GP0  Packet Word (Destination Coord: X Counted In Halfwords)
+  WRIOW GP0,(HEIGHT<<16)+WIDTH ; Write GP0  Packet Word (Width+Height:  Width Counted In Halfwords)
+                               ; Write GP0  Packet Word (Data)
+.endmacro
+
+GPUCOPYRECTVRAMCPU    equ 0xC0 ; GPU Memory Transfer Commands (GP0): $C0 - Copy Rectangle (VRAM To CPU)
+.macro CopyRectVRAMCPU,X,Y,WIDTH,HEIGHT ; GP0($C0) - Copy Rectangle (VRAM To CPU)
+  WRIOW GP0,0xC0<<24           ; Write GP0 Command Word (Command)
+  WRIOW GP0,(Y<<16)+X          ; Write GP0  Packet Word (Destination Coord: X Counted In Halfwords)
+  WRIOW GP0,(HEIGHT<<16)+WIDTH ; Write GP0  Packet Word (Width+Height:  Width Counted In Halfwords)
+                               ; Read  GP0  Packet Word (Data)
+.endmacro
+
 ; GPU Render Polygon Commands (GP0)
 GPUFILLTRI            equ 0x20 ; GPU Render Polygon Commands (GP0): $20 - Monochrome Triangle, Opaque
 .macro FillTri,COLOR,X1,Y1,X2,Y2,X3,Y3 ; GP0($20) - Monochrome Triangle Polygon, Opaque
@@ -100,6 +138,8 @@ GPUFILLPOLYLINE       equ 0x48 ; GPU Render Line Commands (GP0): $48 - Monochrom
   WRIOW GP0,(0x48<<24)+COLOR   ; Write GP0 Command Word (Color+Command)
   WRIOW GP0,(Y1<<16)+X1        ; Write GP0  Packet Word (Vertex1)
   WRIOW GP0,(Y2<<16)+X2        ; Write GP0  Packet Word (Vertex2)
+                               ; Write GP0  Packet Word (VertexN)
+                               ; Write GP0  Packet Word (Termination Code)
 .endmacro
 .macro FillTriLine,COLOR,X1,Y1,X2,Y2,X3,Y3 ; GP0($48) - Monochrome Triangle-Line, Opaque
   WRIOW GP0,(0x48<<24)+COLOR   ; Write GP0 Command Word (Color+Command)
@@ -124,6 +164,8 @@ GPUFILLPOLYLINEALPHA  equ 0x4A ; GPU Render Line Commands (GP0): $4A - Monochrom
   WRIOW GP0,(0x4A<<24)+COLOR   ; Write GP0 Command Word (Color+Command)
   WRIOW GP0,(Y1<<16)+X1        ; Write GP0  Packet Word (Vertex1)
   WRIOW GP0,(Y2<<16)+X2        ; Write GP0  Packet Word (Vertex2)
+                               ; Write GP0  Packet Word (VertexN)
+                               ; Write GP0  Packet Word (Termination Code)
 .endmacro
 .macro FillTriLineAlpha,COLOR,X1,Y1,X2,Y2,X3,Y3 ; GP0($4A) - Monochrome Triangle-Line, Semi-Transparent
   WRIOW GP0,(0x4A<<24)+COLOR   ; Write GP0 Command Word (Color+Command)
@@ -165,6 +207,9 @@ GPUSHADEPOLYLINE      equ 0x58 ; GPU Render Line Commands (GP0): $58 - Shaded Po
   WRIOW GP0,(Y1<<16)+X1        ; Write GP0  Packet Word (Vertex1)
   WRIOW GP0,COLOR2             ; Write GP0  Packet Word (Color2)
   WRIOW GP0,(Y2<<16)+X2        ; Write GP0  Packet Word (Vertex2)
+                               ; Write GP0  Packet Word (ColorN)
+                               ; Write GP0  Packet Word (VertexN)
+                               ; Write GP0  Packet Word (Termination Code)
 .endmacro
 .macro ShadeTriLine,COLOR1,X1,Y1,COLOR2,X2,Y2,COLOR3,X3,Y3 ; GP0($58) - Shaded Triangle-Line, Opaque
   WRIOW GP0,(0x58<<24)+COLOR1  ; Write GP0 Command Word (Color+Command)
@@ -197,6 +242,9 @@ GPUSHADEPOLYLINEALPHA equ 0x5A ; GPU Render Line Commands (GP0): $5A - Shaded Po
   WRIOW GP0,(Y1<<16)+X1        ; Write GP0  Packet Word (Vertex1)
   WRIOW GP0,COLOR2             ; Write GP0  Packet Word (Color2)
   WRIOW GP0,(Y2<<16)+X2        ; Write GP0  Packet Word (Vertex2)
+                               ; Write GP0  Packet Word (ColorN)
+                               ; Write GP0  Packet Word (VertexN)
+                               ; Write GP0  Packet Word (Termination Code)
 .endmacro
 .macro ShadeTriLineAlpha,COLOR1,X1,Y1,COLOR2,X2,Y2,COLOR3,X3,Y3 ; GP0($5A) - Shaded Triangle-Line, Semi-Transparent
   WRIOW GP0,(0x5A<<24)+COLOR1  ; Write GP0 Command Word (Color+Command)
@@ -297,7 +345,7 @@ GPUMASKBIT equ 0xE6 ; GPU Rendering Attributes (GP0): $E6 - Mask Bit Setting
 ; GPU Display Control Commands (GP1) (Command = 8-Bit MSB, Parameter = 24-Bit LSB)
 GPURESET   equ 0x00 ; GPU Display Control Commands (GP1): $00 - Reset GPU
 GPURESETCB equ 0x01 ; GPU Display Control Commands (GP1): $01 - Reset Command Buffer
-GPUIRQ1    equ 0x02 ; GPU Display Control Commands (GP1): $02 - Acknowledge GPU Interrupt (IRQ1)
+GPUIRQACK  equ 0x02 ; GPU Display Control Commands (GP1): $02 - Acknowledge GPU Interrupt (IRQ1)
 GPUDISPEN  equ 0x03 ; GPU Display Control Commands (GP1): $03 - Display Enable
 GPUDMA     equ 0x04 ; GPU Display Control Commands (GP1): $04 - DMA Direction / Data Request
 GPUVRAM    equ 0x05 ; GPU Display Control Commands (GP1): $05 - Start Of Display Area (In VRAM)
