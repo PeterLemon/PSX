@@ -1,4 +1,4 @@
-; PSX 'Bare Metal' 16BPP Render Rectangle Demo by krom (Peter Lemon):
+; PSX 'Bare Metal' GPU 16BPP Render Rectangle Demo by krom (Peter Lemon):
 .psx
 .create "RenderRectangle16BPP.bin", 0
 
