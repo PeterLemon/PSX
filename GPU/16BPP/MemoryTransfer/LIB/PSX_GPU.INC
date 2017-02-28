@@ -34,8 +34,8 @@ GPUCOPYRECTCPU        equ 0xA0 ; GPU Memory Transfer Commands (GP0): $A0 - Copy 
 GPUCOPYRECTVRAMCPU    equ 0xC0 ; GPU Memory Transfer Commands (GP0): $C0 - Copy Rectangle (VRAM To CPU)
 .macro CopyRectVRAMCPU,X,Y,WIDTH,HEIGHT ; GP0($C0) - Copy Rectangle (VRAM To CPU)
   WRIOW GP0,0xC0<<24           ; Write GP0 Command Word (Command)
-  WRIOW GP0,(Y<<16)+X          ; Write GP0  Packet Word (Destination Coord: X Counted In Halfwords)
-  WRIOW GP0,(HEIGHT<<16)+WIDTH ; Write GP0  Packet Word (Width+Height:  Width Counted In Halfwords)
+  WRIOW GP0,(Y<<16)+X          ; Write GP0  Packet Word (Source Coord:     X Counted In Halfwords)
+  WRIOW GP0,(HEIGHT<<16)+WIDTH ; Write GP0  Packet Word (Width+Height: Width Counted In Halfwords)
                                ; Read  GP0  Packet Word (Data)
 .endmacro
 
