@@ -35,9 +35,9 @@ FillQuad 0x0000FF, 32,88, 74,88, 32,124, 74,124     ; Fill Quad: Color, X1,Y1, X
 FillQuad 0x00FF00, 128,88, 170,88, 128,124, 170,124 ; Fill Quad: Color, X1,Y1, X2,Y2, X3,Y3, X4,Y4
 FillQuad 0xFF0000, 224,88, 266,88, 224,124, 266,124 ; Fill Quad: Color, X1,Y1, X2,Y2, X3,Y3, X4,Y4
 
-FillQuadAlpha 0x00FF00, 54,106, 96,106, 54,142, 96,142     ; Fill Quad Alpha: Color, X1,Y1, X2,Y2, X3,Y3
-FillQuadAlpha 0xFF0000, 150,106, 192,106, 150,142, 192,142 ; Fill Quad Alpha: Color, X1,Y1, X2,Y2, X3,Y3
-FillQuadAlpha 0x0000FF, 246,106, 288,106, 246,142, 288,142 ; Fill Quad Alpha: Color, X1,Y1, X2,Y2, X3,Y3
+FillQuadAlpha 0x00FF00, 54,106, 96,106, 54,142, 96,142     ; Fill Quad Alpha: Color, X1,Y1, X2,Y2, X3,Y3, X4,Y4
+FillQuadAlpha 0xFF0000, 150,106, 192,106, 150,142, 192,142 ; Fill Quad Alpha: Color, X1,Y1, X2,Y2, X3,Y3, X4,Y4
+FillQuadAlpha 0x0000FF, 246,106, 288,106, 246,142, 288,142 ; Fill Quad Alpha: Color, X1,Y1, X2,Y2, X3,Y3, X4,Y4
 
 ShadeTri 0x0000FF,64,148, 0x00FF00,96,196, 0xFF0000,32,196 ; Shaded Triangle: Color1,X1,Y1, Color2,X2,Y2, Color3,X3,Y3
 
