@@ -56,6 +56,50 @@ GPUFILLTRIALPHA       equ 0x22 ; GPU Render Polygon Commands (GP0): $22 - Monoch
   WRIOW GP0,(Y3<<16)+X3        ; Write GP0  Packet Word (Vertex3)
 .endmacro
 
+GPUTEXTRIBLEND          equ 0x24 ; GPU Render Polygon Commands (GP0): $24 - Textured Triangle, Opaque, Texture-Blending
+.macro TexTriBlend,COLOR,X1,Y1,U1,V1,PAL,X2,Y2,U2,V2,TEX,X3,Y3,U3,V3 ; GP0($24) - Textured Triangle, Opaque, Texture-Blending
+  WRIOW GP0,(0x24<<24)+COLOR     ; Write GP0 Command Word (Color+Command)
+  WRIOW GP0,(Y1<<16)+X1          ; Write GP0  Packet Word (Vertex1)
+  WRIOW GP0,(PAL<<16)+(V1<<8)+U1 ; Write GP0  Packet Word (Texcoord1+Palette)
+  WRIOW GP0,(Y2<<16)+X2          ; Write GP0  Packet Word (Vertex2)
+  WRIOW GP0,(TEX<<16)+(V2<<8)+U2 ; Write GP0  Packet Word (Texcoord2+Texpage)
+  WRIOW GP0,(Y3<<16)+X3          ; Write GP0  Packet Word (Vertex3)
+  WRIOW GP0,(V3<<8)+U3           ; Write GP0  Packet Word (Texcoord3)
+.endmacro
+
+GPUTEXTRIRAW            equ 0x25 ; GPU Render Polygon Commands (GP0): $25 - Textured Triangle, Opaque, Raw-Texture
+.macro TexTriRaw,X1,Y1,U1,V1,PAL,X2,Y2,U2,V2,TEX,X3,Y3,U3,V3 ; GP0($25) - Textured Triangle, Opaque, Raw-Texture
+  WRIOW GP0,(0x25<<24)           ; Write GP0 Command Word (Command)
+  WRIOW GP0,(Y1<<16)+X1          ; Write GP0  Packet Word (Vertex1)
+  WRIOW GP0,(PAL<<16)+(V1<<8)+U1 ; Write GP0  Packet Word (Texcoord1+Palette)
+  WRIOW GP0,(Y2<<16)+X2          ; Write GP0  Packet Word (Vertex2)
+  WRIOW GP0,(TEX<<16)+(V2<<8)+U2 ; Write GP0  Packet Word (Texcoord2+Texpage)
+  WRIOW GP0,(Y3<<16)+X3          ; Write GP0  Packet Word (Vertex3)
+  WRIOW GP0,(V3<<8)+U3           ; Write GP0  Packet Word (Texcoord3)
+.endmacro
+
+GPUTEXTRIBLENDALPHA     equ 0x26 ; GPU Render Polygon Commands (GP0): $26 - Textured Triangle, Semi-Transparent, Texture-Blending
+.macro TexTriBlendAlpha,COLOR,X1,Y1,U1,V1,PAL,X2,Y2,U2,V2,TEX,X3,Y3,U3,V3 ; GP0($26) - Textured Triangle, Semi-Transparent, Texture-Blending
+  WRIOW GP0,(0x26<<24)+COLOR     ; Write GP0 Command Word (Color+Command)
+  WRIOW GP0,(Y1<<16)+X1          ; Write GP0  Packet Word (Vertex1)
+  WRIOW GP0,(PAL<<16)+(V1<<8)+U1 ; Write GP0  Packet Word (Texcoord1+Palette)
+  WRIOW GP0,(Y2<<16)+X2          ; Write GP0  Packet Word (Vertex2)
+  WRIOW GP0,(TEX<<16)+(V2<<8)+U2 ; Write GP0  Packet Word (Texcoord2+Texpage)
+  WRIOW GP0,(Y3<<16)+X3          ; Write GP0  Packet Word (Vertex3)
+  WRIOW GP0,(V3<<8)+U3           ; Write GP0  Packet Word (Texcoord3)
+.endmacro
+
+GPUTEXTRIRAWALPHA       equ 0x27 ; GPU Render Polygon Commands (GP0): $27 - Textured Triangle, Semi-Transparent, Raw-Texture
+.macro TexTriRawAlpha,X1,Y1,U1,V1,PAL,X2,Y2,U2,V2,TEX,X3,Y3,U3,V3 ; GP0($27) - Textured Triangle, Semi-Transparent, Raw-Texture
+  WRIOW GP0,(0x27<<24)           ; Write GP0 Command Word (Command)
+  WRIOW GP0,(Y1<<16)+X1          ; Write GP0  Packet Word (Vertex1)
+  WRIOW GP0,(PAL<<16)+(V1<<8)+U1 ; Write GP0  Packet Word (Texcoord1+Palette)
+  WRIOW GP0,(Y2<<16)+X2          ; Write GP0  Packet Word (Vertex2)
+  WRIOW GP0,(TEX<<16)+(V2<<8)+U2 ; Write GP0  Packet Word (Texcoord2+Texpage)
+  WRIOW GP0,(Y3<<16)+X3          ; Write GP0  Packet Word (Vertex3)
+  WRIOW GP0,(V3<<8)+U3           ; Write GP0  Packet Word (Texcoord3)
+.endmacro
+
 GPUFILLQUAD           equ 0x28 ; GPU Render Polygon Commands (GP0): $28 - Monochrome Quad, Opaque
 .macro FillQuad,COLOR,X1,Y1,X2,Y2,X3,Y3,X4,Y4 ; GP0($28) - Monochrome Quad, Opaque
   WRIOW GP0,(0x28<<24)+COLOR   ; Write GP0 Command Word (Color+Command)
@@ -72,6 +116,58 @@ GPUFILLQUADALPHA      equ 0x2A ; GPU Render Polygon Commands (GP0): $2A - Monoch
   WRIOW GP0,(Y2<<16)+X2        ; Write GP0  Packet Word (Vertex2)
   WRIOW GP0,(Y3<<16)+X3        ; Write GP0  Packet Word (Vertex3)
   WRIOW GP0,(Y4<<16)+X4        ; Write GP0  Packet Word (Vertex4)
+.endmacro
+
+GPUTEXQUADBLEND         equ 0x2C ; GPU Render Polygon Commands (GP0): $2C - Textured Quad, Opaque, Texture-Blending
+.macro TexQuadBlend,COLOR,X1,Y1,U1,V1,PAL,X2,Y2,U2,V2,TEX,X3,Y3,U3,V3,X4,Y4,U4,V4 ; GP0($2C) - Textured Quad, Opaque, Texture-Blending
+  WRIOW GP0,(0x2C<<24)+COLOR     ; Write GP0 Command Word (Color+Command)
+  WRIOW GP0,(Y1<<16)+X1          ; Write GP0  Packet Word (Vertex1)
+  WRIOW GP0,(PAL<<16)+(V1<<8)+U1 ; Write GP0  Packet Word (Texcoord1+Palette)
+  WRIOW GP0,(Y2<<16)+X2          ; Write GP0  Packet Word (Vertex2)
+  WRIOW GP0,(TEX<<16)+(V2<<8)+U2 ; Write GP0  Packet Word (Texcoord2+Texpage)
+  WRIOW GP0,(Y3<<16)+X3          ; Write GP0  Packet Word (Vertex3)
+  WRIOW GP0,(V3<<8)+U3           ; Write GP0  Packet Word (Texcoord3)
+  WRIOW GP0,(Y4<<16)+X4          ; Write GP0  Packet Word (Vertex4)
+  WRIOW GP0,(V4<<8)+U4           ; Write GP0  Packet Word (Texcoord4)
+.endmacro
+
+GPUTEXQUADRAW           equ 0x2D ; GPU Render Polygon Commands (GP0): $2D - Textured Quad, Opaque, Raw-Texture
+.macro TexQuadRaw,X1,Y1,U1,V1,PAL,X2,Y2,U2,V2,TEX,X3,Y3,U3,V3,X4,Y4,U4,V4 ; GP0($2D) - Textured Quad, Opaque, Raw-Texture
+  WRIOW GP0,(0x2D<<24)           ; Write GP0 Command Word (Command)
+  WRIOW GP0,(Y1<<16)+X1          ; Write GP0  Packet Word (Vertex1)
+  WRIOW GP0,(PAL<<16)+(V1<<8)+U1 ; Write GP0  Packet Word (Texcoord1+Palette)
+  WRIOW GP0,(Y2<<16)+X2          ; Write GP0  Packet Word (Vertex2)
+  WRIOW GP0,(TEX<<16)+(V2<<8)+U2 ; Write GP0  Packet Word (Texcoord2+Texpage)
+  WRIOW GP0,(Y3<<16)+X3          ; Write GP0  Packet Word (Vertex3)
+  WRIOW GP0,(V3<<8)+U3           ; Write GP0  Packet Word (Texcoord3)
+  WRIOW GP0,(Y4<<16)+X4          ; Write GP0  Packet Word (Vertex4)
+  WRIOW GP0,(V4<<8)+U4           ; Write GP0  Packet Word (Texcoord4)
+.endmacro
+
+GPUTEXQUADBLENDALPHA    equ 0x2E ; GPU Render Polygon Commands (GP0): $2E - Textured Quad, Semi-Transparent, Texture-Blending
+.macro TexQuadBlendAlpha,COLOR,X1,Y1,U1,V1,PAL,X2,Y2,U2,V2,TEX,X3,Y3,U3,V3,X4,Y4,U4,V4 ; GP0($2E) - Textured Quad, Semi-Transparent, Texture-Blending
+  WRIOW GP0,(0x2E<<24)+COLOR     ; Write GP0 Command Word (Color+Command)
+  WRIOW GP0,(Y1<<16)+X1          ; Write GP0  Packet Word (Vertex1)
+  WRIOW GP0,(PAL<<16)+(V1<<8)+U1 ; Write GP0  Packet Word (Texcoord1+Palette)
+  WRIOW GP0,(Y2<<16)+X2          ; Write GP0  Packet Word (Vertex2)
+  WRIOW GP0,(TEX<<16)+(V2<<8)+U2 ; Write GP0  Packet Word (Texcoord2+Texpage)
+  WRIOW GP0,(Y3<<16)+X3          ; Write GP0  Packet Word (Vertex3)
+  WRIOW GP0,(V3<<8)+U3           ; Write GP0  Packet Word (Texcoord3)
+  WRIOW GP0,(Y4<<16)+X4          ; Write GP0  Packet Word (Vertex4)
+  WRIOW GP0,(V4<<8)+U4           ; Write GP0  Packet Word (Texcoord4)
+.endmacro
+
+GPUTEXQUADRAWALPHA      equ 0x2F ; GPU Render Polygon Commands (GP0): $2F - Textured Quad, Semi-Transparent, Raw-Texture
+.macro TexQuadRawAlpha,X1,Y1,U1,V1,PAL,X2,Y2,U2,V2,TEX,X3,Y3,U3,V3,X4,Y4,U4,V4 ; GP0($2F) - Textured Quad, Semi-Transparent, Raw-Texture
+  WRIOW GP0,(0x2F<<24)           ; Write GP0 Command Word (Command)
+  WRIOW GP0,(Y1<<16)+X1          ; Write GP0  Packet Word (Vertex1)
+  WRIOW GP0,(PAL<<16)+(V1<<8)+U1 ; Write GP0  Packet Word (Texcoord1+Palette)
+  WRIOW GP0,(Y2<<16)+X2          ; Write GP0  Packet Word (Vertex2)
+  WRIOW GP0,(TEX<<16)+(V2<<8)+U2 ; Write GP0  Packet Word (Texcoord2+Texpage)
+  WRIOW GP0,(Y3<<16)+X3          ; Write GP0  Packet Word (Vertex3)
+  WRIOW GP0,(V3<<8)+U3           ; Write GP0  Packet Word (Texcoord3)
+  WRIOW GP0,(Y4<<16)+X4          ; Write GP0  Packet Word (Vertex4)
+  WRIOW GP0,(V4<<8)+U4           ; Write GP0  Packet Word (Texcoord4)
 .endmacro
 
 GPUSHADETRI           equ 0x30 ; GPU Render Polygon Commands (GP0): $30 - Shaded Triangle, Opaque
@@ -92,6 +188,32 @@ GPUSHADETRIALPHA      equ 0x32 ; GPU Render Polygon Commands (GP0): $32 - Shaded
   WRIOW GP0,(Y2<<16)+X2        ; Write GP0  Packet Word (Vertex2)
   WRIOW GP0,COLOR3             ; Write GP0  Packet Word (Color3)
   WRIOW GP0,(Y3<<16)+X3        ; Write GP0  Packet Word (Vertex3)
+.endmacro
+
+GPUSHADETEXTRI          equ 0x34 ; GPU Render Polygon Commands (GP0): $34 - Shaded Textured Triangle, Opaque, Texture-Blending
+.macro ShadeTexTri,COLOR1,X1,Y1,U1,V1,PAL,COLOR2,X2,Y2,U2,V2,TEX,COLOR3,X3,Y3,U3,V3 ; GP0($34) - Shaded Textured Triangle, Opaque, Texture-Blending
+  WRIOW GP0,(0x34<<24)+COLOR1    ; Write GP0 Command Word (Color1+Command)
+  WRIOW GP0,(Y1<<16)+X1          ; Write GP0  Packet Word (Vertex1)
+  WRIOW GP0,(PAL<<16)+(V1<<8)+U1 ; Write GP0  Packet Word (Texcoord1+Palette)
+  WRIOW GP0,COLOR2               ; Write GP0  Packet Word (Color2)
+  WRIOW GP0,(Y2<<16)+X2          ; Write GP0  Packet Word (Vertex2)
+  WRIOW GP0,(TEX<<16)+(V2<<8)+U2 ; Write GP0  Packet Word (Texcoord2+Texpage)
+  WRIOW GP0,COLOR3               ; Write GP0  Packet Word (Color3)
+  WRIOW GP0,(Y3<<16)+X3          ; Write GP0  Packet Word (Vertex3)
+  WRIOW GP0,(V3<<8)+U3           ; Write GP0  Packet Word (Texcoord3)
+.endmacro
+
+GPUSHADETEXTRIALPHA     equ 0x36 ; GPU Render Polygon Commands (GP0): $36 - Shaded Textured Triangle, Semi-Transparent, Texture-Blending
+.macro ShadeTexTriAlpha,COLOR1,X1,Y1,U1,V1,PAL,COLOR2,X2,Y2,U2,V2,TEX,COLOR3,X3,Y3,U3,V3 ; GP0($36) - Shaded Textured Triangle, Semi-Transparent, Texture-Blending
+  WRIOW GP0,(0x36<<24)+COLOR1    ; Write GP0 Command Word (Color1+Command)
+  WRIOW GP0,(Y1<<16)+X1          ; Write GP0  Packet Word (Vertex1)
+  WRIOW GP0,(PAL<<16)+(V1<<8)+U1 ; Write GP0  Packet Word (Texcoord1+Palette)
+  WRIOW GP0,COLOR2               ; Write GP0  Packet Word (Color2)
+  WRIOW GP0,(Y2<<16)+X2          ; Write GP0  Packet Word (Vertex2)
+  WRIOW GP0,(TEX<<16)+(V2<<8)+U2 ; Write GP0  Packet Word (Texcoord2+Texpage)
+  WRIOW GP0,COLOR3               ; Write GP0  Packet Word (Color3)
+  WRIOW GP0,(Y3<<16)+X3          ; Write GP0  Packet Word (Vertex3)
+  WRIOW GP0,(V3<<8)+U3           ; Write GP0  Packet Word (Texcoord3)
 .endmacro
 
 GPUSHADEQUAD          equ 0x38 ; GPU Render Polygon Commands (GP0): $38 - Shaded Quad, Opaque
@@ -116,6 +238,38 @@ GPUSHADEQUADALPHA     equ 0x3A ; GPU Render Polygon Commands (GP0): $3A - Shaded
   WRIOW GP0,(Y3<<16)+X3        ; Write GP0  Packet Word (Vertex3)
   WRIOW GP0,COLOR4             ; Write GP0  Packet Word (Color4)
   WRIOW GP0,(Y4<<16)+X4        ; Write GP0  Packet Word (Vertex4)
+.endmacro
+
+GPUSHADETEXQUAD         equ 0x3C ; GPU Render Polygon Commands (GP0): $3C - Shaded Textured Quad, Opaque, Texture-Blending
+.macro ShadeTexQuad,COLOR1,X1,Y1,U1,V1,PAL,COLOR2,X2,Y2,U2,V2,TEX,COLOR3,X3,Y3,U3,V3,COLOR4,X4,Y4,U4,V4 ; GP0($3C) - Shaded Textured Quad, Opaque, Texture-Blending
+  WRIOW GP0,(0x3C<<24)+COLOR1    ; Write GP0 Command Word (Color1+Command)
+  WRIOW GP0,(Y1<<16)+X1          ; Write GP0  Packet Word (Vertex1)
+  WRIOW GP0,(PAL<<16)+(V1<<8)+U1 ; Write GP0  Packet Word (Texcoord1+Palette)
+  WRIOW GP0,COLOR2               ; Write GP0  Packet Word (Color2)
+  WRIOW GP0,(Y2<<16)+X2          ; Write GP0  Packet Word (Vertex2)
+  WRIOW GP0,(TEX<<16)+(V2<<8)+U2 ; Write GP0  Packet Word (Texcoord2+Texpage)
+  WRIOW GP0,COLOR3               ; Write GP0  Packet Word (Color3)
+  WRIOW GP0,(Y3<<16)+X3          ; Write GP0  Packet Word (Vertex3)
+  WRIOW GP0,(V3<<8)+U3           ; Write GP0  Packet Word (Texcoord3)
+  WRIOW GP0,COLOR4               ; Write GP0  Packet Word (Color4)
+  WRIOW GP0,(Y4<<16)+X4          ; Write GP0  Packet Word (Vertex4)
+  WRIOW GP0,(V4<<8)+U4           ; Write GP0  Packet Word (Texcoord4)
+.endmacro
+
+GPUSHADETEXQUADALPHA    equ 0x3E ; GPU Render Polygon Commands (GP0): $3E - Shaded Textured Quad, Semi-Transparent, Texture-Blending
+.macro ShadeTexQuadAlpha,COLOR1,X1,Y1,U1,V1,PAL,COLOR2,X2,Y2,U2,V2,TEX,COLOR3,X3,Y3,U3,V3,COLOR4,X4,Y4,U4,V4 ; GP0($3E) - Shaded Textured Quad, Semi-Transparent, Texture-Blending
+  WRIOW GP0,(0x3E<<24)+COLOR1    ; Write GP0 Command Word (Color1+Command)
+  WRIOW GP0,(Y1<<16)+X1          ; Write GP0  Packet Word (Vertex1)
+  WRIOW GP0,(PAL<<16)+(V1<<8)+U1 ; Write GP0  Packet Word (Texcoord1+Palette)
+  WRIOW GP0,COLOR2               ; Write GP0  Packet Word (Color2)
+  WRIOW GP0,(Y2<<16)+X2          ; Write GP0  Packet Word (Vertex2)
+  WRIOW GP0,(TEX<<16)+(V2<<8)+U2 ; Write GP0  Packet Word (Texcoord2+Texpage)
+  WRIOW GP0,COLOR3               ; Write GP0  Packet Word (Color3)
+  WRIOW GP0,(Y3<<16)+X3          ; Write GP0  Packet Word (Vertex3)
+  WRIOW GP0,(V3<<8)+U3           ; Write GP0  Packet Word (Texcoord3)
+  WRIOW GP0,COLOR4               ; Write GP0  Packet Word (Color4)
+  WRIOW GP0,(Y4<<16)+X4          ; Write GP0  Packet Word (Vertex4)
+  WRIOW GP0,(V4<<8)+U4           ; Write GP0  Packet Word (Texcoord4)
 .endmacro
 
 ; GPU Render Line Commands (GP0)
@@ -298,6 +452,38 @@ GPUFILLRECTALPHA      equ 0x62 ; GPU Render Rectangle Commands (GP0): $62 - Mono
   WRIOW GP0,(HEIGHT<<16)+WIDTH ; Write GP0  Packet Word (Width+Height)
 .endmacro
 
+GPUTEXRECTBLEND       equ 0x64 ; GPU Render Rectangle Commands (GP0): $64 - Textured Rectangle (Variable Size), Opaque, Texture-Blending
+.macro TexRectBlend,COLOR,X,Y,U,V,PAL,WIDTH,HEIGHT ; GP0($64) - Textured Rectangle (Variable Size), Opaque, Texture-Blending
+  WRIOW GP0,(0x64<<24)+COLOR   ; Write GP0 Command Word (Color+Command)
+  WRIOW GP0,(Y<<16)+X          ; Write GP0  Packet Word (Vertex)
+  WRIOW GP0,(PAL<<16)+(V<<8)+U ; Write GP0  Packet Word (Texcoord+Palette)
+  WRIOW GP0,(HEIGHT<<16)+WIDTH ; Write GP0  Packet Word (Width+Height)
+.endmacro
+
+GPUTEXRECTRAW         equ 0x65 ; GPU Render Rectangle Commands (GP0): $65 - Textured Rectangle (Variable Size), Opaque, Raw-Texture
+.macro TexRectRaw,X,Y,U,V,PAL,WIDTH,HEIGHT ; GP0($65) - Textured Rectangle (Variable Size), Opaque, Raw-Texture
+  WRIOW GP0,(0x65<<24)         ; Write GP0 Command Word (Command)
+  WRIOW GP0,(Y<<16)+X          ; Write GP0  Packet Word (Vertex)
+  WRIOW GP0,(PAL<<16)+(V<<8)+U ; Write GP0  Packet Word (Texcoord+Palette)
+  WRIOW GP0,(HEIGHT<<16)+WIDTH ; Write GP0  Packet Word (Width+Height)
+.endmacro
+
+GPUTEXRECTBLENDALPHA  equ 0x66 ; GPU Render Rectangle Commands (GP0): $66 - Textured Rectangle (Variable Size), Semi-Transparent, Texture-Blending
+.macro TexRectBlendAlpha,COLOR,X,Y,U,V,PAL,WIDTH,HEIGHT ; GP0($66) - Textured Rectangle (Variable Size), Semi-Transparent, Texture-Blending
+  WRIOW GP0,(0x66<<24)+COLOR   ; Write GP0 Command Word (Color+Command)
+  WRIOW GP0,(Y<<16)+X          ; Write GP0  Packet Word (Vertex)
+  WRIOW GP0,(PAL<<16)+(V<<8)+U ; Write GP0  Packet Word (Texcoord+Palette)
+  WRIOW GP0,(HEIGHT<<16)+WIDTH ; Write GP0  Packet Word (Width+Height)
+.endmacro
+
+GPUTEXRECTRAWALPHA    equ 0x67 ; GPU Render Rectangle Commands (GP0): $67 - Textured Rectangle (Variable Size), Semi-Transparent, Raw-Texture
+.macro TexRectRawAlpha,X,Y,U,V,PAL,WIDTH,HEIGHT ; GP0($67) - Textured Rectangle (Variable Size), Semi-Transparent, Raw-Texture
+  WRIOW GP0,(0x67<<24)         ; Write GP0 Command Word (Command)
+  WRIOW GP0,(Y<<16)+X          ; Write GP0  Packet Word (Vertex)
+  WRIOW GP0,(PAL<<16)+(V<<8)+U ; Write GP0  Packet Word (Texcoord+Palette)
+  WRIOW GP0,(HEIGHT<<16)+WIDTH ; Write GP0  Packet Word (Width+Height)
+.endmacro
+
 GPUFILLRECT1X1        equ 0x68 ; GPU Render Rectangle Commands (GP0): $68 - Monochrome Rectangle Dot (1x1), Opaque
 .macro FillRect1x1,COLOR,X,Y   ; GP0($68) - Monochrome Rectangle Dot (1x1), Opaque
   WRIOW GP0,(0x68<<24)+COLOR   ; Write GP0 Command Word (Color+Command)
@@ -308,6 +494,34 @@ GPUFILLRECTALPHA1X1   equ 0x6A ; GPU Render Rectangle Commands (GP0): $6A - Mono
 .macro FillRectAlpha1x1,COLOR,X,Y ; GP0($6A) - Monochrome Rectangle Dot (1x1), Semi-Transparent
   WRIOW GP0,(0x6A<<24)+COLOR   ; Write GP0 Command Word (Color+Command)
   WRIOW GP0,(Y<<16)+X          ; Write GP0  Packet Word (Vertex)
+.endmacro
+
+GPUTEXRECTBLEND1X1      equ 0x6C ; GPU Render Rectangle Commands (GP0): $6C - Textured Rectangle Dot (1x1), Opaque, Texture-Blending
+.macro TexRectBlend1x1,COLOR,X,Y,U,V,PAL ; GP0($6C) - Textured Rectangle Dot (1x1), Opaque, Texture-Blending
+  WRIOW GP0,(0x6C<<24)+COLOR     ; Write GP0 Command Word (Color+Command)
+  WRIOW GP0,(Y<<16)+X            ; Write GP0  Packet Word (Vertex)
+  WRIOW GP0,(PAL<<16)+(V<<8)+U   ; Write GP0  Packet Word (Texcoord+Palette)
+.endmacro
+
+GPUTEXRECTRAW1X1        equ 0x6D ; GPU Render Rectangle Commands (GP0): $6D - Textured Rectangle Dot (1x1), Opaque, Raw-Texture
+.macro TexRectRaw1x1,X,Y,U,V,PAL ; GP0($6D) - Textured Rectangle Dot (1x1), Opaque, Raw-Texture
+  WRIOW GP0,(0x6D<<24)           ; Write GP0 Command Word (Command)
+  WRIOW GP0,(Y<<16)+X            ; Write GP0  Packet Word (Vertex)
+  WRIOW GP0,(PAL<<16)+(V<<8)+U   ; Write GP0  Packet Word (Texcoord+Palette)
+.endmacro
+
+GPUTEXRECTBLENDALPHA1X1 equ 0x6E ; GPU Render Rectangle Commands (GP0): $6E - Textured Rectangle Dot (1x1), Semi-Transparent, Texture-Blending
+.macro TexRectBlendAlpha1x1,COLOR,X,Y,U,V,PAL ; GP0($6E) - Textured Rectangle Dot (1x1), Semi-Transparent, Texture-Blending
+  WRIOW GP0,(0x6E<<24)+COLOR     ; Write GP0 Command Word (Color+Command)
+  WRIOW GP0,(Y<<16)+X            ; Write GP0  Packet Word (Vertex)
+  WRIOW GP0,(PAL<<16)+(V<<8)+U   ; Write GP0  Packet Word (Texcoord+Palette)
+.endmacro
+
+GPUTEXRECTRAWALPHA1X1   equ 0x6F ; GPU Render Rectangle Commands (GP0): $6F - Textured Rectangle Dot (1x1), Semi-Transparent, Raw-Texture
+.macro TexRectRawAlpha1x1,X,Y,U,V,PAL ; GP0($6F) - Textured Rectangle Dot (1x1), Semi-Transparent, Raw-Texture
+  WRIOW GP0,(0x6F<<24)           ; Write GP0 Command Word (Command)
+  WRIOW GP0,(Y<<16)+X            ; Write GP0  Packet Word (Vertex)
+  WRIOW GP0,(PAL<<16)+(V<<8)+U   ; Write GP0  Packet Word (Texcoord+Palette)
 .endmacro
 
 GPUFILLRECT8X8        equ 0x70 ; GPU Render Rectangle Commands (GP0): $70 - Monochrome Rectangle (8x8), Opaque
@@ -322,6 +536,34 @@ GPUFILLRECTALPHA8X8   equ 0x72 ; GPU Render Rectangle Commands (GP0): $72 - Mono
   WRIOW GP0,(Y<<16)+X          ; Write GP0  Packet Word (Vertex)
 .endmacro
 
+GPUTEXRECTBLEND8X8      equ 0x74 ; GPU Render Rectangle Commands (GP0): $74 - Textured Rectangle (8x8), Opaque, Texture-Blending
+.macro TexRectBlend8x8,COLOR,X,Y,U,V,PAL ; GP0($74) - Textured Rectangle (8x8), Opaque, Texture-Blending
+  WRIOW GP0,(0x74<<24)+COLOR     ; Write GP0 Command Word (Color+Command)
+  WRIOW GP0,(Y<<16)+X            ; Write GP0  Packet Word (Vertex)
+  WRIOW GP0,(PAL<<16)+(V<<8)+U   ; Write GP0  Packet Word (Texcoord+Palette)
+.endmacro
+
+GPUTEXRECTRAW8X8        equ 0x75 ; GPU Render Rectangle Commands (GP0): $75 - Textured Rectangle (8x8), Opaque, Raw-Texture
+.macro TexRectRaw8x8,X,Y,U,V,PAL ; GP0($75) - Textured Rectangle (8x8), Opaque, Raw-Texture
+  WRIOW GP0,(0x75<<24)           ; Write GP0 Command Word (Command)
+  WRIOW GP0,(Y<<16)+X            ; Write GP0  Packet Word (Vertex)
+  WRIOW GP0,(PAL<<16)+(V<<8)+U   ; Write GP0  Packet Word (Texcoord+Palette)
+.endmacro
+
+GPUTEXRECTBLENDALPHA8X8 equ 0x76 ; GPU Render Rectangle Commands (GP0): $76 - Textured Rectangle (8x8), Semi-Transparent, Texture-Blending
+.macro TexRectBlendAlpha8x8,COLOR,X,Y,U,V,PAL ; GP0($76) - Textured Rectangle (8x8), Semi-Transparent, Texture-Blending
+  WRIOW GP0,(0x76<<24)+COLOR     ; Write GP0 Command Word (Color+Command)
+  WRIOW GP0,(Y<<16)+X            ; Write GP0  Packet Word (Vertex)
+  WRIOW GP0,(PAL<<16)+(V<<8)+U   ; Write GP0  Packet Word (Texcoord+Palette)
+.endmacro
+
+GPUTEXRECTRAWALPHA8X8   equ 0x77 ; GPU Render Rectangle Commands (GP0): $77 - Textured Rectangle (8x8), Semi-Transparent, Raw-Texture
+.macro TexRectRawAlpha8x8,X,Y,U,V,PAL ; GP0($77) - Textured Rectangle (8x8), Semi-Transparent, Raw-Texture
+  WRIOW GP0,(0x77<<24)           ; Write GP0 Command Word (Command)
+  WRIOW GP0,(Y<<16)+X            ; Write GP0  Packet Word (Vertex)
+  WRIOW GP0,(PAL<<16)+(V<<8)+U   ; Write GP0  Packet Word (Texcoord+Palette)
+.endmacro
+
 GPUFILLRECT16X16      equ 0x78 ; GPU Render Rectangle Commands (GP0): $78 - Monochrome Rectangle (16x16), Opaque
 .macro FillRect16x16,COLOR,X,Y ; GP0($78) - Monochrome Rectangle (16x16), Opaque
   WRIOW GP0,(0x78<<24)+COLOR   ; Write GP0 Command Word (Color+Command)
@@ -332,6 +574,34 @@ GPUFILLRECTALPHA16X16 equ 0x7A ; GPU Render Rectangle Commands (GP0): $7A - Mono
 .macro FillRectAlpha16x16,COLOR,X,Y ; GP0($7A) - Monochrome Rectangle (16x16), Semi-Transparent
   WRIOW GP0,(0x7A<<24)+COLOR   ; Write GP0 Command Word (Color+Command)
   WRIOW GP0,(Y<<16)+X          ; Write GP0  Packet Word (Vertex)
+.endmacro
+
+GPUTEXRECTBLEND16X16      equ 0x7C ; GPU Render Rectangle Commands (GP0): $7C - Textured Rectangle (16x16), Opaque, Texture-Blending
+.macro TexRectBlend16x16,COLOR,X,Y,U,V,PAL ; GP0($7C) - Textured Rectangle (16x16), Opaque, Texture-Blending
+  WRIOW GP0,(0x7C<<24)+COLOR       ; Write GP0 Command Word (Color+Command)
+  WRIOW GP0,(Y<<16)+X              ; Write GP0  Packet Word (Vertex)
+  WRIOW GP0,(PAL<<16)+(V<<8)+U     ; Write GP0  Packet Word (Texcoord+Palette)
+.endmacro
+
+GPUTEXRECTRAW16X16        equ 0x7D ; GPU Render Rectangle Commands (GP0): $7D - Textured Rectangle (16x16), Opaque, Raw-Texture
+.macro TexRectRaw16x16,X,Y,U,V,PAL ; GP0($7D) - Textured Rectangle (16x16), Opaque, Raw-Texture
+  WRIOW GP0,(0x7D<<24)             ; Write GP0 Command Word (Command)
+  WRIOW GP0,(Y<<16)+X              ; Write GP0  Packet Word (Vertex)
+  WRIOW GP0,(PAL<<16)+(V<<8)+U     ; Write GP0  Packet Word (Texcoord+Palette)
+.endmacro
+
+GPUTEXRECTBLENDALPHA16X16 equ 0x7E ; GPU Render Rectangle Commands (GP0): $7E - Textured Rectangle (16x16), Semi-Transparent, Texture-Blending
+.macro TexRectBlendAlpha16x16,COLOR,X,Y,U,V,PAL ; GP0($7E) - Textured Rectangle (16x16), Semi-Transparent, Texture-Blending
+  WRIOW GP0,(0x7E<<24)+COLOR       ; Write GP0 Command Word (Color+Command)
+  WRIOW GP0,(Y<<16)+X              ; Write GP0  Packet Word (Vertex)
+  WRIOW GP0,(PAL<<16)+(V<<8)+U     ; Write GP0  Packet Word (Texcoord+Palette)
+.endmacro
+
+GPUTEXRECTRAWALPHA16X16   equ 0x7F ; GPU Render Rectangle Commands (GP0): $7F - Textured Rectangle (16x16), Semi-Transparent, Raw-Texture
+.macro TexRectRawAlpha16x16,X,Y,U,V,PAL ; GP0($7F) - Textured Rectangle (16x16), Semi-Transparent, Raw-Texture
+  WRIOW GP0,(0x7F<<24)             ; Write GP0 Command Word (Command)
+  WRIOW GP0,(Y<<16)+X              ; Write GP0  Packet Word (Vertex)
+  WRIOW GP0,(PAL<<16)+(V<<8)+U     ; Write GP0  Packet Word (Texcoord+Palette)
 .endmacro
 
 ; GPU Rendering Attributes (GP0)
