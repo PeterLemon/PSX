@@ -1,10 +1,10 @@
 .psx
-.create "PRINTGPU.bin", 0
+.create "PRINTGPU.bin", 0x80010000
 
 ;-------------------------------------------------------------
 ;GPU print example.                          1999 doomed/padua
 ;-syntax of spasm.
-;-uses the caetla 8*16 font, but can be any 8*16 font (font.bin)
+;-uses the caetla 8*16 font, but can be any 8*16 font (FONT.BIN)
 ;-prints fixed width. If you want proportional, just add the char
 ; width after a plot to X, instead of 8.
 ;
@@ -70,7 +70,7 @@ text2:
 dw 0
 
 ;-------------------------------------------------------------
-.include "sys2.asm" ; GPU routines
+.include "SYS2.ASM" ; GPU routines
 ;-------------------------------------------------------------
 txtDMA  equ 0x0000  ; primitive offsets
 txtRGB  equ 0x0004
@@ -387,7 +387,7 @@ clut:
   dh 0x7FFF,0x7FFF,0x7FFF,0x7FFF,0x7FFF,0x7FFF,0x7FFF,0x7FFF
 
 img:
-  .incbin "font.bin" ; this is the font.
+  .incbin "FONT.BIN" ; this is the font.
 ;-------------------------------------------------------------
 
 .close
