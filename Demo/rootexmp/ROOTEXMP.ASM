@@ -1,5 +1,5 @@
 .psx
-.create "ROOTEXMP.bin", 0
+.create "ROOTEXMP.bin", 0x80010000
 
 ;--------------------------------------------------------------------------
 ; Here's a little example of how to set up and start a root
@@ -44,7 +44,7 @@ Mod_CTick    equ 0x80011271 ; Current Tick
 j main
 nop
 
-.incbin "modplay.bin" ; The mod player
+.incbin "MODPLAY.BIN" ; The mod player
 
 main:
   la a0,str1        ; Print welcome line and name of
@@ -247,6 +247,6 @@ str4:
 
 .align 4 ; always important..
 Mod:
-  .incbin "lunatic.hit" ; the module
+  .incbin "LUNATIC.HIT" ; the module
 
 .close
