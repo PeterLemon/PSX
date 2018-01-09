@@ -1,6 +1,6 @@
 ; PSX 'Bare Metal' GPU 24BPP Memory Transfer Demo by krom (Peter Lemon):
 .psx
-.create "MemoryTransfer24BPP.bin", 0
+.create "MemoryTransfer24BPP.bin", 0x80010000
 
 .include "LIB/PSX.INC" ; Include PSX Definitions
 .include "LIB/PSX_GPU.INC" ; Include PSX GPU Definitions & Macros
