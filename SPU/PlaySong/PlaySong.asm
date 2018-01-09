@@ -1,6 +1,6 @@
 ; PSX 'Bare Metal' SPU Play Song Demo by krom (Peter Lemon):
 .psx
-.create "PlaySong.bin", 0
+.create "PlaySong.bin", 0x80010000
 
 .include "LIB/PSX.INC" ; Include PSX Definitions
 .include "LIB/PSX_SPU.INC" ; Include PSX SPU Definitions & Macros
