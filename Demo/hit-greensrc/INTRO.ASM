@@ -1,5 +1,5 @@
 .psx
-.create "hit-green.bin", 0
+.create "hit-green.bin", 0x80010000
 
 ; Another simple asm intro source by Silpheed of HITMEN
 
@@ -166,16 +166,16 @@ skipupdate:
   nop
 
 
-.include "silph.inc" ; some useful routines
+.include "SILPH.INC" ; some useful routines
 
 image:
-  .incbin "gfx.raw" ; the raw image data for the logo and chars
+  .incbin "GFX.RAW" ; the raw image data for the logo and chars
 clut:
-  .incbin "gfx.clt" ; clut info for above
+  .incbin "GFX.CLT" ; clut info for above
 
 .align 4
 list:
-  .include "list.inc" ; the display list
+  .include "LIST.INC" ; the display list
 
 pages:
   dw page1,page2,page3,page4 ; the pages to display
@@ -237,9 +237,9 @@ page4:
     db "HITMEN - Ruling in 1998!"
 
 module:
-  .incbin "thesong.hit"
+  .incbin "THESONG.HIT"
 
 .align 4
-.include "hitmod.inc"
+.include "HITMOD.INC"
 
 .close
