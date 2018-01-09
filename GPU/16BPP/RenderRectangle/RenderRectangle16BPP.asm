@@ -1,6 +1,6 @@
 ; PSX 'Bare Metal' GPU 16BPP Render Rectangle Demo by krom (Peter Lemon):
 .psx
-.create "RenderRectangle16BPP.bin", 0
+.create "RenderRectangle16BPP.bin", 0x80010000
 
 .include "LIB/PSX.INC" ; Include PSX Definitions
 .include "LIB/PSX_GPU.INC" ; Include PSX GPU Definitions & Macros
