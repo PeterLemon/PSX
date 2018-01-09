@@ -1,6 +1,6 @@
 ; PSX 'Bare Metal' SPU Play ADPCM Sample Demo by krom (Peter Lemon):
 .psx
-.create "PlayADPCMSample.bin", 0
+.create "PlayADPCMSample.bin", 0x80010000
 
 .include "LIB/PSX.INC" ; Include PSX Definitions
 
