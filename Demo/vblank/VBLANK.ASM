@@ -1,5 +1,5 @@
 .psx
-.create "VBLANK.bin", 0
+.create "VBLANK.bin", 0x80010000
 
 ;--------------------------------------------------------------------------
 ; Vertical Blank example.                                       1999 doomed
