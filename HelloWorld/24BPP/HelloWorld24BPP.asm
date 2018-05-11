@@ -17,16 +17,16 @@
 
     ; Write GP0 Command Word (Command)
     li t3,0xA0<<24 ; T3 = DATA Word
-    sw t3,GP0(a0) ; I/O Port Register Word = T0
+    sw t3,GP0(a0) ; I/O Port Register Word = T3
 
     ; Write GP0  Packet Word (Destination Coord: X Counted In Halfwords)
     sll t3,t2,16 ; T3 = Y<<16
     addu t3,t1 ; T3 = DATA Word (Y<<16)+X
-    sw t3,GP0(a0) ; I/O Port Register Word = T0
+    sw t3,GP0(a0) ; I/O Port Register Word = T3
 
     ; Write GP0  Packet Word (Width+Height:  Width Counted In Halfwords)
     li t3,(HEIGHT<<16)+WIDTH ; T3 = DATA Word
-    sw t3,GP0(a0) ; I/O Port Register Word = T0
+    sw t3,GP0(a0) ; I/O Port Register Word = T3
 
     ; Write GP0  Packet Word (Data)
     lbu a3,0(a2) ; A3 = Next Text Character
