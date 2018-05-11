@@ -29,8 +29,8 @@
     sw t3,GP0(a0) ; I/O Port Register Word = T0
 
     ; Write GP0  Packet Word (Data)
-    li t3,(WIDTH*HEIGHT/2)-1 ; T3 = Data Copy Word Count
     lbu a3,0(a2) ; A3 = Next Text Character
+    li t3,(WIDTH*HEIGHT/2)-1 ; T3 = Data Copy Word Count
     sll t4,a3,6 ; T4 = A3 *= 64
     sll a3,7 ; A3 *= 128
     addu a3,t4 ; A3 += T4
