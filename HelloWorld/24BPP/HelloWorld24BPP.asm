@@ -6,11 +6,11 @@
 .include "LIB/PSX_GPU.INC" ; Include PSX GPU Definitions & Macros
 
 .macro PrintString,X,Y,WIDTH,HEIGHT,FONT,STRING,LENGTH ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-  la a1,FONT   // A1 = Font Address
-  la a2,STRING // A2 = Text Address
-  li t0,LENGTH // T0 = Number of Text Characters to Print
-  li t1,X // T1 = X Position
-  li t2,Y // T2 = Y Position
+  la a1,FONT   ; A1 = Font Address
+  la a2,STRING ; A2 = Text Address
+  li t0,LENGTH ; T0 = Number of Text Characters to Print
+  li t1,X ; T1 = X Position
+  li t2,Y ; T2 = Y Position
   
   DrawChars:
     ; Copy Rectangle (CPU To VRAM): X,Y, Width,Height
