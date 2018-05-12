@@ -208,7 +208,7 @@ ADDIUENDA:
 la a1,VALUEWORDB ; A1 = Word Data Offset
 lw t0,0(a1)      ; T0 = Word Data
 la a1,RDWORD ; A1 = RDWORD Offset
-addi t0,IWORDC ; T0 = Test Word Data
+addiu t0,IWORDC ; T0 = Test Word Data
 sw t0,0(a1) ; RDWORD = Word Data
 PrintString 40,48, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,48, 8,8, FontBlack,VALUEWORDB,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
@@ -235,7 +235,7 @@ ADDIUENDB:
 la a1,VALUEWORDC ; A1 = Word Data Offset
 lw t0,0(a1)      ; T0 = Word Data
 la a1,RDWORD ; A1 = RDWORD Offset
-addi t0,IWORDD ; T0 = Test Word Data
+addiu t0,IWORDD ; T0 = Test Word Data
 sw t0,0(a1) ; RDWORD = Word Data
 PrintString 40,72, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,72, 8,8, FontBlack,VALUEWORDC,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
@@ -262,7 +262,7 @@ ADDIUENDC:
 la a1,VALUEIWORDD ; A1 = Word Data Offset
 lw t0,0(a1)       ; T0 = Word Data
 la a1,RDWORD ; A1 = RDWORD Offset
-addi t0,IWORDE ; T0 = Test Word Data
+addiu t0,IWORDE ; T0 = Test Word Data
 sw t0,0(a1) ; RDWORD = Word Data
 PrintString 40,96, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,96, 8,8, FontBlack,VALUEIWORDD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
@@ -289,7 +289,7 @@ ADDIUENDD:
 la a1,VALUEWORDE ; A1 = Word Data Offset
 lw t0,0(a1)      ; T0 = Word Data
 la a1,RDWORD ; A1 = RDWORD Offset
-addi t0,IWORDF ; T0 = Test Word Data
+addiu t0,IWORDF ; T0 = Test Word Data
 sw t0,0(a1) ; RDWORD = Word Data
 PrintString 40,120, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,120, 8,8, FontBlack,VALUEWORDE,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
@@ -316,7 +316,7 @@ ADDIUENDE:
 la a1,VALUEWORDF ; A1 = Word Data Offset
 lw t0,0(a1)      ; T0 = Word Data
 la a1,RDWORD ; A1 = RDWORD Offset
-addi t0,IWORDG ; T0 = Test Word Data
+addiu t0,IWORDG ; T0 = Test Word Data
 sw t0,0(a1) ; RDWORD = Word Data
 PrintString 40,144, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,144, 8,8, FontBlack,VALUEWORDF,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
@@ -343,7 +343,7 @@ ADDIUENDF:
 la a1,VALUEWORDA ; A1 = Word Data Offset
 lw t0,0(a1)      ; T0 = Word Data
 la a1,RDWORD ; A1 = RDWORD Offset
-addi t0,IWORDG ; T0 = Test Word Data
+addiu t0,IWORDG ; T0 = Test Word Data
 sw t0,0(a1) ; RDWORD = Word Data
 PrintString 40,168, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,168, 8,8, FontBlack,VALUEWORDA,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
