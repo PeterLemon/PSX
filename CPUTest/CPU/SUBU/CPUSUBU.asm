@@ -11,7 +11,7 @@
   li t0,LENGTH ; T0 = Number of Text Characters to Print
   li t1,X ; T1 = X Position
   li t2,Y ; T2 = Y Position
-  
+
   DrawChars:
     ; Copy Rectangle (CPU To VRAM): X,Y, Width,Height
 
@@ -52,7 +52,7 @@
   li t0,LENGTH ; T0 = Number of Text Characters to Print
   li t1,X ; T1 = X Position
   li t2,Y ; T2 = Y Position
-  
+
   DrawHEXChars:
     lbu t3,0(a2) ; T3 = Next 2 HEX Chars
     subiu a2,1 ; Decrement Text Offset
