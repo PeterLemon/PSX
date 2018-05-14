@@ -109,7 +109,7 @@
     addiu t4,7
     HEXEndB:
 
-    sll a3,t4,7 // Add Shift to Correct Position in Font (*128: WIDTH*HEIGHT*BYTES_PER_PIXEL)
+    sll a3,t4,7 ; Add Shift to Correct Position in Font (*128: WIDTH*HEIGHT*BYTES_PER_PIXEL)
     addu a3,a1 ; A3 = Texture RAM Font Offset
 
     ; Copy Rectangle (CPU To VRAM): X,Y, Width,Height
@@ -200,7 +200,7 @@ beq t0,t1,ADDIPASSA ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,32, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j ADDIENDA
-nop // Delay Slot
+nop ; Delay Slot
 ADDIPASSA:
 PrintString 280,32, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 ADDIENDA:
@@ -227,7 +227,7 @@ beq t0,t1,ADDIPASSB ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,56, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j ADDIENDB
-nop // Delay Slot
+nop ; Delay Slot
 ADDIPASSB:
 PrintString 280,56, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 ADDIENDB:
@@ -254,7 +254,7 @@ beq t0,t1,ADDIPASSC ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,80, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j ADDIENDC
-nop // Delay Slot
+nop ; Delay Slot
 ADDIPASSC:
 PrintString 280,80, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 ADDIENDC:
@@ -281,7 +281,7 @@ beq t0,t1,ADDIPASSD ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,104, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j ADDIENDD
-nop // Delay Slot
+nop ; Delay Slot
 ADDIPASSD:
 PrintString 280,104, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 ADDIENDD:
@@ -308,7 +308,7 @@ beq t0,t1,ADDIPASSE ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,128, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j ADDIENDE
-nop // Delay Slot
+nop ; Delay Slot
 ADDIPASSE:
 PrintString 280,128, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 ADDIENDE:
@@ -335,7 +335,7 @@ beq t0,t1,ADDIPASSF ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,152, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j ADDIENDF
-nop // Delay Slot
+nop ; Delay Slot
 ADDIPASSF:
 PrintString 280,152, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 ADDIENDF:
@@ -362,7 +362,7 @@ beq t0,t1,ADDIPASSG ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,176, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j ADDIENDG
-nop // Delay Slot
+nop ; Delay Slot
 ADDIPASSG:
 PrintString 280,176, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 ADDIENDG:

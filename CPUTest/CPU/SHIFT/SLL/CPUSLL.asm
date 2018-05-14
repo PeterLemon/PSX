@@ -109,7 +109,7 @@
     addiu t4,7
     HEXEndB:
 
-    sll a3,t4,7 // Add Shift to Correct Position in Font (*128: WIDTH*HEIGHT*BYTES_PER_PIXEL)
+    sll a3,t4,7 ; Add Shift to Correct Position in Font (*128: WIDTH*HEIGHT*BYTES_PER_PIXEL)
     addu a3,a1 ; A3 = Texture RAM Font Offset
 
     ; Copy Rectangle (CPU To VRAM): X,Y, Width,Height
@@ -191,7 +191,7 @@ beq t0,t1,SLLPASS0 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,24, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND0
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS0:
 PrintString 280,24, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND0:
@@ -215,7 +215,7 @@ beq t0,t1,SLLPASS1 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,32, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND1
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS1:
 PrintString 280,32, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND1:
@@ -239,7 +239,7 @@ beq t0,t1,SLLPASS2 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,40, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND2
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS2:
 PrintString 280,40, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND2:
@@ -263,7 +263,7 @@ beq t0,t1,SLLPASS3 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,48, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND3
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS3:
 PrintString 280,48, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND3:
@@ -287,7 +287,7 @@ beq t0,t1,SLLPASS4 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,56, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND4
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS4:
 PrintString 280,56, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND4:
@@ -311,7 +311,7 @@ beq t0,t1,SLLPASS5 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,64, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND5
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS5:
 PrintString 280,64, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND5:
@@ -335,7 +335,7 @@ beq t0,t1,SLLPASS6 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,72, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND6
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS6:
 PrintString 280,72, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND6:
@@ -359,7 +359,7 @@ beq t0,t1,SLLPASS7 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,80, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND7
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS7:
 PrintString 280,80, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND7:
@@ -383,7 +383,7 @@ beq t0,t1,SLLPASS8 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,88, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND8
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS8:
 PrintString 280,88, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND8:
@@ -407,7 +407,7 @@ beq t0,t1,SLLPASS9 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,96, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND9
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS9:
 PrintString 280,96, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND9:
@@ -431,7 +431,7 @@ beq t0,t1,SLLPASS10 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,104, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND10
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS10:
 PrintString 280,104, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND10:
@@ -455,7 +455,7 @@ beq t0,t1,SLLPASS11 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,112, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND11
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS11:
 PrintString 280,112, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND11:
@@ -479,7 +479,7 @@ beq t0,t1,SLLPASS12 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,120, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND12
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS12:
 PrintString 280,120, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND12:
@@ -503,7 +503,7 @@ beq t0,t1,SLLPASS13 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,128, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND13
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS13:
 PrintString 280,128, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND13:
@@ -527,7 +527,7 @@ beq t0,t1,SLLPASS14 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,136, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND14
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS14:
 PrintString 280,136, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND14:
@@ -551,7 +551,7 @@ beq t0,t1,SLLPASS15 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,144, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND15
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS15:
 PrintString 280,144, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND15:
@@ -575,7 +575,7 @@ beq t0,t1,SLLPASS16 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,152, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND16
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS16:
 PrintString 280,152, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND16:
@@ -599,7 +599,7 @@ beq t0,t1,SLLPASS17 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,160, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND17
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS17:
 PrintString 280,160, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND17:
@@ -623,7 +623,7 @@ beq t0,t1,SLLPASS18 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,168, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND18
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS18:
 PrintString 280,168, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND18:
@@ -647,7 +647,7 @@ beq t0,t1,SLLPASS19 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,176, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND19
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS19:
 PrintString 280,176, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND19:
@@ -671,7 +671,7 @@ beq t0,t1,SLLPASS20 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,184, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND20
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS20:
 PrintString 280,184, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND20:
@@ -695,7 +695,7 @@ beq t0,t1,SLLPASS21 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,192, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND21
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS21:
 PrintString 280,192, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND21:
@@ -719,7 +719,7 @@ beq t0,t1,SLLPASS22 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,200, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND22
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS22:
 PrintString 280,200, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND22:
@@ -743,7 +743,7 @@ beq t0,t1,SLLPASS23 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,208, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND23
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS23:
 PrintString 280,208, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND23:
@@ -767,7 +767,7 @@ beq t0,t1,SLLPASS24 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,216, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND24
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS24:
 PrintString 280,216, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND24:
@@ -791,7 +791,7 @@ beq t0,t1,SLLPASS25 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,224, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND25
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS25:
 PrintString 280,224, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND25:
@@ -815,7 +815,7 @@ beq t0,t1,SLLPASS26 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,232, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND26
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS26:
 PrintString 280,232, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND26:
@@ -839,7 +839,7 @@ beq t0,t1,SLLPASS27 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,240, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND27
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS27:
 PrintString 280,240, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND27:
@@ -863,7 +863,7 @@ beq t0,t1,SLLPASS28 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,248, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND28
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS28:
 PrintString 280,248, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND28:
@@ -887,7 +887,7 @@ beq t0,t1,SLLPASS29 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,256, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND29
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS29:
 PrintString 280,256, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND29:
@@ -911,7 +911,7 @@ beq t0,t1,SLLPASS30 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,264, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND30
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS30:
 PrintString 280,264, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND30:
@@ -935,7 +935,7 @@ beq t0,t1,SLLPASS31 ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,272, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j SLLEND31
-nop // Delay Slot
+nop ; Delay Slot
 SLLPASS31:
 PrintString 280,272, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 SLLEND31:

@@ -109,7 +109,7 @@
     addiu t4,7
     HEXEndB:
 
-    sll a3,t4,7 // Add Shift to Correct Position in Font (*128: WIDTH*HEIGHT*BYTES_PER_PIXEL)
+    sll a3,t4,7 ; Add Shift to Correct Position in Font (*128: WIDTH*HEIGHT*BYTES_PER_PIXEL)
     addu a3,a1 ; A3 = Texture RAM Font Offset
 
     ; Copy Rectangle (CPU To VRAM): X,Y, Width,Height
@@ -197,19 +197,19 @@ la a1,LOWORD        ; A1 = Word Data Offset
 lw t0,0(a1)         ; T0 = Word Data
 la a1,MULTULOCHECKA ; A1 = Word Check Data Offset
 lw t1,0(a1)         ; T1 = Word Check Data
-nop // Delay Slot
+nop ; Delay Slot
 beq t0,t1,MULTULOPASSA ; Compare Result Equality With Check Data
-nop // Delay Slot
+nop ; Delay Slot
 PrintString 280,24, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j MULTUENDA
-nop // Delay Slot
+nop ; Delay Slot
 MULTULOPASSA:
 PrintString 280,24, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 la a1,HIWORD        ; A1 = Word Data Offset
 lw t0,0(a1)         ; T0 = Word Data
 la a1,MULTUHICHECKA ; A1 = Word Check Data Offset
 lw t1,0(a1)         ; T1 = Word Check Data
-nop // Delay Slot
+nop ; Delay Slot
 beq t0,t1,MULTUHIPASSA ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,32, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
@@ -244,19 +244,19 @@ la a1,LOWORD        ; A1 = Word Data Offset
 lw t0,0(a1)         ; T0 = Word Data
 la a1,MULTULOCHECKB ; A1 = Word Check Data Offset
 lw t1,0(a1)         ; T1 = Word Check Data
-nop // Delay Slot
+nop ; Delay Slot
 beq t0,t1,MULTULOPASSB ; Compare Result Equality With Check Data
-nop // Delay Slot
+nop ; Delay Slot
 PrintString 280,48, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j MULTUENDB
-nop // Delay Slot
+nop ; Delay Slot
 MULTULOPASSB:
 PrintString 280,48, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 la a1,HIWORD        ; A1 = Word Data Offset
 lw t0,0(a1)         ; T0 = Word Data
 la a1,MULTUHICHECKB ; A1 = Word Check Data Offset
 lw t1,0(a1)         ; T1 = Word Check Data
-nop // Delay Slot
+nop ; Delay Slot
 beq t0,t1,MULTUHIPASSB ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,56, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
@@ -291,19 +291,19 @@ la a1,LOWORD        ; A1 = Word Data Offset
 lw t0,0(a1)         ; T0 = Word Data
 la a1,MULTULOCHECKC ; A1 = Word Check Data Offset
 lw t1,0(a1)         ; T1 = Word Check Data
-nop // Delay Slot
+nop ; Delay Slot
 beq t0,t1,MULTULOPASSC ; Compare Result Equality With Check Data
-nop // Delay Slot
+nop ; Delay Slot
 PrintString 280,72, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j MULTUENDC
-nop // Delay Slot
+nop ; Delay Slot
 MULTULOPASSC:
 PrintString 280,72, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 la a1,HIWORD        ; A1 = Word Data Offset
 lw t0,0(a1)         ; T0 = Word Data
 la a1,MULTUHICHECKC ; A1 = Word Check Data Offset
 lw t1,0(a1)         ; T1 = Word Check Data
-nop // Delay Slot
+nop ; Delay Slot
 beq t0,t1,MULTUHIPASSC ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,80, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
@@ -338,19 +338,19 @@ la a1,LOWORD        ; A1 = Word Data Offset
 lw t0,0(a1)         ; T0 = Word Data
 la a1,MULTULOCHECKD ; A1 = Word Check Data Offset
 lw t1,0(a1)         ; T1 = Word Check Data
-nop // Delay Slot
+nop ; Delay Slot
 beq t0,t1,MULTULOPASSD ; Compare Result Equality With Check Data
-nop // Delay Slot
+nop ; Delay Slot
 PrintString 280,96, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j MULTUENDD
-nop // Delay Slot
+nop ; Delay Slot
 MULTULOPASSD:
 PrintString 280,96, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 la a1,HIWORD        ; A1 = Word Data Offset
 lw t0,0(a1)         ; T0 = Word Data
 la a1,MULTUHICHECKD ; A1 = Word Check Data Offset
 lw t1,0(a1)         ; T1 = Word Check Data
-nop // Delay Slot
+nop ; Delay Slot
 beq t0,t1,MULTUHIPASSD ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,104, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
@@ -385,19 +385,19 @@ la a1,LOWORD        ; A1 = Word Data Offset
 lw t0,0(a1)         ; T0 = Word Data
 la a1,MULTULOCHECKE ; A1 = Word Check Data Offset
 lw t1,0(a1)         ; T1 = Word Check Data
-nop // Delay Slot
+nop ; Delay Slot
 beq t0,t1,MULTULOPASSE ; Compare Result Equality With Check Data
-nop // Delay Slot
+nop ; Delay Slot
 PrintString 280,120, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j MULTUENDE
-nop // Delay Slot
+nop ; Delay Slot
 MULTULOPASSE:
 PrintString 280,120, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 la a1,HIWORD        ; A1 = Word Data Offset
 lw t0,0(a1)         ; T0 = Word Data
 la a1,MULTUHICHECKE ; A1 = Word Check Data Offset
 lw t1,0(a1)         ; T1 = Word Check Data
-nop // Delay Slot
+nop ; Delay Slot
 beq t0,t1,MULTUHIPASSE ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,128, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
@@ -432,19 +432,19 @@ la a1,LOWORD        ; A1 = Word Data Offset
 lw t0,0(a1)         ; T0 = Word Data
 la a1,MULTULOCHECKF ; A1 = Word Check Data Offset
 lw t1,0(a1)         ; T1 = Word Check Data
-nop // Delay Slot
+nop ; Delay Slot
 beq t0,t1,MULTULOPASSF ; Compare Result Equality With Check Data
-nop // Delay Slot
+nop ; Delay Slot
 PrintString 280,144, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j MULTUENDF
-nop // Delay Slot
+nop ; Delay Slot
 MULTULOPASSF:
 PrintString 280,144, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 la a1,HIWORD        ; A1 = Word Data Offset
 lw t0,0(a1)         ; T0 = Word Data
 la a1,MULTUHICHECKF ; A1 = Word Check Data Offset
 lw t1,0(a1)         ; T1 = Word Check Data
-nop // Delay Slot
+nop ; Delay Slot
 beq t0,t1,MULTUHIPASSF ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,152, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
@@ -479,19 +479,19 @@ la a1,LOWORD        ; A1 = Word Data Offset
 lw t0,0(a1)         ; T0 = Word Data
 la a1,MULTULOCHECKG ; A1 = Word Check Data Offset
 lw t1,0(a1)         ; T1 = Word Check Data
-nop // Delay Slot
+nop ; Delay Slot
 beq t0,t1,MULTULOPASSG ; Compare Result Equality With Check Data
-nop // Delay Slot
+nop ; Delay Slot
 PrintString 280,168, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 j MULTUENDG
-nop // Delay Slot
+nop ; Delay Slot
 MULTULOPASSG:
 PrintString 280,168, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 la a1,HIWORD        ; A1 = Word Data Offset
 lw t0,0(a1)         ; T0 = Word Data
 la a1,MULTUHICHECKG ; A1 = Word Check Data Offset
 lw t1,0(a1)         ; T1 = Word Check Data
-nop // Delay Slot
+nop ; Delay Slot
 beq t0,t1,MULTUHIPASSG ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,176, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position

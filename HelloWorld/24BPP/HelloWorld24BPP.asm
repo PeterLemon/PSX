@@ -69,8 +69,8 @@ WRGP0 GPUDRAWOFS,0x000000 ; Write GP0 Command Word (Set Drawing Offset X=0, Y=0)
 FillRectVRAM 0x000000, 0,0, 479,239 ; Fill Rectangle In VRAM: Color, X,Y, Width,Height
 
 ; Print Text
-PrintString 192,32, 12,8, FontBlack, Text, 12 // Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintString 288,96, 12,8, FontRed, Text, 12 // Print Text String To VRAM Using Width,Height Font At X,Y Position
+PrintString 192,32, 12,8, FontBlack, Text, 12 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
+PrintString 288,96, 12,8, FontRed, Text, 12 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 
 Loop:
   b Loop
