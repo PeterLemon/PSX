@@ -1,6 +1,6 @@
-; PSX 'Bare Metal' CPU Load Halfword Test Demo by krom (Peter Lemon):
+; PSX 'Bare Metal' CPU Store Halfword Test Demo by krom (Peter Lemon):
 .psx
-.create "CPULH.bin", 0x80010000
+.create "CPUSH.bin", 0x80010000
 
 .include "LIB/PSX.INC" ; Include PSX Definitions
 .include "LIB/PSX_GPU.INC" ; Include PSX GPU Definitions & Macros
@@ -162,359 +162,194 @@ WRGP0 GPUDRAWOFS,0x000000 ; Write GP0 Command Word (Set Drawing Offset X=0, Y=0)
 FillRectVRAM 0x000000, 0,0, 319,239 ; Fill Rectangle In VRAM: Color, X,Y, Width,Height
 
 ; Print Header Text
-PrintString  40,8, 8,8, FontRed,HALFHEX,7 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintString 128,8, 8,8, FontRed,HALFDEC,7 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintString 200,8, 8,8, FontRed,RTHEX,5 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
+PrintString  40,8, 8,8, FontRed,RTHEX,5 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
+PrintString 144,8, 8,8, FontRed,RTDEC,5 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
+PrintString 200,8, 8,8, FontRed,WORDHEX,7 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintString 280,8, 8,8, FontRed,TEST,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 
 
 PrintString 0,16, 8,8, FontBlack,PAGEBREAK,39 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 
 
-PrintString 8,24, 8,8, FontRed,LH,1 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
+PrintString 8,24, 8,8, FontRed,SH,1 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 la a1,VALUEHALFA ; A1 = Halfword Data Offset
 lh t0,0(a1)      ; T0 = Test Halfword Data
-la a1,RTWORD ; A1 = RTWORD Offset
-sw t0,0(a1)  ; RTWORD = Word Data
+la a1,WORD  ; A1 = WORD Offset
+sh t0,0(a1) ; WORD = Word Data
 PrintString 40,24, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,24, 8,8, FontBlack,VALUEHALFA,1 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
 PrintString 184,24, 8,8, FontBlack,TEXTHALFA,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintString 200,24, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  208,24, 8,8, FontBlack,RTWORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-la a1,RTWORD   ; A1 = Word Data Offset
+PrintValue  208,24, 8,8, FontBlack,WORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
+la a1,WORD     ; A1 = Word Data Offset
 lw t0,0(a1)    ; T0 = Word Data
-la a1,LHCHECKA ; A1 = Word Check Data Offset
+la a1,SHCHECKA ; A1 = Word Check Data Offset
 lw t1,0(a1)    ; T1 = Word Check Data
 nop ; Delay Slot
-beq t0,t1,LHPASSA ; Compare Result Equality With Check Data
+beq t0,t1,SHPASSA ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,24, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-j LHENDA
+j SHENDA
 nop ; Delay Slot
-LHPASSA:
+SHPASSA:
 PrintString 280,24, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-LHENDA:
+SHENDA:
 
 la a1,VALUEHALFB ; A1 = Halfword Data Offset
 lh t0,0(a1)      ; T0 = Test Halfword Data
-la a1,RTWORD ; A1 = RTWORD Offset
-sw t0,0(a1)  ; RTWORD = Word Data
+la a1,WORD  ; A1 = WORD Offset
+sh t0,0(a1) ; WORD = Word Data
 PrintString 40,32, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,32, 8,8, FontBlack,VALUEHALFB,1 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
 PrintString 152,32, 8,8, FontBlack,TEXTHALFB,4 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintString 200,32, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  208,32, 8,8, FontBlack,RTWORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-la a1,RTWORD   ; A1 = Word Data Offset
+PrintValue  208,32, 8,8, FontBlack,WORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
+la a1,WORD     ; A1 = Word Data Offset
 lw t0,0(a1)    ; T0 = Word Data
-la a1,LHCHECKB ; A1 = Word Check Data Offset
+la a1,SHCHECKB ; A1 = Word Check Data Offset
 lw t1,0(a1)    ; T1 = Word Check Data
 nop ; Delay Slot
-beq t0,t1,LHPASSB ; Compare Result Equality With Check Data
+beq t0,t1,SHPASSB ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,32, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-j LHENDB
+j SHENDB
 nop ; Delay Slot
-LHPASSB:
+SHPASSB:
 PrintString 280,32, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-LHENDB:
+SHENDB:
 
 la a1,VALUEHALFC ; A1 = Halfword Data Offset
 lh t0,0(a1)      ; T0 = Test Halfword Data
-la a1,RTWORD ; A1 = RTWORD Offset
-sw t0,0(a1)  ; RTWORD = Word Data
+la a1,WORD  ; A1 = WORD Offset
+sh t0,0(a1) ; WORD = Word Data
 PrintString 40,40, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,40, 8,8, FontBlack,VALUEHALFC,1 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
 PrintString 160,40, 8,8, FontBlack,TEXTHALFC,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintString 200,40, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  208,40, 8,8, FontBlack,RTWORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-la a1,RTWORD   ; A1 = Word Data Offset
+PrintValue  208,40, 8,8, FontBlack,WORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
+la a1,WORD     ; A1 = Word Data Offset
 lw t0,0(a1)    ; T0 = Word Data
-la a1,LHCHECKC ; A1 = Word Check Data Offset
+la a1,SHCHECKC ; A1 = Word Check Data Offset
 lw t1,0(a1)    ; T1 = Word Check Data
 nop ; Delay Slot
-beq t0,t1,LHPASSC ; Compare Result Equality With Check Data
+beq t0,t1,SHPASSC ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,40, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-j LHENDC
+j SHENDC
 nop ; Delay Slot
-LHPASSC:
+SHPASSC:
 PrintString 280,40, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-LHENDC:
+SHENDC:
 
 la a1,VALUEHALFD ; A1 = Halfword Data Offset
 lh t0,0(a1)      ; T0 = Test Halfword Data
-la a1,RTWORD ; A1 = RTWORD Offset
-sw t0,0(a1)  ; RTWORD = Word Data
+la a1,WORD  ; A1 = WORD Offset
+sh t0,0(a1) ; WORD = Word Data
 PrintString 40,48, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,48, 8,8, FontBlack,VALUEHALFD,1 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
 PrintString 152,48, 8,8, FontBlack,TEXTHALFD,4 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintString 200,48, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  208,48, 8,8, FontBlack,RTWORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-la a1,RTWORD   ; A1 = Word Data Offset
+PrintValue  208,48, 8,8, FontBlack,WORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
+la a1,WORD     ; A1 = Word Data Offset
 lw t0,0(a1)    ; T0 = Word Data
-la a1,LHCHECKD ; A1 = Word Check Data Offset
+la a1,SHCHECKD ; A1 = Word Check Data Offset
 lw t1,0(a1)    ; T1 = Word Check Data
 nop ; Delay Slot
-beq t0,t1,LHPASSD ; Compare Result Equality With Check Data
+beq t0,t1,SHPASSD ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,48, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-j LHENDD
+j SHENDD
 nop ; Delay Slot
-LHPASSD:
+SHPASSD:
 PrintString 280,48, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-LHENDD:
+SHENDD:
 
 la a1,VALUEHALFE ; A1 = Halfword Data Offset
 lh t0,0(a1)      ; T0 = Test Halfword Data
-la a1,RTWORD ; A1 = RTWORD Offset
-sw t0,0(a1)  ; RTWORD = Word Data
+la a1,WORD  ; A1 = WORD Offset
+sh t0,0(a1) ; WORD = Word Data
 PrintString 40,56, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,56, 8,8, FontBlack,VALUEHALFE,1 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
 PrintString 144,56, 8,8, FontBlack,TEXTHALFE,5 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintString 200,56, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  208,56, 8,8, FontBlack,RTWORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-la a1,RTWORD   ; A1 = Word Data Offset
+PrintValue  208,56, 8,8, FontBlack,WORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
+la a1,WORD     ; A1 = Word Data Offset
 lw t0,0(a1)    ; T0 = Word Data
-la a1,LHCHECKE ; A1 = Word Check Data Offset
+la a1,SHCHECKE ; A1 = Word Check Data Offset
 lw t1,0(a1)    ; T1 = Word Check Data
 nop ; Delay Slot
-beq t0,t1,LHPASSE ; Compare Result Equality With Check Data
+beq t0,t1,SHPASSE ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,56, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-j LHENDE
+j SHENDE
 nop ; Delay Slot
-LHPASSE:
+SHPASSE:
 PrintString 280,56, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-LHENDE:
+SHENDE:
 
 la a1,VALUEHALFF ; A1 = Halfword Data Offset
 lh t0,0(a1)      ; T0 = Test Halfword Data
-la a1,RTWORD ; A1 = RTWORD Offset
-sw t0,0(a1)  ; RTWORD = Word Data
+la a1,WORD  ; A1 = WORD Offset
+sh t0,0(a1) ; WORD = Word Data
 PrintString 40,64, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,64, 8,8, FontBlack,VALUEHALFF,1 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
 PrintString 152,64, 8,8, FontBlack,TEXTHALFF,4 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintString 200,64, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  208,64, 8,8, FontBlack,RTWORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-la a1,RTWORD   ; A1 = Word Data Offset
+PrintValue  208,64, 8,8, FontBlack,WORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
+la a1,WORD     ; A1 = Word Data Offset
 lw t0,0(a1)    ; T0 = Word Data
-la a1,LHCHECKF ; A1 = Word Check Data Offset
+la a1,SHCHECKF ; A1 = Word Check Data Offset
 lw t1,0(a1)    ; T1 = Word Check Data
 nop ; Delay Slot
-beq t0,t1,LHPASSF ; Compare Result Equality With Check Data
+beq t0,t1,SHPASSF ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,64, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-j LHENDF
+j SHENDF
 nop ; Delay Slot
-LHPASSF:
+SHPASSF:
 PrintString 280,64, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-LHENDF:
+SHENDF:
 
 la a1,VALUEHALFG ; A1 = Halfword Data Offset
 lh t0,0(a1)      ; T0 = Test Halfword Data
-la a1,RTWORD ; A1 = RTWORD Offset
-sw t0,0(a1)  ; RTWORD = Word Data
+la a1,WORD  ; A1 = WORD Offset
+sh t0,0(a1) ; WORD = Word Data
 PrintString 40,72, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,72, 8,8, FontBlack,VALUEHALFG,1 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
 PrintString 144,72, 8,8, FontBlack,TEXTHALFG,5 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintString 200,72, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  208,72, 8,8, FontBlack,RTWORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-la a1,RTWORD   ; A1 = Word Data Offset
+PrintValue  208,72, 8,8, FontBlack,WORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
+la a1,WORD     ; A1 = Word Data Offset
 lw t0,0(a1)    ; T0 = Word Data
-la a1,LHCHECKG ; A1 = Word Check Data Offset
+la a1,SHCHECKG ; A1 = Word Check Data Offset
 lw t1,0(a1)    ; T1 = Word Check Data
 nop ; Delay Slot
-beq t0,t1,LHPASSG ; Compare Result Equality With Check Data
+beq t0,t1,SHPASSG ; Compare Result Equality With Check Data
 nop ; Delay Slot
 PrintString 280,72, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-j LHENDG
+j SHENDG
 nop ; Delay Slot
-LHPASSG:
+SHPASSG:
 PrintString 280,72, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-LHENDG:
+SHENDG:
 
 
-PrintString 8,88, 8,8, FontRed,LHU,2 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-la a1,VALUEHALFA ; A1 = Halfword Data Offset
-lhu t0,0(a1)     ; T0 = Test Halfword Data
-la a1,RTWORD ; A1 = RTWORD Offset
-sw t0,0(a1)  ; RTWORD = Word Data
-PrintString 40,88, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  48,88, 8,8, FontBlack,VALUEHALFA,1 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-PrintString 184,88, 8,8, FontBlack,TEXTHALFA,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintString 200,88, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  208,88, 8,8, FontBlack,RTWORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-la a1,RTWORD    ; A1 = Word Data Offset
-lw t0,0(a1)     ; T0 = Word Data
-la a1,LHUCHECKA ; A1 = Word Check Data Offset
-lw t1,0(a1)     ; T1 = Word Check Data
-nop ; Delay Slot
-beq t0,t1,LHUPASSA ; Compare Result Equality With Check Data
-nop ; Delay Slot
-PrintString 280,88, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-j LHUENDA
-nop ; Delay Slot
-LHUPASSA:
-PrintString 280,88, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-LHUENDA:
-
-la a1,VALUEHALFB ; A1 = Halfword Data Offset
-lhu t0,0(a1)     ; T0 = Test Halfword Data
-la a1,RTWORD ; A1 = RTWORD Offset
-sw t0,0(a1)  ; RTWORD = Word Data
-PrintString 40,96, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  48,96, 8,8, FontBlack,VALUEHALFB,1 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-PrintString 152,96, 8,8, FontBlack,TEXTHALFB,4 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintString 200,96, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  208,96, 8,8, FontBlack,RTWORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-la a1,RTWORD    ; A1 = Word Data Offset
-lw t0,0(a1)     ; T0 = Word Data
-la a1,LHUCHECKB ; A1 = Word Check Data Offset
-lw t1,0(a1)     ; T1 = Word Check Data
-nop ; Delay Slot
-beq t0,t1,LHUPASSB ; Compare Result Equality With Check Data
-nop ; Delay Slot
-PrintString 280,96, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-j LHUENDB
-nop ; Delay Slot
-LHUPASSB:
-PrintString 280,96, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-LHUENDB:
-
-la a1,VALUEHALFC ; A1 = Halfword Data Offset
-lhu t0,0(a1)     ; T0 = Test Halfword Data
-la a1,RTWORD ; A1 = RTWORD Offset
-sw t0,0(a1)  ; RTWORD = Word Data
-PrintString 40,104, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  48,104, 8,8, FontBlack,VALUEHALFC,1 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-PrintString 160,104, 8,8, FontBlack,TEXTHALFC,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintString 200,104, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  208,104, 8,8, FontBlack,RTWORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-la a1,RTWORD    ; A1 = Word Data Offset
-lw t0,0(a1)     ; T0 = Word Data
-la a1,LHUCHECKC ; A1 = Word Check Data Offset
-lw t1,0(a1)     ; T1 = Word Check Data
-nop ; Delay Slot
-beq t0,t1,LHUPASSC ; Compare Result Equality With Check Data
-nop ; Delay Slot
-PrintString 280,104, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-j LHUENDC
-nop ; Delay Slot
-LHUPASSC:
-PrintString 280,104, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-LHUENDC:
-
-la a1,VALUEHALFD ; A1 = Halfword Data Offset
-lhu t0,0(a1)     ; T0 = Test Halfword Data
-la a1,RTWORD ; A1 = RTWORD Offset
-sw t0,0(a1)  ; RTWORD = Word Data
-PrintString 40,112, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  48,112, 8,8, FontBlack,VALUEHALFD,1 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-PrintString 152,112, 8,8, FontBlack,TEXTHALFD,4 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintString 200,112, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  208,112, 8,8, FontBlack,RTWORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-la a1,RTWORD    ; A1 = Word Data Offset
-lw t0,0(a1)     ; T0 = Word Data
-la a1,LHUCHECKD ; A1 = Word Check Data Offset
-lw t1,0(a1)     ; T1 = Word Check Data
-nop ; Delay Slot
-beq t0,t1,LHUPASSD ; Compare Result Equality With Check Data
-nop ; Delay Slot
-PrintString 280,112, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-j LHUENDD
-nop ; Delay Slot
-LHUPASSD:
-PrintString 280,112, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-LHUENDD:
-
-la a1,VALUEHALFE ; A1 = Halfword Data Offset
-lhu t0,0(a1)     ; T0 = Test Halfword Data
-la a1,RTWORD ; A1 = RTWORD Offset
-sw t0,0(a1)  ; RTWORD = Word Data
-PrintString 40,120, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  48,120, 8,8, FontBlack,VALUEHALFE,1 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-PrintString 144,120, 8,8, FontBlack,TEXTHALFE,5 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintString 200,120, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  208,120, 8,8, FontBlack,RTWORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-la a1,RTWORD    ; A1 = Word Data Offset
-lw t0,0(a1)     ; T0 = Word Data
-la a1,LHUCHECKE ; A1 = Word Check Data Offset
-lw t1,0(a1)     ; T1 = Word Check Data
-nop ; Delay Slot
-beq t0,t1,LHUPASSE ; Compare Result Equality With Check Data
-nop ; Delay Slot
-PrintString 280,120, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-j LHUENDE
-nop ; Delay Slot
-LHUPASSE:
-PrintString 280,120, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-LHUENDE:
-
-la a1,VALUEHALFF ; A1 = Halfword Data Offset
-lhu t0,0(a1)     ; T0 = Test Halfword Data
-la a1,RTWORD ; A1 = RTWORD Offset
-sw t0,0(a1)  ; RTWORD = Word Data
-PrintString 40,128, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  48,128, 8,8, FontBlack,VALUEHALFF,1 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-PrintString 152,128, 8,8, FontBlack,TEXTHALFF,4 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintString 200,128, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  208,128, 8,8, FontBlack,RTWORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-la a1,RTWORD    ; A1 = Word Data Offset
-lw t0,0(a1)     ; T0 = Word Data
-la a1,LHUCHECKF ; A1 = Word Check Data Offset
-lw t1,0(a1)     ; T1 = Word Check Data
-nop ; Delay Slot
-beq t0,t1,LHUPASSF ; Compare Result Equality With Check Data
-nop ; Delay Slot
-PrintString 280,128, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-j LHUENDF
-nop ; Delay Slot
-LHUPASSF:
-PrintString 280,128, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-LHUENDF:
-
-la a1,VALUEHALFG ; A1 = Halfword Data Offset
-lhu t0,0(a1)     ; T0 = Test Halfword Data
-la a1,RTWORD ; A1 = RTWORD Offset
-sw t0,0(a1)  ; RTWORD = Word Data
-PrintString 40,136, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  48,136, 8,8, FontBlack,VALUEHALFG,1 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-PrintString 144,136, 8,8, FontBlack,TEXTHALFG,5 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintString 200,136, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  208,136, 8,8, FontBlack,RTWORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
-la a1,RTWORD    ; A1 = Word Data Offset
-lw t0,0(a1)     ; T0 = Word Data
-la a1,LHUCHECKG ; A1 = Word Check Data Offset
-lw t1,0(a1)     ; T1 = Word Check Data
-nop ; Delay Slot
-beq t0,t1,LHUPASSG ; Compare Result Equality With Check Data
-nop ; Delay Slot
-PrintString 280,136, 8,8, FontRed,FAIL,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-j LHUENDG
-nop ; Delay Slot
-LHUPASSG:
-PrintString 280,136, 8,8, FontGreen,PASS,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-LHUENDG:
-
-
-PrintString 0,144, 8,8, FontBlack,PAGEBREAK,39 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
+PrintString 0,80, 8,8, FontBlack,PAGEBREAK,39 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 
 
 Loop:
   b Loop
   nop ; Delay Slot
 
-LH:
-  .db "LH"
-LHU:
-  .db "LHU"
+SH:
+  .db "SH"
 
+WORDHEX:
+  .db "WORD Hex"
 RTHEX:
   .db "RT Hex"
-HALFHEX:
-  .db "HALF Hex"
-HALFDEC:
-  .db "HALF Dec"
+RTDEC:
+  .db "RT Dec"
 TEST:
   .db "Test"
 FAIL:
@@ -560,37 +395,22 @@ VALUEHALFG:
   .dh -12345
 
 .align 4 ; Align 32-Bit
-LHCHECKA:
+SHCHECKA:
   .dw 0x00000000
-LHCHECKB:
+SHCHECKB:
   .dw 0x00003039
-LHCHECKC:
+SHCHECKC:
   .dw 0x000004D2
-LHCHECKD:
+SHCHECKD:
   .dw 0x00003035
-LHCHECKE:
-  .dw 0xFFFFCFCB
-LHCHECKF:
-  .dw 0xFFFFFB2E
-LHCHECKG:
-  .dw 0xFFFFCFC7
-
-LHUCHECKA:
-  .dw 0x00000000
-LHUCHECKB:
-  .dw 0x00003039
-LHUCHECKC:
-  .dw 0x000004D2
-LHUCHECKD:
-  .dw 0x00003035
-LHUCHECKE:
+SHCHECKE:
   .dw 0x0000CFCB
-LHUCHECKF:
+SHCHECKF:
   .dw 0x0000FB2E
-LHUCHECKG:
+SHCHECKG:
   .dw 0x0000CFC7
 
-RTWORD:
+WORD:
   .dw 0
 
 FontBlack:
