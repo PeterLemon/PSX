@@ -1,6 +1,9 @@
 ;================
 ; PSX GTE (COP2)
 ;================
+;========================================================================================
+; GTE Registers (Use: Data (R0..R31) lwc2,swc2,mfc2,mtc2 / Control (R32..R63) cfc2,ctc2)
+;========================================================================================
 ; GTE Registers - 16-Bit Vectors
 VXY0 equ  0 ; GTE R0 - 16-Bit Vectors: Vector XY 0 (V0) - Bit 0..15 = VX0 (S.15.0), Bit 16..31 VY0 (S.15.0)
 VZ0  equ  1 ; GTE R1 - 16-Bit Vectors: Vector  Z 0 (V0) - Bit 0..15 = VZ0 (S.15.0) (Returns Sign-Expanded 32-Bit Value)
@@ -65,16 +68,16 @@ LLM2 equ 10 ; GTE R42 - Matrix: Light Source (LLM/CNT10) - Bit 0..15 = L22 (S.3.
 LLM3 equ 11 ; GTE R43 - Matrix: Light Source (LLM/CNT11) - Bit 0..15 = L31 (S.3.12), Bit 16..31 L32 (S.3.12)
 LLM4 equ 12 ; GTE R44 - Matrix: Light Source (LLM/CNT12) - Bit 0..15 = L33 (S.3.12) (Returns Sign-Expanded 32-Bit Value)
 
-LCM0 equ 16 ; GTE R48 - Matrix: Light Color Source (LCM/CNT16) - Bit 0..15 = LR1 (S.3.12), Bit 16..31 LR2 (S.3.12)
-LCM1 equ 17 ; GTE R49 - Matrix: Light Color Source (LCM/CNT17) - Bit 0..15 = LR3 (S.3.12), Bit 16..31 LG1 (S.3.12)
-LCM2 equ 18 ; GTE R50 - Matrix: Light Color Source (LCM/CNT18) - Bit 0..15 = LG2 (S.3.12), Bit 16..31 LG3 (S.3.12)
-LCM3 equ 19 ; GTE R51 - Matrix: Light Color Source (LCM/CNT19) - Bit 0..15 = LB1 (S.3.12), Bit 16..31 LB2 (S.3.12)
-LCM4 equ 20 ; GTE R52 - Matrix: Light Color Source (LCM/CNT20) - Bit 0..15 = LB3 (S.3.12) (Returns Sign-Expanded 32-Bit Value)
+LCM0 equ 16 ; GTE R48 - Matrix: Light Color (LCM/CNT16) - Bit 0..15 = LR1 (S.3.12), Bit 16..31 LR2 (S.3.12)
+LCM1 equ 17 ; GTE R49 - Matrix: Light Color (LCM/CNT17) - Bit 0..15 = LR3 (S.3.12), Bit 16..31 LG1 (S.3.12)
+LCM2 equ 18 ; GTE R50 - Matrix: Light Color (LCM/CNT18) - Bit 0..15 = LG2 (S.3.12), Bit 16..31 LG3 (S.3.12)
+LCM3 equ 19 ; GTE R51 - Matrix: Light Color (LCM/CNT19) - Bit 0..15 = LB1 (S.3.12), Bit 16..31 LB2 (S.3.12)
+LCM4 equ 20 ; GTE R52 - Matrix: Light Color (LCM/CNT20) - Bit 0..15 = LB3 (S.3.12) (Returns Sign-Expanded 32-Bit Value)
 
 ; GTE Registers - Translation Vector X,Y,Z (TR)
 TRX  equ  5 ; GTE R37 - Translation Vector: X (TRX/CNT05) - Bit 0..31 = TRX (S.31.0)
-TRY  equ  6 ; GTE R38 - Translation Vector: Y (TRX/CNT06) - Bit 0..31 = TRY (S.31.0)
-TRZ  equ  7 ; GTE R39 - Translation Vector: Z (TRX/CNT07) - Bit 0..31 = TRZ (S.31.0)
+TRY  equ  6 ; GTE R38 - Translation Vector: Y (TRY/CNT06) - Bit 0..31 = TRY (S.31.0)
+TRZ  equ  7 ; GTE R39 - Translation Vector: Z (TRZ/CNT07) - Bit 0..31 = TRZ (S.31.0)
 
 ; GTE Registers - Background Color R,G,B (BK)
 RBK  equ 13 ; GTE R45 - Background Color: Red   Component (RBK/CNT13) - Bit 0..31 = RBK (S.19.12)
@@ -104,7 +107,9 @@ OTZ  equ  7 ; GTE R7 - Average Z Registers: Average Z Value (Ordering Table) (OT
 ; GTE Registers - Error Flag
 FLAG equ 31 ; GTE R63 - Error Flag: Returns Calculation Errors (FLAG/CNT31) - Bit 0..31 = FLAG
 
-
+;====================================
+; GTE Commands (Use: "cop2 command")
+;====================================
 ; GTE Coordinate Calculation Commands
 RTPS  equ 0x0180001 ; GTE Coordinate Calculation Commands: Perspective Transformation (Single) - 15 Cycles
 RTPT  equ 0x0280030 ; GTE Coordinate Calculation Commands: Perspective Transformation (Triple) - 23 Cycles
@@ -138,3 +143,69 @@ INTPL equ 0x0980011 ; GTE Color Calculation Commands: Interpolation Of Vector & 
 GPF   equ 0x190003D ; GTE Color Calculation Commands: General Purpose Interpolation - 5 Cycles
 GPL   equ 0x1A0003E ; GTE Color Calculation Commands: General Purpose Interpolation With Base - 5 Cycles
 
+; GTE MVMVA (Multiply Vector By Matrix With Vector Addition) Command Instructions
+RTV0   equ 0x0486012 ; GTE MVMVA Command: Vector 0 (V0) * Rotation Matrix (RT) - 8 Cycles
+RTV1   equ 0x048E012 ; GTE MVMVA Command: Vector 1 (V1) * Rotation Matrix (RT) - 8 Cycles
+RTV2   equ 0x0496012 ; GTE MVMVA Command: Vector 2 (V2) * Rotation Matrix (RT) - 8 Cycles
+RTIR12 equ 0x049E012 ; GTE MVMVA Command: Vector 3 (IR) * Rotation Matrix (RT) - 8 Cycles
+RTIR0  equ 0x041E012 ; GTE MVMVA Command: Intermediate Value 0 (IR0) * Rotation Matrix (RT) - 8 Cycles
+
+RTV0TR equ 0x0480012 ; GTE MVMVA Command: Vector 0 (V0) * Rotation Matrix (RT) + Translation Vector (TR) - 8 Cycles
+RTV1TR equ 0x0488012 ; GTE MVMVA Command: Vector 1 (V1) * Rotation Matrix (RT) + Translation Vector (TR) - 8 Cycles
+RTV2TR equ 0x0490012 ; GTE MVMVA Command: Vector 2 (V2) * Rotation Matrix (RT) + Translation Vector (TR) - 8 Cycles
+RTIRTR equ 0x0498012 ; GTE MVMVA Command: Vector 3 (IR) * Rotation Matrix (RT) + Translation Vector (TR) - 8 Cycles
+
+RTV0BK equ 0x0482012 ; GTE MVMVA Command: Vector 0 (V0) * Rotation Matrix (RT) + Background Color Vector (BK) - 8 Cycles
+RTV1BK equ 0x048A012 ; GTE MVMVA Command: Vector 1 (V1) * Rotation Matrix (RT) + Background Color Vector (BK) - 8 Cycles
+RTV2BK equ 0x0492012 ; GTE MVMVA Command: Vector 2 (V2) * Rotation Matrix (RT) + Background Color Vector (BK) - 8 Cycles
+RTIRBK equ 0x049A012 ; GTE MVMVA Command: Vector 3 (IR) * Rotation Matrix (RT) + Background Color Vector (BK) - 8 Cycles
+
+LL     equ 0x04A6412 ; GTE MVMVA Command: Vector 0 (V0) * Light Source Matrix (LLM) (Lower Limit Result 0) - 8 Cycles
+
+LLV0   equ 0x04A6012 ; GTE MVMVA Command: Vector 0 (V0) * Light Source Matrix (LLM) - 8 Cycles
+LLV1   equ 0x04AE012 ; GTE MVMVA Command: Vector 1 (V1) * Light Source Matrix (LLM) - 8 Cycles
+LLV2   equ 0x04B6012 ; GTE MVMVA Command: Vector 2 (V2) * Light Source Matrix (LLM) - 8 Cycles
+LLIR   equ 0x04BE012 ; GTE MVMVA Command: Vector 3 (IR) * Light Source Matrix (LLM) - 8 Cycles
+
+LLV0TR equ 0x04A0012 ; GTE MVMVA Command: Vector 0 (V0) * Light Source Matrix (LLM) + Translation Vector (TR) - 8 Cycles
+LLV1TR equ 0x04A8012 ; GTE MVMVA Command: Vector 1 (V1) * Light Source Matrix (LLM) + Translation Vector (TR) - 8 Cycles
+LLV2TR equ 0x04B0012 ; GTE MVMVA Command: Vector 2 (V2) * Light Source Matrix (LLM) + Translation Vector (TR) - 8 Cycles
+LLIRTR equ 0x04B8012 ; GTE MVMVA Command: Vector 3 (IR) * Light Source Matrix (LLM) + Translation Vector (TR) - 8 Cycles
+
+LLV0BK equ 0x04A2012 ; GTE MVMVA Command: Vector 0 (V0) * Light Source Matrix (LLM) + Background Color Vector (BK) - 8 Cycles
+LLV1BK equ 0x04AA012 ; GTE MVMVA Command: Vector 1 (V1) * Light Source Matrix (LLM) + Background Color Vector (BK) - 8 Cycles
+LLV2BK equ 0x04B2012 ; GTE MVMVA Command: Vector 2 (V2) * Light Source Matrix (LLM) + Background Color Vector (BK) - 8 Cycles
+LLIRBK equ 0x04BA012 ; GTE MVMVA Command: Vector 3 (IR) * Light Source Matrix (LLM) + Background Color Vector (BK) - 8 Cycles
+
+LC     equ 0x04DA412 ; GTE MVMVA Command: Vector 0 (V0) * Light Color Matrix (LCM) (Lower Limit Result 0) - 8 Cycles
+
+LCV0   equ 0x04C6012 ; GTE MVMVA Command: Vector 0 (V0) * Light Color Matrix (LCM) - 8 Cycles
+LCV1   equ 0x04CE012 ; GTE MVMVA Command: Vector 1 (V1) * Light Color Matrix (LCM) - 8 Cycles
+LCV2   equ 0x04D6012 ; GTE MVMVA Command: Vector 2 (V2) * Light Color Matrix (LCM) - 8 Cycles
+LCIR   equ 0x04DE012 ; GTE MVMVA Command: Vector 3 (IR) * Light Color Matrix (LCM) - 8 Cycles
+
+LCV0TR equ 0x04C0012 ; GTE MVMVA Command: Vector 0 (V0) * Light Color Matrix (LCM) + Translation Vector (TR) - 8 Cycles
+LCV1TR equ 0x04C8012 ; GTE MVMVA Command: Vector 1 (V1) * Light Color Matrix (LCM) + Translation Vector (TR) - 8 Cycles
+LCV2TR equ 0x04D0012 ; GTE MVMVA Command: Vector 2 (V2) * Light Color Matrix (LCM) + Translation Vector (TR) - 8 Cycles
+LCIRTR equ 0x04D8012 ; GTE MVMVA Command: Vector 3 (IR) * Light Color Matrix (LCM) + Translation Vector (TR) - 8 Cycles
+
+LCV0BK equ 0x04C2012 ; GTE MVMVA Command: Vector 0 (V0) * Light Color Matrix (LCM) + Background Color Vector (BK) - 8 Cycles
+LCV1BK equ 0x04CA012 ; GTE MVMVA Command: Vector 1 (V1) * Light Color Matrix (LCM) + Background Color Vector (BK) - 8 Cycles
+LCV2BK equ 0x04D2012 ; GTE MVMVA Command: Vector 2 (V2) * Light Color Matrix (LCM) + Background Color Vector (BK) - 8 Cycles
+LCIRBK equ 0x04DA012 ; GTE MVMVA Command: Vector 3 (IR) * Light Color Matrix (LCM) + Background Color Vector (BK) - 8 Cycles
+
+; GTE SQR (Calculate Square Of Vector) Command Instructions
+SQR12 equ 0x0A80428 ; GTE SQR Command: Calculate Square Of Vector 3 (IR) (S.19.12) - 5 Cycles
+SQR0  equ 0x0A00428 ; GTE SQR Command: Calculate Square Of Intermediate Value 0 (IR0) (S.31.0) - 5 Cycles
+
+; GTE OP (Calculate Outer Product Of Two Signed 16-Bit Vectors) Command Instructions
+OP12  equ 0x178000C ; GTE OP Command: Calculate Outer Product Of Vector 3 (IR) (S.19.12) - 6 Cycles
+OP0   equ 0x170000C ; GTE OP Command: Calculate Outer Product Of Intermediate Value 0 (IR0) (S.31.0) - 6 Cycles
+
+; GTE GPF (General Purpose Interpolation) Command Instructions
+GPF12 equ 0x198003D ; GTE OP Command: General Purpose Interpolation Of Vector 3 (IR) (S.19.12) - 5 Cycles
+GPF0  equ 0x190003D ; GTE OP Command: General Purpose Interpolation Of Intermediate Value 0 (IR0) (S.31.0) - 5 Cycles
+
+; GTE GPL (General Purpose Interpolation With Base) Command Instructions
+GPL12 equ 0x1A8003E ; GTE OP Command: General Purpose Interpolation With Base Of Vector 3 (IR) (S.19.12) - 6 Cycles
+GPL0  equ 0x1A0003E ; GTE OP Command: General Purpose Interpolation With Base Of Intermediate Value 0 (IR0) (S.31.0) - 5 Cycles
