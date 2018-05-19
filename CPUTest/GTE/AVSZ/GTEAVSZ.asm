@@ -196,8 +196,8 @@ mtc0 t0,sr  ; COP0 Status Register = T0
 
 ; Print Header Text
 PrintString  40,8, 8,8, FontRed,SZHEX,8 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintString 120,8, 8,8, FontRed,MAC0HEX,7 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintString 200,8, 8,8, FontRed,OTZHEX,6 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
+PrintString 120,8, 8,8, FontRed,ZSF3ZSF4,8 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
+PrintString 200,8, 8,8, FontRed,MAC0OTZ,7 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintString 280,8, 8,8, FontRed,TEST,3 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 
 
@@ -216,7 +216,9 @@ lwc2 SZ3,8,(0x05) ; GTE SZ3 = VALUESZ3
 nop ; Delay Slot
 
 ; Load GTE ZSF3 Register (R61) For Triangle
-li t0,(1<<12)/3 ; T0 = Z3 Average Scale Factor (Normally 1/3) (S.3.12)
+la a1,VALUEZSF3 ; A1 = Word Data Offset
+lw t0,0(a1) ; T0 = Z3 Average Scale Factor (Normally 1/3) (S.3.12)
+nop ; Delay Slot
 ctc2 0x08,ZSF3 ; GTE ZSF3 = T0
 
 cop2 AVSZ3 ; Run GTE AVSZ3 Command
@@ -230,14 +232,17 @@ swc2 OTZ,0,(0x05) ; OTZWORD = GTE OTZ Word Data
 PrintString 40,24, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,24, 8,8, FontBlack,VALUESZ1,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
 
+PrintString 120,24, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
+PrintValue  128,24, 8,8, FontBlack,VALUEZSF3,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
+
 PrintString 40,32, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,32, 8,8, FontBlack,VALUESZ2,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
 
 PrintString 40,40, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,40, 8,8, FontBlack,VALUESZ3,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
 
-PrintString 120,32, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  128,32, 8,8, FontBlack,MAC0WORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
+PrintString 200,32, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
+PrintValue  208,32, 8,8, FontBlack,MAC0WORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
 
 PrintString 200,40, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  208,40, 8,8, FontBlack,OTZWORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
@@ -285,7 +290,9 @@ lwc2 SZ3,12,(0x05) ; GTE SZ3 = VALUESZ3
 nop ; Delay Slot
 
 ; Load GTE ZSF4 Register (R62) For Quad
-li t0,(1<<12)/4 ; T0 = Z4 Average Scale Factor (Normally 1/4) (S.3.12)
+la a1,VALUEZSF4 ; A1 = Word Data Offset
+lw t0,0(a1) ; T0 = Z4 Average Scale Factor (Normally 1/4) (S.3.12)
+nop ; Delay Slot
 ctc2 0x08,ZSF4 ; GTE ZSF4 = T0
 
 cop2 AVSZ4 ; Run GTE AVSZ4 Command
@@ -299,6 +306,9 @@ swc2 OTZ,0,(0x05) ; OTZWORD = GTE OTZ Word Data
 PrintString 40,56, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,56, 8,8, FontBlack,VALUESZ0,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
 
+PrintString 120,56, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
+PrintValue  128,56, 8,8, FontBlack,VALUEZSF4,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
+
 PrintString 40,64, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,64, 8,8, FontBlack,VALUESZ1,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
 
@@ -308,8 +318,8 @@ PrintValue  48,72, 8,8, FontBlack,VALUESZ2,3 ; Print HEX Chars To VRAM Using Wid
 PrintString 40,80, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,80, 8,8, FontBlack,VALUESZ3,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
 
-PrintString 120,72, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
-PrintValue  128,72, 8,8, FontBlack,MAC0WORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
+PrintString 200,72, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
+PrintValue  208,72, 8,8, FontBlack,MAC0WORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
 
 PrintString 200,80, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  208,80, 8,8, FontBlack,OTZWORD,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
@@ -358,10 +368,10 @@ TEXTAVSZ4:
 
 SZHEX:
   .db "SZ0-3 Hex"
-MAC0HEX:
-  .db "MAC0 Hex"
-OTZHEX:
-  .db "OTZ Hex"
+ZSF3ZSF4:
+  .db "ZSF3/ZSF4"
+MAC0OTZ:
+  .db "MAC0/OTZ"
 TEST:
   .db "Test"
 FAIL:
@@ -384,6 +394,11 @@ VALUESZ2:
   .dw 288
 VALUESZ3:
   .dw 208
+
+VALUEZSF3:
+  .dw (1<<12)/3
+VALUEZSF4:
+  .dw (1<<12)/4
 
 AVSZ3MAC0CHECK:
   .dw 0x000AFF50
