@@ -142,34 +142,6 @@
     subiu t0,1 ; Subtract Number of Text Characters to Print (Delay Slot)
 .endmacro
 
-.macro cop2,COFUN ; Coprocessor Operation To Coprocessor 2 (GTE)
-  dw (0x25<<25)+COFUN
-.endmacro
-
-.macro cfc2,RT,RS ; Move Control Word From Coprocessor 2 (GTE)
-  dw ((0x4840+RT)<<16)+(RS<<11)
-.endmacro
-
-.macro ctc2,RT,RS ; Move Control Word To Coprocessor 2 (GTE)
-  dw ((0x48C0+RT)<<16)+(RS<<11)
-.endmacro
-
-.macro lwc2,RT,OFFSET,BASE ; Load Word To Coprocessor 2 (GTE)
-  dw (0x32<<26)+(BASE<<21)+(RT<<16)+OFFSET
-.endmacro
-
-.macro swc2,RT,OFFSET,BASE ; Store Word From Coprocessor 2 (GTE)
-  dw (0x3A<<26)+(BASE<<21)+(RT<<16)+OFFSET
-.endmacro
-
-.macro mfc2,RT,RS ; Move Word From Coprocessor 2 (GTE)
-  dw ((0x4800+RT)<<16)+(RS<<11)
-.endmacro
-
-.macro mtc2,RT,RS ; Move Word To Coprocessor 2 (GTE)
-  dw ((0x4880+RT)<<16)+(RS<<11)
-.endmacro
-
 .org 0x80010000 ; Entry Point Of Code
 
 la a0,IO_BASE ; A0 = I/O Port Base Address ($1F80XXXX)
@@ -208,26 +180,26 @@ PrintString 0,24, 8,8, FontRed,TEXTAVSZ3,4 ; Print Text String To VRAM Using Wid
 
 ; Load GTE SZ1..3 Registers (R17..R19) For Triangle
 la a1,VALUESZ1 ; A1 = Word Data Offset
-lwc2 SZ1,0,(0x05) ; GTE SZ1 = VALUESZ1
+lwc2 SZ1,0(a1) ; GTE SZ1 = VALUESZ1
 nop ; Delay Slot
-lwc2 SZ2,4,(0x05) ; GTE SZ2 = VALUESZ2
+lwc2 SZ2,4(a1) ; GTE SZ2 = VALUESZ2
 nop ; Delay Slot
-lwc2 SZ3,8,(0x05) ; GTE SZ3 = VALUESZ3
+lwc2 SZ3,8(a1) ; GTE SZ3 = VALUESZ3
 nop ; Delay Slot
 
 ; Load GTE ZSF3 Register (R61) For Triangle
 la a1,VALUEZSF3 ; A1 = Word Data Offset
 lw t0,0(a1) ; T0 = Z3 Average Scale Factor (Normally 1/3) (S.3.12)
 nop ; Delay Slot
-ctc2 0x08,ZSF3 ; GTE ZSF3 = T0
+ctc2 t0,ZSF3 ; GTE ZSF3 = T0
 
 cop2 AVSZ3 ; Run GTE AVSZ3 Command
 
-la a1,MAC0WORD     ; A1 = MAC0WORD Offset
-swc2 MAC0,0,(0x05) ; MAC0WORD = GTE MAC0 Word Data
+la a1,MAC0WORD  ; A1 = MAC0WORD Offset
+swc2 MAC0,0(a1) ; MAC0WORD = GTE MAC0 Word Data
 
-la a1,OTZWORD     ; A1 = OTZWORD Offset
-swc2 OTZ,0,(0x05) ; OTZWORD = GTE OTZ Word Data
+la a1,OTZWORD  ; A1 = OTZWORD Offset
+swc2 OTZ,0(a1) ; OTZWORD = GTE OTZ Word Data
 
 PrintString 40,24, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,24, 8,8, FontBlack,VALUESZ1,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
@@ -280,28 +252,28 @@ PrintString 0,56, 8,8, FontRed,TEXTAVSZ4,4 ; Print Text String To VRAM Using Wid
 
 ; Load GTE SZ1..3 Registers (R17..R19) For Quad
 la a1,VALUESZ0 ; A1 = Word Data Offset
-lwc2 SZ0,0,(0x05) ; GTE SZ0 = VALUESZ0
+lwc2 SZ0,0(a1) ; GTE SZ0 = VALUESZ0
 nop ; Delay Slot
-lwc2 SZ1,4,(0x05) ; GTE SZ1 = VALUESZ1
+lwc2 SZ1,4(a1) ; GTE SZ1 = VALUESZ1
 nop ; Delay Slot
-lwc2 SZ2,8,(0x05) ; GTE SZ2 = VALUESZ2
+lwc2 SZ2,8(a1) ; GTE SZ2 = VALUESZ2
 nop ; Delay Slot
-lwc2 SZ3,12,(0x05) ; GTE SZ3 = VALUESZ3
+lwc2 SZ3,12(a1) ; GTE SZ3 = VALUESZ3
 nop ; Delay Slot
 
 ; Load GTE ZSF4 Register (R62) For Quad
 la a1,VALUEZSF4 ; A1 = Word Data Offset
 lw t0,0(a1) ; T0 = Z4 Average Scale Factor (Normally 1/4) (S.3.12)
 nop ; Delay Slot
-ctc2 0x08,ZSF4 ; GTE ZSF4 = T0
+ctc2 t0,ZSF4 ; GTE ZSF4 = T0
 
 cop2 AVSZ4 ; Run GTE AVSZ4 Command
 
-la a1,MAC0WORD     ; A1 = MAC0WORD Offset
-swc2 MAC0,0,(0x05) ; MAC0WORD = GTE MAC0 Word Data
+la a1,MAC0WORD  ; A1 = MAC0WORD Offset
+swc2 MAC0,0(a1) ; MAC0WORD = GTE MAC0 Word Data
 
-la a1,OTZWORD     ; A1 = OTZWORD Offset
-swc2 OTZ,0,(0x05) ; OTZWORD = GTE OTZ Word Data
+la a1,OTZWORD  ; A1 = OTZWORD Offset
+swc2 OTZ,0(a1) ; OTZWORD = GTE OTZ Word Data
 
 PrintString 40,56, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,56, 8,8, FontBlack,VALUESZ0,3 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position

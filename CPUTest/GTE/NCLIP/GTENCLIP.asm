@@ -142,34 +142,6 @@
     subiu t0,1 ; Subtract Number of Text Characters to Print (Delay Slot)
 .endmacro
 
-.macro cop2,COFUN ; Coprocessor Operation To Coprocessor 2 (GTE)
-  dw (0x25<<25)+COFUN
-.endmacro
-
-.macro cfc2,RT,RS ; Move Control Word From Coprocessor 2 (GTE)
-  dw ((0x4840+RT)<<16)+(RS<<11)
-.endmacro
-
-.macro ctc2,RT,RS ; Move Control Word To Coprocessor 2 (GTE)
-  dw ((0x48C0+RT)<<16)+(RS<<11)
-.endmacro
-
-.macro lwc2,RT,OFFSET,BASE ; Load Word To Coprocessor 2 (GTE)
-  dw (0x32<<26)+(BASE<<21)+(RT<<16)+OFFSET
-.endmacro
-
-.macro swc2,RT,OFFSET,BASE ; Store Word From Coprocessor 2 (GTE)
-  dw (0x3A<<26)+(BASE<<21)+(RT<<16)+OFFSET
-.endmacro
-
-.macro mfc2,RT,RS ; Move Word From Coprocessor 2 (GTE)
-  dw ((0x4800+RT)<<16)+(RS<<11)
-.endmacro
-
-.macro mtc2,RT,RS ; Move Word To Coprocessor 2 (GTE)
-  dw ((0x4880+RT)<<16)+(RS<<11)
-.endmacro
-
 .org 0x80010000 ; Entry Point Of Code
 
 la a0,IO_BASE ; A0 = I/O Port Base Address ($1F80XXXX)
@@ -208,17 +180,17 @@ PrintString 0,24, 8,8, FontRed,TEXTNCLIP,4 ; Print Text String To VRAM Using Wid
 
 ; Load GTE SXY0..2 Registers (R12..R14) With Clockwise Winding Point Data
 la a1,VALUESX0 ; A1 = Word Data Offset
-lwc2 SXY0,0,(0x05) ; GTE SXY0 = VALUESX0, VALUESY0
+lwc2 SXY0,0(a1) ; GTE SXY0 = VALUESX0, VALUESY0
 nop ; Delay Slot
-lwc2 SXY1,4,(0x05) ; GTE SXY1 = VALUESX1, VALUESY1
+lwc2 SXY1,4(a1) ; GTE SXY1 = VALUESX1, VALUESY1
 nop ; Delay Slot
-lwc2 SXY2,8,(0x05) ; GTE SXY2 = VALUESX2, VALUESY2
+lwc2 SXY2,8(a1) ; GTE SXY2 = VALUESX2, VALUESY2
 nop ; Delay Slot
 
 cop2 NCLIP ; Run GTE NCLIP Command
 
 la a1,MAC0WORD     ; A1 = MAC0WORD Offset
-swc2 MAC0,0,(0x05) ; MAC0WORD = GTE MAC0 Word Data
+swc2 MAC0,0(a1) ; MAC0WORD = GTE MAC0 Word Data
 
 PrintString 40,24, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,24, 8,8, FontBlack,VALUESX0,1 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
@@ -255,17 +227,17 @@ NCLIPENDA:
 
 ; Load GTE SXY0..2 Registers (R12..R14) With Anti-Clockwise Winding Point Data
 la a1,VALUESX0 ; A1 = Word Data Offset
-lwc2 SXY0,8,(0x05) ; GTE SXY0 = VALUESX2, VALUESY2
+lwc2 SXY0,8(a1) ; GTE SXY0 = VALUESX2, VALUESY2
 nop ; Delay Slot
-lwc2 SXY1,4,(0x05) ; GTE SXY1 = VALUESX1, VALUESY1
+lwc2 SXY1,4(a1) ; GTE SXY1 = VALUESX1, VALUESY1
 nop ; Delay Slot
-lwc2 SXY2,0,(0x05) ; GTE SXY2 = VALUESX0, VALUESY0
+lwc2 SXY2,0(a1) ; GTE SXY2 = VALUESX0, VALUESY0
 nop ; Delay Slot
 
 cop2 NCLIP ; Run GTE NCLIP Command
 
 la a1,MAC0WORD     ; A1 = MAC0WORD Offset
-swc2 MAC0,0,(0x05) ; MAC0WORD = GTE MAC0 Word Data
+swc2 MAC0,0(a1) ; MAC0WORD = GTE MAC0 Word Data
 
 PrintString 40,56, 8,8, FontBlack,DOLLAR,0 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 PrintValue  48,56, 8,8, FontBlack,VALUESX2,1 ; Print HEX Chars To VRAM Using Width,Height Font At X,Y Position
