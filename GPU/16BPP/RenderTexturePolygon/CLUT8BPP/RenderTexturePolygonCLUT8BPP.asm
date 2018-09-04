@@ -63,6 +63,7 @@ CopyTexture64x64:
   bnez t0,CopyTexture64x64 ; IF (T0 != 0) Copy Texture64x64
   subiu t0,1 ; T0-- (Delay Slot)
 
+; Copy Palette Color Look Up Table (CLUT) To VRAM
 CopyRectCPU 512,256, 6,1 ; Copy Rectangle (CPU To VRAM): X,Y, Width,Height
 li t0,3 ; T0 = Data Copy Word Count
 la a1,CLUT ; A1 = Texture RAM Offset
