@@ -80,26 +80,26 @@ TexRectRaw 96,8, 8,0, 0x4020, 16,16   ; Texture Rectangle Raw: X,Y, U,V, PAL, Wi
 TexRectRaw 160,8, 24,0, 0x4020, 32,32 ; Texture Rectangle Raw: X,Y, U,V, PAL, Width,Height
 TexRectRaw 224,8, 56,0, 0x4020, 64,64 ; Texture Rectangle Raw: X,Y, U,V, PAL, Width,Height
 
-WRGP0 GPUDRAWM,0x003488 ; Write GP0 Command Word (Texture Rectangle Flip Y Bit 13, Texture Rectangle Flip X Bit 12, Drawing To Display Area Allowed Bit 10, Texture Page Colors = 15BPP Bit 7..8, Texture Page Y Base = 0 Bit 4, Texture Page X Base = 512 Bit 0..3)
+WRGP0 GPUDRAWM,0x003488 ; Write GP0 Command Word (Texture Rectangle Flip Y Bit 13, Texture Rectangle Flip X Bit 12, Drawing To Display Area Allowed Bit 10, Texture Page Colors = 8BPP Bit 7..8, Texture Page Y Base = 0 Bit 4, Texture Page X Base = 512 Bit 0..3)
 
 TexRectRawAlpha 34,9, 7,7, 0x4020, 8,8        ; Texture Rectangle Raw Alpha: X,Y, U,V, PAL, Width,Height
 TexRectRawAlpha 100,10, 23,15, 0x4020, 16,16  ; Texture Rectangle Raw Alpha: X,Y, U,V, PAL, Width,Height
 TexRectRawAlpha 168,12, 55,31, 0x4020, 32,32  ; Texture Rectangle Raw Alpha: X,Y, U,V, PAL, Width,Height
 TexRectRawAlpha 240,16, 119,63, 0x4020, 64,64 ; Texture Rectangle Raw Alpha: X,Y, U,V, PAL, Width,Height
 
-WRGP0 GPUDRAWM,0x000488 ; Write GP0 Command Word (Drawing To Display Area Allowed Bit 10, Texture Page Colors = 15BPP Bit 7..8, Texture Page Y Base = 0 Bit 4, Texture Page X Base = 512 Bit 0..3)
+WRGP0 GPUDRAWM,0x000488 ; Write GP0 Command Word (Drawing To Display Area Allowed Bit 10, Texture Page Colors = 8BPP Bit 7..8, Texture Page Y Base = 0 Bit 4, Texture Page X Base = 512 Bit 0..3)
 
 TexRectBlend 0x0000FF, 32,88, 56,0, 0x4020, 64,64  ; Texture Rectangle Blend: Color, X,Y, U,V, PAL, Width,Height
 TexRectBlend 0x00FF00, 128,88, 56,0, 0x4020, 64,64 ; Texture Rectangle Blend: Color, X,Y, U,V, PAL, Width,Height
 TexRectBlend 0xFF0000, 224,88, 56,0, 0x4020, 64,64 ; Texture Rectangle Blend: Color, X,Y, U,V, PAL, Width,Height
 
-WRGP0 GPUDRAWM,0x003488 ; Write GP0 Command Word (Texture Rectangle Flip Y Bit 13, Texture Rectangle Flip X Bit 12, Drawing To Display Area Allowed Bit 10, Texture Page Colors = 15BPP Bit 7..8, Texture Page Y Base = 0 Bit 4, Texture Page X Base = 512 Bit 0..3)
+WRGP0 GPUDRAWM,0x003488 ; Write GP0 Command Word (Texture Rectangle Flip Y Bit 13, Texture Rectangle Flip X Bit 12, Drawing To Display Area Allowed Bit 10, Texture Page Colors = 8BPP Bit 7..8, Texture Page Y Base = 0 Bit 4, Texture Page X Base = 512 Bit 0..3)
 
 TexRectBlendAlpha 0x00FF00, 48,96, 119,63, 0x4020, 64,64  ; Texture Rectangle Blend Alpha: Color, X,Y, U,V, PAL, Width,Height
 TexRectBlendAlpha 0xFF0000, 144,96, 119,63, 0x4020, 64,64 ; Texture Rectangle Blend Alpha: Color, X,Y, U,V, PAL, Width,Height
 TexRectBlendAlpha 0x0000FF, 240,96, 119,63, 0x4020, 64,64 ; Texture Rectangle Blend Alpha: Color, X,Y, U,V, PAL, Width,Height
 
-WRGP0 GPUDRAWM,0x000488 ; Write GP0 Command Word (Drawing To Display Area Allowed Bit 10, Texture Page Colors = 15BPP Bit 7..8, Texture Page Y Base = 0 Bit 4, Texture Page X Base = 512 Bit 0..3)
+WRGP0 GPUDRAWM,0x000488 ; Write GP0 Command Word (Drawing To Display Area Allowed Bit 10, Texture Page Colors = 8BPP Bit 7..8, Texture Page Y Base = 0 Bit 4, Texture Page X Base = 512 Bit 0..3)
 
 TexRectRaw1x1 80,102, 0,0, 0x4020  ; Texture Rectangle Raw Dot (1x1): X,Y, U,V, PAL
 TexRectRaw1x1 176,102, 7,0, 0x4020 ; Texture Rectangle Raw Dot (1x1): X,Y, U,V, PAL
@@ -123,7 +123,7 @@ TexRectBlend8x8 0x0000FF, 96,172, 0,0, 0x4020  ; Texture Rectangle Blend (8x8): 
 TexRectBlend8x8 0x00FF00, 160,172, 0,0, 0x4020 ; Texture Rectangle Blend (8x8): Color, X,Y, U,V, PAL
 TexRectBlend8x8 0xFF0000, 224,172, 0,0, 0x4020 ; Texture Rectangle Blend (8x8): Color, X,Y, U,V, PAL
 
-WRGP0 GPUDRAWM,0x003488 ; Write GP0 Command Word (Texture Rectangle Flip Y Bit 13, Texture Rectangle Flip X Bit 12, Drawing To Display Area Allowed Bit 10, Texture Page Colors = 15BPP Bit 7..8, Texture Page Y Base = 0 Bit 4, Texture Page X Base = 512 Bit 0..3)
+WRGP0 GPUDRAWM,0x003488 ; Write GP0 Command Word (Texture Rectangle Flip Y Bit 13, Texture Rectangle Flip X Bit 12, Drawing To Display Area Allowed Bit 10, Texture Page Colors = 8BPP Bit 7..8, Texture Page Y Base = 0 Bit 4, Texture Page X Base = 512 Bit 0..3)
 
 TexRectRawAlpha8x8 34,173, 7,7, 0x4020 ; Texture Rectangle Raw Alpha (8x8): X,Y, U,V, PAL
 
@@ -131,7 +131,7 @@ TexRectBlendAlpha8x8 0x00FF00, 98,173, 7,7, 0x4020  ; Texture Rectangle Blend Al
 TexRectBlendAlpha8x8 0xFF0000, 162,173, 7,7, 0x4020 ; Texture Rectangle Blend Alpha (8x8): Color, X,Y, U,V, PAL
 TexRectBlendAlpha8x8 0x0000FF, 226,173, 7,7, 0x4020 ; Texture Rectangle Blend Alpha (8x8): Color, X,Y, U,V, PAL
 
-WRGP0 GPUDRAWM,0x000488 ; Write GP0 Command Word (Drawing To Display Area Allowed Bit 10, Texture Page Colors = 15BPP Bit 7..8, Texture Page Y Base = 0 Bit 4, Texture Page X Base = 512 Bit 0..3)
+WRGP0 GPUDRAWM,0x000488 ; Write GP0 Command Word (Drawing To Display Area Allowed Bit 10, Texture Page Colors = 8BPP Bit 7..8, Texture Page Y Base = 0 Bit 4, Texture Page X Base = 512 Bit 0..3)
 
 TexRectRaw16x16 32,196, 8,0, 0x4020 ; Texture Rectangle Raw (16x16): X,Y, U,V, PAL
 
@@ -139,7 +139,7 @@ TexRectBlend16x16 0x0000FF, 96,196, 8,0, 0x4020  ; Texture Rectangle Blend (16x1
 TexRectBlend16x16 0x00FF00, 160,196, 8,0, 0x4020 ; Texture Rectangle Blend (16x16): Color, X,Y, U,V, PAL
 TexRectBlend16x16 0xFF0000, 224,196, 8,0, 0x4020 ; Texture Rectangle Blend (16x16): Color, X,Y, U,V, PAL
 
-WRGP0 GPUDRAWM,0x003488 ; Write GP0 Command Word (Texture Rectangle Flip Y Bit 13, Texture Rectangle Flip X Bit 12, Drawing To Display Area Allowed Bit 10, Texture Page Colors = 15BPP Bit 7..8, Texture Page Y Base = 0 Bit 4, Texture Page X Base = 512 Bit 0..3)
+WRGP0 GPUDRAWM,0x003488 ; Write GP0 Command Word (Texture Rectangle Flip Y Bit 13, Texture Rectangle Flip X Bit 12, Drawing To Display Area Allowed Bit 10, Texture Page Colors = 8BPP Bit 7..8, Texture Page Y Base = 0 Bit 4, Texture Page X Base = 512 Bit 0..3)
 
 TexRectRawAlpha16x16 36,198, 23,15, 0x4020 ; Texture Rectangle Raw Alpha (16x16): X,Y, U,V, PAL
 
