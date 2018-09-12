@@ -58,7 +58,7 @@ CopyTextureA8x8:
   bnez t0,CopyTextureA8x8 ; IF (T0 != 0) Copy Texture A 8x8
   subiu t0,1 ; T0-- (Delay Slot)
 
-; Render Texture Rectangles
+; Render Texture Rectangle
 TexRectRaw 32,8, 0,0, 0x4020, 8,8 ; Texture Rectangle Raw: X,Y, U,V, PAL, Width,Height
 
 
@@ -79,7 +79,7 @@ CopyTextureB8x8:
   bnez t0,CopyTextureB8x8 ; IF (T0 != 0) Copy Texture B 8x8
   subiu t0,1 ; T0-- (Delay Slot)
 
-; Render Texture Rectangles
+; Render Texture Rectangle
 TexRectRaw 44,8, 8,0, 0x4020, 8,8 ; Texture Rectangle Raw: X,Y, U,V, PAL, Width,Height
 
 
@@ -100,7 +100,7 @@ CopyTextureC8x8:
   bnez t0,CopyTextureC8x8 ; IF (T0 != 0) Copy Texture C 8x8
   subiu t0,1 ; T0-- (Delay Slot)
 
-; Render Texture Rectangles
+; Render Texture Rectangle
 TexRectRaw 56,8, 16,0, 0x4020, 8,8 ; Texture Rectangle Raw: X,Y, U,V, PAL, Width,Height
 
 
@@ -121,7 +121,7 @@ CopyTextureD8x8:
   bnez t0,CopyTextureD8x8 ; IF (T0 != 0) Copy Texture D 8x8
   subiu t0,1 ; T0-- (Delay Slot)
 
-; Render Texture Rectangles
+; Render Texture Rectangle
 TexRectRaw 68,8, 24,0, 0x4020, 8,8 ; Texture Rectangle Raw: X,Y, U,V, PAL, Width,Height
 
 
@@ -142,7 +142,7 @@ CopyTextureE8x8:
   bnez t0,CopyTextureE8x8 ; IF (T0 != 0) Copy Texture E 8x8
   subiu t0,1 ; T0-- (Delay Slot)
 
-; Render Texture Rectangles
+; Render Texture Rectangle
 TexRectRaw 80,8, 32,0, 0x4020, 8,8 ; Texture Rectangle Raw: X,Y, U,V, PAL, Width,Height
 
 
@@ -163,7 +163,7 @@ CopyTextureF8x8:
   bnez t0,CopyTextureF8x8 ; IF (T0 != 0) Copy Texture F 8x8
   subiu t0,1 ; T0-- (Delay Slot)
 
-; Render Texture Rectangles
+; Render Texture Rectangle
 TexRectRaw 92,8, 40,0, 0x4020, 8,8 ; Texture Rectangle Raw: X,Y, U,V, PAL, Width,Height
 
 
@@ -184,7 +184,7 @@ CopyTextureG8x8:
   bnez t0,CopyTextureG8x8 ; IF (T0 != 0) Copy Texture G 8x8
   subiu t0,1 ; T0-- (Delay Slot)
 
-; Render Texture Rectangles
+; Render Texture Rectangle
 TexRectRaw 104,8, 48,0, 0x4020, 8,8 ; Texture Rectangle Raw: X,Y, U,V, PAL, Width,Height
 
 
