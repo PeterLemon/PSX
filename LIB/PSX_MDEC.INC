@@ -1,7 +1,9 @@
 ;==========
 ; PSX MDEC
 ;==========
+;===============
 ; MDEC Commands
+;===============
 MDECNOP                   equ 0x00 ; MDEC Commands: $00 - NOP
 MDECBLOCK                 equ 0x01 ; MDEC Commands: $01 - Decode Macroblock
 MDECSETQUANT              equ 0x02 ; MDEC Commands: $02 - Set Quantization Table
@@ -11,6 +13,9 @@ MDEC5                     equ 0x05 ; MDEC Commands: $05 - NOP
 MDEC6                     equ 0x06 ; MDEC Commands: $06 - NOP
 MDEC7                     equ 0x07 ; MDEC Commands: $07 - NOP
 
+;=============
+; MDEC Macros
+;=============
 ; MDEC Decode Macroblock
 .macro DecodeMacroBlock,DEPTH,SIGN,BIT15,SIZE,DCT ; MDEC($01) - Decode Macroblock
   WRIOW MDECPAR,(0x01<<29)+(DEPTH<<27)+(SIGN<<26)+(BIT15<<25)+SIZE ; Write MDEC Command Word (Color+Command)
