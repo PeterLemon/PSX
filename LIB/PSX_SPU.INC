@@ -1,7 +1,9 @@
 ;=========
 ; PSX SPU
 ;=========
+;============
 ; SPU Macros
+;============
 .macro SPUWait,AMOUNT ; Wait For Amount
   li t0,AMOUNT
   @@Wait:
