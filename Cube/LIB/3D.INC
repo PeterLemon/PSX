@@ -351,145 +351,7 @@
     nop ; Delay Slot
 .endmacro
 
-.macro TexTriRawCullNone,START,END ; Texture Triangle Raw Face Cull None: Object Start Address, Object End Address
-  la a2,START ; A2 = Object Start Address
-  la a3,END   ; A3 = Object End Address
-  Loop:
-    LoadXYZ s0,s1,s2 ; S0 = 2D X1, S1 = 2D Y1
-    LoadXYZ s2,s3,s4 ; S2 = 2D X2, S3 = 2D Y2
-    LoadXYZ s4,s5,s6 ; S4 = 2D X3, S5 = 2D Y3
-
-    sll s1,16      ; Y1 <<= 16
-    andi s0,0xFFFF ; X1 &= 0xFFFF
-    or s0,s1       ; X1 |= Y1
-
-    sll s3,16      ; Y2 <<= 16
-    andi s2,0xFFFF ; X2 &= 0xFFFF
-    or s1,s2,s3    ; X2 |= Y2
-
-    sll s5,16      ; Y3 <<= 16
-    andi s4,0xFFFF ; X3 &= 0xFFFF
-    or s2,s4,s5    ; X3 |= Y3
-
-    lw s3,0(a2) ; S3 = Command
-    addiu a2,4  ; A2 += 4
-
-    lw s4,0(a2) ; S4 = Texcoord1+Palette
-    addiu a2,4  ; A2 += 4
-    lw s5,0(a2) ; S5 = Texcoord2+Texpage
-    addiu a2,4  ; A2 += 4
-    lw s6,0(a2) ; S6 = Texcoord3
-    addiu a2,4  ; A2 += 4
-
-    sw s3,GP0(a0) ; Write GP0 Command Word (Command)
-    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
-    sw s4,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
-    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
-    sw s5,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
-    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
-    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
-
-    bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
-    nop ; Delay Slot
-.endmacro
-
-.macro TexTriRawCullBack,START,END ; Texture Triangle Raw Back Face Cull: Object Start Address, Object End Address
-  la a2,START ; A2 = Object Start Address
-  la a3,END   ; A3 = Object End Address
-  Loop:
-    LoadXYZ s0,s1,s2 ; S0 = 2D X1, S1 = 2D Y1
-    LoadXYZ s2,s3,s4 ; S2 = 2D X2, S3 = 2D Y2
-    LoadXYZ s4,s5,s6 ; S4 = 2D X3, S5 = 2D Y3
-
-    CullFace s0,s1,s2,s3,s4,s5 ; Back Face Cull: X1,Y1,X2,Y2,X3,Y3
-    bgez t0,Skip ; IF ((X3-X1 * Y2-Y1) - (Y3-Y1 * X2-X1)) >= 0 Skip
-    addiu a2,16  ; A2 += 16 (Delay Slot)
-    subiu a2,16  ; A2 -= 16
-
-    sll s1,16      ; Y1 <<= 16
-    andi s0,0xFFFF ; X1 &= 0xFFFF
-    or s0,s1       ; X1 |= Y1
-
-    sll s3,16      ; Y2 <<= 16
-    andi s2,0xFFFF ; X2 &= 0xFFFF
-    or s1,s2,s3    ; X2 |= Y2
-
-    sll s5,16      ; Y3 <<= 16
-    andi s4,0xFFFF ; X3 &= 0xFFFF
-    or s2,s4,s5    ; X3 |= Y3
-
-    lw s3,0(a2) ; S3 = Command
-    addiu a2,4  ; A2 += 4
-
-    lw s4,0(a2) ; S4 = Texcoord1+Palette
-    addiu a2,4  ; A2 += 4
-    lw s5,0(a2) ; S5 = Texcoord2+Texpage
-    addiu a2,4  ; A2 += 4
-    lw s6,0(a2) ; S6 = Texcoord3
-    addiu a2,4  ; A2 += 4
-
-    sw s3,GP0(a0) ; Write GP0 Command Word (Command)
-    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
-    sw s4,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
-    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
-    sw s5,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
-    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
-    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
-
-    Skip:
-    bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
-    nop ; Delay Slot
-.endmacro
-
-.macro TexTriRawCullFront,START,END ; Texture Triangle Raw Front Face Cull: Object Start Address, Object End Address
-  la a2,START ; A2 = Object Start Address
-  la a3,END   ; A3 = Object End Address
-  Loop:
-    LoadXYZ s0,s1,s2 ; S0 = 2D X1, S1 = 2D Y1
-    LoadXYZ s2,s3,s4 ; S2 = 2D X2, S3 = 2D Y2
-    LoadXYZ s4,s5,s6 ; S4 = 2D X3, S5 = 2D Y3
-
-    CullFace s0,s1,s2,s3,s4,s5 ; Front Face Cull: X1,Y1,X2,Y2,X3,Y3
-    blez t0,Skip ; IF ((X3-X1 * Y2-Y1) - (Y3-Y1 * X2-X1)) <= 0 Skip
-    addiu a2,16  ; A2 += 16 (Delay Slot)
-    subiu a2,16  ; A2 -= 16
-
-    sll s1,16      ; Y1 <<= 16
-    andi s0,0xFFFF ; X1 &= 0xFFFF
-    or s0,s1       ; X1 |= Y1
-
-    sll s3,16      ; Y2 <<= 16
-    andi s2,0xFFFF ; X2 &= 0xFFFF
-    or s1,s2,s3    ; X2 |= Y2
-
-    sll s5,16      ; Y3 <<= 16
-    andi s4,0xFFFF ; X3 &= 0xFFFF
-    or s2,s4,s5    ; X3 |= Y3
-
-    lw s3,0(a2) ; S3 = Command
-    addiu a2,4  ; A2 += 4
-
-    lw s4,0(a2) ; S4 = Texcoord1+Palette
-    addiu a2,4  ; A2 += 4
-    lw s5,0(a2) ; S5 = Texcoord2+Texpage
-    addiu a2,4  ; A2 += 4
-    lw s6,0(a2) ; S6 = Texcoord3
-    addiu a2,4  ; A2 += 4
-
-    sw s3,GP0(a0) ; Write GP0 Command Word (Command)
-    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
-    sw s4,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
-    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
-    sw s5,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
-    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
-    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
-
-    Skip:
-    bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
-    nop ; Delay Slot
-.endmacro
-
-.macro TexTriBlendCullNone,START,END ; Texture Triangle Blend Face Cull None: Object Start Address, Object End Address
+.macro TexTriCullNone,START,END ; Texture Triangle Face Cull None: Object Start Address, Object End Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
   Loop:
@@ -531,7 +393,7 @@
     nop ; Delay Slot
 .endmacro
 
-.macro TexTriBlendCullBack,START,END ; Texture Triangle Blend Back Face Cull: Object Start Address, Object End Address
+.macro TexTriCullBack,START,END ; Texture Triangle Back Face Cull: Object Start Address, Object End Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
   Loop:
@@ -579,7 +441,7 @@
     nop ; Delay Slot
 .endmacro
 
-.macro TexTriBlendCullFront,START,END ; Texture Triangle Blend Front Face Cull: Object Start Address, Object End Address
+.macro TexTriCullFront,START,END ; Texture Triangle Front Face Cull: Object Start Address, Object End Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
   Loop:
@@ -1045,174 +907,7 @@
     nop ; Delay Slot
 .endmacro
 
-.macro TexQuadRawCullNone,START,END ; Texture Quad Raw Face Cull None: Object Start Address, Object End Address
-  la a2,START ; A2 = Object Start Address
-  la a3,END   ; A3 = Object End Address
-  Loop:
-    LoadXYZ s0,s1,s2 ; S0 = 2D X1, S1 = 2D Y1
-    LoadXYZ s2,s3,s4 ; S2 = 2D X2, S3 = 2D Y2
-    LoadXYZ s4,s5,s6 ; S4 = 2D X3, S5 = 2D Y3
-    LoadXYZ s6,s7,s8 ; S6 = 2D X4, S7 = 2D Y4
-
-    sll s1,16      ; Y1 <<= 16
-    andi s0,0xFFFF ; X1 &= 0xFFFF
-    or s0,s1       ; X1 |= Y1
-
-    sll s3,16      ; Y2 <<= 16
-    andi s2,0xFFFF ; X2 &= 0xFFFF
-    or s1,s2,s3    ; X2 |= Y2
-
-    sll s5,16      ; Y3 <<= 16
-    andi s4,0xFFFF ; X3 &= 0xFFFF
-    or s2,s4,s5    ; X3 |= Y3
-
-    sll s7,16      ; Y4 <<= 16
-    andi s6,0xFFFF ; X4 &= 0xFFFF
-    or s3,s6,s7    ; X4 |= Y4
-
-    lw s4,0(a2) ; S4 = Command
-    addiu a2,4  ; A2 += 4
-
-    lw s5,0(a2) ; S5 = Texcoord1+Palette
-    addiu a2,4  ; A2 += 4
-    lw s6,0(a2) ; S6 = Texcoord2+Texpage
-    addiu a2,4  ; A2 += 4
-    lw s7,0(a2) ; S7 = Texcoord3
-    addiu a2,4  ; A2 += 4
-    lw s8,0(a2) ; S8 = Texcoord4
-    addiu a2,4  ; A2 += 4
-
-    sw s4,GP0(a0) ; Write GP0 Command Word (Command)
-    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
-    sw s5,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
-    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
-    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
-    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
-    sw s7,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
-    sw s3,GP0(a0) ; Write GP0  Packet Word (Vertex4)
-    sw s8,GP0(a0) ; Write GP0  Packet Word (Texcoord4)
-
-    bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
-    nop ; Delay Slot
-.endmacro
-
-.macro TexQuadRawCullBack,START,END ; Texture Quad Raw Back Face Cull: Object Start Address, Object End Address
-  la a2,START ; A2 = Object Start Address
-  la a3,END   ; A3 = Object End Address
-  Loop:
-    LoadXYZ s0,s1,s2 ; S0 = 2D X1, S1 = 2D Y1
-    LoadXYZ s2,s3,s4 ; S2 = 2D X2, S3 = 2D Y2
-    LoadXYZ s4,s5,s6 ; S4 = 2D X3, S5 = 2D Y3
-
-    CullFace s0,s1,s2,s3,s4,s5 ; Back Face Cull: X1,Y1,X2,Y2,X3,Y3
-    bgez t0,Skip ; IF ((X3-X1 * Y2-Y1) - (Y3-Y1 * X2-X1)) >= 0 Skip
-    addiu a2,32  ; A2 += 32 (Delay Slot)
-    subiu a2,32  ; A2 -= 32
-
-    LoadXYZ s6,s7,s8 ; S6 = 2D X4, S7 = 2D Y4
-
-    sll s1,16      ; Y1 <<= 16
-    andi s0,0xFFFF ; X1 &= 0xFFFF
-    or s0,s1       ; X1 |= Y1
-
-    sll s3,16      ; Y2 <<= 16
-    andi s2,0xFFFF ; X2 &= 0xFFFF
-    or s1,s2,s3    ; X2 |= Y2
-
-    sll s5,16      ; Y3 <<= 16
-    andi s4,0xFFFF ; X3 &= 0xFFFF
-    or s2,s4,s5    ; X3 |= Y3
-
-    sll s7,16      ; Y4 <<= 16
-    andi s6,0xFFFF ; X4 &= 0xFFFF
-    or s3,s6,s7    ; X4 |= Y4
-
-    lw s4,0(a2) ; S4 = Command
-    addiu a2,4  ; A2 += 4
-
-    lw s5,0(a2) ; S5 = Texcoord1+Palette
-    addiu a2,4  ; A2 += 4
-    lw s6,0(a2) ; S6 = Texcoord2+Texpage
-    addiu a2,4  ; A2 += 4
-    lw s7,0(a2) ; S7 = Texcoord3
-    addiu a2,4  ; A2 += 4
-    lw s8,0(a2) ; S8 = Texcoord4
-    addiu a2,4  ; A2 += 4
-
-    sw s4,GP0(a0) ; Write GP0 Command Word (Command)
-    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
-    sw s5,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
-    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
-    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
-    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
-    sw s7,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
-    sw s3,GP0(a0) ; Write GP0  Packet Word (Vertex4)
-    sw s8,GP0(a0) ; Write GP0  Packet Word (Texcoord4)
-
-    Skip:
-    bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
-    nop ; Delay Slot
-.endmacro
-
-.macro TexQuadRawCullFront,START,END ; Texture Quad Raw Front Face Cull: Object Start Address, Object End Address
-  la a2,START ; A2 = Object Start Address
-  la a3,END   ; A3 = Object End Address
-  Loop:
-    LoadXYZ s0,s1,s2 ; S0 = 2D X1, S1 = 2D Y1
-    LoadXYZ s2,s3,s4 ; S2 = 2D X2, S3 = 2D Y2
-    LoadXYZ s4,s5,s6 ; S4 = 2D X3, S5 = 2D Y3
-
-    CullFace s0,s1,s2,s3,s4,s5 ; Front Face Cull: X1,Y1,X2,Y2,X3,Y3
-    blez t0,Skip ; IF ((X3-X1 * Y2-Y1) - (Y3-Y1 * X2-X1)) <= 0 Skip
-    addiu a2,32  ; A2 += 32 (Delay Slot)
-    subiu a2,32  ; A2 -= 32
-
-    LoadXYZ s6,s7,s8 ; S6 = 2D X4, S7 = 2D Y4
-
-    sll s1,16      ; Y1 <<= 16
-    andi s0,0xFFFF ; X1 &= 0xFFFF
-    or s0,s1       ; X1 |= Y1
-
-    sll s3,16      ; Y2 <<= 16
-    andi s2,0xFFFF ; X2 &= 0xFFFF
-    or s1,s2,s3    ; X2 |= Y2
-
-    sll s5,16      ; Y3 <<= 16
-    andi s4,0xFFFF ; X3 &= 0xFFFF
-    or s2,s4,s5    ; X3 |= Y3
-
-    sll s7,16      ; Y4 <<= 16
-    andi s6,0xFFFF ; X4 &= 0xFFFF
-    or s3,s6,s7    ; X4 |= Y4
-
-    lw s4,0(a2) ; S4 = Command
-    addiu a2,4  ; A2 += 4
-
-    lw s5,0(a2) ; S5 = Texcoord1+Palette
-    addiu a2,4  ; A2 += 4
-    lw s6,0(a2) ; S6 = Texcoord2+Texpage
-    addiu a2,4  ; A2 += 4
-    lw s7,0(a2) ; S7 = Texcoord3
-    addiu a2,4  ; A2 += 4
-    lw s8,0(a2) ; S8 = Texcoord4
-    addiu a2,4  ; A2 += 4
-
-    sw s4,GP0(a0) ; Write GP0 Command Word (Command)
-    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
-    sw s5,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
-    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
-    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
-    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
-    sw s7,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
-    sw s3,GP0(a0) ; Write GP0  Packet Word (Vertex4)
-    sw s8,GP0(a0) ; Write GP0  Packet Word (Texcoord4)
-
-    Skip:
-    bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
-    nop ; Delay Slot
-.endmacro
-
-.macro TexQuadBlendCullNone,START,END ; Texture Quad Blend Face Cull None: Object Start Address, Object End Address
+.macro TexQuadCullNone,START,END ; Texture Quad Face Cull None: Object Start Address, Object End Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
   Loop:
@@ -1263,7 +958,7 @@
     nop ; Delay Slot
 .endmacro
 
-.macro TexQuadBlendCullBack,START,END ; Texture Quad Blend Back Face Cull: Object Start Address, Object End Address
+.macro TexQuadCullBack,START,END ; Texture Quad Back Face Cull: Object Start Address, Object End Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
   Loop:
@@ -1321,7 +1016,7 @@
     nop ; Delay Slot
 .endmacro
 
-.macro TexQuadBlendCullFront,START,END ; Texture Quad Blend Front Face Cull: Object Start Address, Object End Address
+.macro TexQuadCullFront,START,END ; Texture Quad Front Face Cull: Object Start Address, Object End Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
   Loop:
