@@ -817,7 +817,7 @@
     nop ; Delay Slot
 .endmacro
 
-.macro FillQuadCullBack,START,END ; Fill Quad Face Cull Back: Object Start Address, Object End Address
+.macro FillQuadCullBack,START,END ; Fill Quad Back Face Cull: Object Start Address, Object End Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
   Loop:
@@ -862,7 +862,7 @@
     nop ; Delay Slot
 .endmacro
 
-.macro FillQuadCullFront,START,END ; Fill Quad Face Cull Front: Object Start Address, Object End Address
+.macro FillQuadCullFront,START,END ; Fill Quad Front Face Cull: Object Start Address, Object End Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
   Loop:
