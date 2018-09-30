@@ -1,4 +1,4 @@
-; PSX 'Bare Metal' Cube Demo by krom (Peter Lemon):
+; PSX 'Bare Metal' Cube CPU Demo by krom (Peter Lemon):
 ; Joypad Control:
 ; Up, Down: -Y, +Y Translation
 ; Left, Right: -X, +X Translation
@@ -11,7 +11,6 @@
 
 .include "LIB/PSX.INC" ; Include PSX Definitions
 .include "LIB/PSX_GPU.INC" ; Include PSX GPU Definitions & Macros
-.include "LIB/PSX_GTE.INC" ; Include PSX GTE Definitions & Macros
 .include "LIB/PSX_INPUT.INC" ; Include PSX Input Definitions & Macros
 .include "LIB/3D.INC" ; Include 3D Definitions & Macros
 
