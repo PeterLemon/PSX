@@ -87,12 +87,17 @@
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
   Loop:
-    LoadXYZ s0,s1,s2 ; S0 = 2D X1, S1 = 2D Y1
+    LoadXYZ s0,s1,s2 ; S0 = 2D X, S1 = 2D Y
 
-    lw s2,0(a2) ; S2 = Face Color
-    addiu a2,4 ; A2 += 4
+    sll s1,16      ; Y <<= 16
+    andi s0,0xFFFF ; X &= 0xFFFF
+    or s0,s1       ; X |= Y
 
-    FillRect1x1V s2,s0,s1 ; Fill Rectangle 1x1: Color,X,Y
+    lw s1,0(a2) ; S1 = Color+Command
+    addiu a2,4  ; A2 += 4
+ 
+    sw s1,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex)
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -105,10 +110,20 @@
     LoadXYZ s0,s1,s2 ; S0 = 2D X1, S1 = 2D Y1
     LoadXYZ s2,s3,s4 ; S2 = 2D X2, S3 = 2D Y2
 
-    lw s4,0(a2) ; S4 = Face Color
-    addiu a2,4 ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    FillLineV s4,s0,s1,s2,s3 ; Fill Line: Color,X1,Y1,X2,Y2
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    lw s2,0(a2) ; S2 = Color+Command
+    addiu a2,4  ; A2 += 4
+
+    sw s2,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -122,10 +137,27 @@
     LoadXYZ s2,s3,s4 ; S2 = 2D X2, S3 = 2D Y2
     LoadXYZ s4,s5,s6 ; S4 = 2D X3, S5 = 2D Y3
 
-    lw s6,0(a2) ; S6 = Face Color
-    addiu a2,4 ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    FillTriLineV s6,s0,s1,s2,s3,s4,s5 ; Fill Triangle Line: Color,X1,Y1,X2,Y2,X3,Y3
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    lw s3,0(a2) ; S3 = Color+Command
+    addiu a2,4  ; A2 += 4
+
+    sw s3,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex4)
+    WRIOW GP0,0x55555555 ; Write GP0  Packet Word (Termination Code)
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -144,10 +176,27 @@
     addiu a2,4 ; A2 += 4 (Delay Slot)
     subiu a2,4 ; A2 -= 4
 
-    lw s6,0(a2) ; S6 = Face Color
-    addiu a2,4 ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    FillTriLineV s6,s0,s1,s2,s3,s4,s5 ; Fill Triangle Line: Color,X1,Y1,X2,Y2,X3,Y3
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    lw s3,0(a2) ; S3 = Color+Command
+    addiu a2,4  ; A2 += 4
+
+    sw s3,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex4)
+    WRIOW GP0,0x55555555 ; Write GP0  Packet Word (Termination Code)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -167,10 +216,27 @@
     addiu a2,4 ; A2 += 4 (Delay Slot)
     subiu a2,4 ; A2 -= 4
 
-    lw s6,0(a2) ; S6 = Face Color
-    addiu a2,4 ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    FillTriLineV s6,s0,s1,s2,s3,s4,s5 ; Fill Triangle Line: Color,X1,Y1,X2,Y2,X3,Y3
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    lw s3,0(a2) ; S3 = Color+Command
+    addiu a2,4  ; A2 += 4
+
+    sw s3,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex4)
+    WRIOW GP0,0x55555555 ; Write GP0  Packet Word (Termination Code)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -185,10 +251,25 @@
     LoadXYZ s2,s3,s4 ; S2 = 2D X2, S3 = 2D Y2
     LoadXYZ s4,s5,s6 ; S4 = 2D X3, S5 = 2D Y3
 
-    lw s6,0(a2) ; S6 = Face Color
-    addiu a2,4 ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    FillTriV s6,s0,s1,s2,s3,s4,s5 ; Fill Triangle: Color,X1,Y1,X2,Y2,X3,Y3
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    lw s3,0(a2) ; S3 = Color+Command
+    addiu a2,4  ; A2 += 4
+
+    sw s3,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -207,10 +288,25 @@
     addiu a2,4 ; A2 += 4 (Delay Slot)
     subiu a2,4 ; A2 -= 4
 
-    lw s6,0(a2) ; S6 = Face Color
-    addiu a2,4 ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    FillTriV s6,s0,s1,s2,s3,s4,s5 ; Fill Triangle: Color,X1,Y1,X2,Y2,X3,Y3
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    lw s3,0(a2) ; S3 = Color+Command
+    addiu a2,4  ; A2 += 4
+
+    sw s3,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -230,10 +326,25 @@
     addiu a2,4 ; A2 += 4 (Delay Slot)
     subiu a2,4 ; A2 -= 4
 
-    lw s6,0(a2) ; S6 = Face Color
-    addiu a2,4 ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    FillTriV s6,s0,s1,s2,s3,s4,s5 ; Fill Triangle: Color,X1,Y1,X2,Y2,X3,Y3
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    lw s3,0(a2) ; S3 = Color+Command
+    addiu a2,4  ; A2 += 4
+
+    sw s3,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -248,27 +359,35 @@
     LoadXYZ s2,s3,s4 ; S2 = 2D X2, S3 = 2D Y2
     LoadXYZ s4,s5,s6 ; S4 = 2D X3, S5 = 2D Y3
 
-    lw s6,0(a2) ; S6 = U1
-    addiu a2,4  ; A2 += 4
-    lw s7,0(a2) ; S7 = V1
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
+
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    lw s3,0(a2) ; S3 = Command
     addiu a2,4  ; A2 += 4
 
-    lw s8,0(a2) ; S8 = U2
+    lw s4,0(a2) ; S4 = Texcoord1+Palette
     addiu a2,4  ; A2 += 4
-    lw t1,0(a2) ; T1 = V2
+    lw s5,0(a2) ; S5 = Texcoord2+Texpage
     addiu a2,4  ; A2 += 4
-
-    lw t2,0(a2) ; T2 = U3
-    addiu a2,4  ; A2 += 4
-    lw t3,0(a2) ; T3 = V3
+    lw s6,0(a2) ; S6 = Texcoord3
     addiu a2,4  ; A2 += 4
 
-    lw t4,0(a2) ; T4 = PAL
-    addiu a2,4  ; A2 += 4
-    lw t5,0(a2) ; T5 = TEX
-    addiu a2,4  ; A2 += 4
-
-    TexTriRawV s0,s1,s6,s7,t4,s2,s3,s8,t1,t5,s4,s5,t2,t3 ; Texture Triangle RAW: X1,Y1,U1,V1,Palette,X2,Y2,U2,V2,Texpage,X3,Y3,U3,V3 
+    sw s3,GP0(a0) ; Write GP0 Command Word (Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s4,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s5,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -284,30 +403,38 @@
 
     CullFace s0,s1,s2,s3,s4,s5 ; Back Face Cull: X1,Y1,X2,Y2,X3,Y3
     bgez t0,Skip ; IF ((X3-X1 * Y2-Y1) - (Y3-Y1 * X2-X1)) >= 0 Skip
-    addiu a2,32  ; A2 += 32 (Delay Slot)
-    subiu a2,32  ; A2 -= 32
+    addiu a2,16  ; A2 += 16 (Delay Slot)
+    subiu a2,16  ; A2 -= 16
 
-    lw s6,0(a2) ; S6 = U1
-    addiu a2,4  ; A2 += 4
-    lw s7,0(a2) ; S7 = V1
-    addiu a2,4  ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    lw s8,0(a2) ; S8 = U2
-    addiu a2,4  ; A2 += 4
-    lw t1,0(a2) ; T1 = V2
-    addiu a2,4  ; A2 += 4
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
 
-    lw t2,0(a2) ; T2 = U3
-    addiu a2,4  ; A2 += 4
-    lw t3,0(a2) ; T3 = V3
-    addiu a2,4  ; A2 += 4
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
 
-    lw t4,0(a2) ; T4 = PAL
-    addiu a2,4  ; A2 += 4
-    lw t5,0(a2) ; T5 = TEX
+    lw s3,0(a2) ; S3 = Command
     addiu a2,4  ; A2 += 4
 
-    TexTriRawV s0,s1,s6,s7,t4,s2,s3,s8,t1,t5,s4,s5,t2,t3 ; Texture Triangle RAW: X1,Y1,U1,V1,Palette,X2,Y2,U2,V2,Texpage,X3,Y3,U3,V3 
+    lw s4,0(a2) ; S4 = Texcoord1+Palette
+    addiu a2,4  ; A2 += 4
+    lw s5,0(a2) ; S5 = Texcoord2+Texpage
+    addiu a2,4  ; A2 += 4
+    lw s6,0(a2) ; S6 = Texcoord3
+    addiu a2,4  ; A2 += 4
+
+    sw s3,GP0(a0) ; Write GP0 Command Word (Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s4,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s5,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -324,30 +451,38 @@
 
     CullFace s0,s1,s2,s3,s4,s5 ; Front Face Cull: X1,Y1,X2,Y2,X3,Y3
     blez t0,Skip ; IF ((X3-X1 * Y2-Y1) - (Y3-Y1 * X2-X1)) <= 0 Skip
-    addiu a2,32  ; A2 += 32 (Delay Slot)
-    subiu a2,32  ; A2 -= 32
+    addiu a2,16  ; A2 += 16 (Delay Slot)
+    subiu a2,16  ; A2 -= 16
 
-    lw s6,0(a2) ; S6 = U1
-    addiu a2,4  ; A2 += 4
-    lw s7,0(a2) ; S7 = V1
-    addiu a2,4  ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    lw s8,0(a2) ; S8 = U2
-    addiu a2,4  ; A2 += 4
-    lw t1,0(a2) ; T1 = V2
-    addiu a2,4  ; A2 += 4
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
 
-    lw t2,0(a2) ; T2 = U3
-    addiu a2,4  ; A2 += 4
-    lw t3,0(a2) ; T3 = V3
-    addiu a2,4  ; A2 += 4
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
 
-    lw t4,0(a2) ; T4 = PAL
-    addiu a2,4  ; A2 += 4
-    lw t5,0(a2) ; T5 = TEX
+    lw s3,0(a2) ; S3 = Command
     addiu a2,4  ; A2 += 4
 
-    TexTriRawV s0,s1,s6,s7,t4,s2,s3,s8,t1,t5,s4,s5,t2,t3 ; Texture Triangle RAW: X1,Y1,U1,V1,Palette,X2,Y2,U2,V2,Texpage,X3,Y3,U3,V3 
+    lw s4,0(a2) ; S4 = Texcoord1+Palette
+    addiu a2,4  ; A2 += 4
+    lw s5,0(a2) ; S5 = Texcoord2+Texpage
+    addiu a2,4  ; A2 += 4
+    lw s6,0(a2) ; S6 = Texcoord3
+    addiu a2,4  ; A2 += 4
+
+    sw s3,GP0(a0) ; Write GP0 Command Word (Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s4,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s5,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -362,30 +497,35 @@
     LoadXYZ s2,s3,s4 ; S2 = 2D X2, S3 = 2D Y2
     LoadXYZ s4,s5,s6 ; S4 = 2D X3, S5 = 2D Y3
 
-    lw s6,0(a2) ; S6 = U1
-    addiu a2,4  ; A2 += 4
-    lw s7,0(a2) ; S7 = V1
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
+
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    lw s3,0(a2) ; S3 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    lw s8,0(a2) ; S8 = U2
+    lw s4,0(a2) ; S4 = Texcoord1+Palette
     addiu a2,4  ; A2 += 4
-    lw t1,0(a2) ; T1 = V2
+    lw s5,0(a2) ; S5 = Texcoord2+Texpage
     addiu a2,4  ; A2 += 4
-
-    lw t2,0(a2) ; T2 = U3
-    addiu a2,4  ; A2 += 4
-    lw t3,0(a2) ; T3 = V3
+    lw s6,0(a2) ; S6 = Texcoord3
     addiu a2,4  ; A2 += 4
 
-    lw t4,0(a2) ; T4 = PAL
-    addiu a2,4  ; A2 += 4
-    lw t5,0(a2) ; T5 = TEX
-    addiu a2,4  ; A2 += 4
-
-    lw t6,0(a2) ; T6 = COLOR
-    addiu a2,4  ; A2 += 4
-
-    TexTriBlendV t6,s0,s1,s6,s7,t4,s2,s3,s8,t1,t5,s4,s5,t2,t3 ; Texture Triangle Blend: Color,X1,Y1,U1,V1,Palette,X2,Y2,U2,V2,Texpage,X3,Y3,U3,V3 
+    sw s3,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s4,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s5,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -401,33 +541,38 @@
 
     CullFace s0,s1,s2,s3,s4,s5 ; Back Face Cull: X1,Y1,X2,Y2,X3,Y3
     bgez t0,Skip ; IF ((X3-X1 * Y2-Y1) - (Y3-Y1 * X2-X1)) >= 0 Skip
-    addiu a2,36  ; A2 += 36 (Delay Slot)
-    subiu a2,36  ; A2 -= 36
+    addiu a2,16  ; A2 += 16 (Delay Slot)
+    subiu a2,16  ; A2 -= 16
 
-    lw s6,0(a2) ; S6 = U1
-    addiu a2,4  ; A2 += 4
-    lw s7,0(a2) ; S7 = V1
-    addiu a2,4  ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    lw s8,0(a2) ; S8 = U2
-    addiu a2,4  ; A2 += 4
-    lw t1,0(a2) ; T1 = V2
-    addiu a2,4  ; A2 += 4
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
 
-    lw t2,0(a2) ; T2 = U3
-    addiu a2,4  ; A2 += 4
-    lw t3,0(a2) ; T3 = V3
-    addiu a2,4  ; A2 += 4
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
 
-    lw t4,0(a2) ; T4 = PAL
-    addiu a2,4  ; A2 += 4
-    lw t5,0(a2) ; T5 = TEX
+    lw s3,0(a2) ; S3 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    lw t6,0(a2) ; T6 = COLOR
+    lw s4,0(a2) ; S4 = Texcoord1+Palette
+    addiu a2,4  ; A2 += 4
+    lw s5,0(a2) ; S5 = Texcoord2+Texpage
+    addiu a2,4  ; A2 += 4
+    lw s6,0(a2) ; S6 = Texcoord3
     addiu a2,4  ; A2 += 4
 
-    TexTriBlendV t6,s0,s1,s6,s7,t4,s2,s3,s8,t1,t5,s4,s5,t2,t3 ; Texture Triangle Blend: Color,X1,Y1,U1,V1,Palette,X2,Y2,U2,V2,Texpage,X3,Y3,U3,V3 
+    sw s3,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s4,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s5,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -444,33 +589,38 @@
 
     CullFace s0,s1,s2,s3,s4,s5 ; Front Face Cull: X1,Y1,X2,Y2,X3,Y3
     blez t0,Skip ; IF ((X3-X1 * Y2-Y1) - (Y3-Y1 * X2-X1)) <= 0 Skip
-    addiu a2,36  ; A2 += 36 (Delay Slot)
-    subiu a2,36  ; A2 -= 36
+    addiu a2,16  ; A2 += 16 (Delay Slot)
+    subiu a2,16  ; A2 -= 16
 
-    lw s6,0(a2) ; S6 = U1
-    addiu a2,4  ; A2 += 4
-    lw s7,0(a2) ; S7 = V1
-    addiu a2,4  ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    lw s8,0(a2) ; S8 = U2
-    addiu a2,4  ; A2 += 4
-    lw t1,0(a2) ; T1 = V2
-    addiu a2,4  ; A2 += 4
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
 
-    lw t2,0(a2) ; T2 = U3
-    addiu a2,4  ; A2 += 4
-    lw t3,0(a2) ; T3 = V3
-    addiu a2,4  ; A2 += 4
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
 
-    lw t4,0(a2) ; T4 = PAL
-    addiu a2,4  ; A2 += 4
-    lw t5,0(a2) ; T5 = TEX
+    lw s3,0(a2) ; S3 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    lw t6,0(a2) ; T6 = COLOR
+    lw s4,0(a2) ; S4 = Texcoord1+Palette
+    addiu a2,4  ; A2 += 4
+    lw s5,0(a2) ; S5 = Texcoord2+Texpage
+    addiu a2,4  ; A2 += 4
+    lw s6,0(a2) ; S6 = Texcoord3
     addiu a2,4  ; A2 += 4
 
-    TexTriBlendV t6,s0,s1,s6,s7,t4,s2,s3,s8,t1,t5,s4,s5,t2,t3 ; Texture Triangle Blend: Color,X1,Y1,U1,V1,Palette,X2,Y2,U2,V2,Texpage,X3,Y3,U3,V3 
+    sw s3,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s4,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s5,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -485,34 +635,41 @@
     LoadXYZ s2,s3,s4 ; S2 = 2D X2, S3 = 2D Y2
     LoadXYZ s4,s5,s6 ; S4 = 2D X3, S5 = 2D Y3
 
-    lw s6,0(a2) ; S6 = U1
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
+
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    lw s3,0(a2) ; S3 = Color1+Command
     addiu a2,4  ; A2 += 4
-    lw s7,0(a2) ; S7 = V1
+    lw s4,0(a2) ; S4 = Color2
+    addiu a2,4  ; A2 += 4
+    lw s5,0(a2) ; S5 = Color3
     addiu a2,4  ; A2 += 4
 
-    lw s8,0(a2) ; S8 = U2
+    lw s6,0(a2) ; S6 = Texcoord1+Palette
     addiu a2,4  ; A2 += 4
-    lw t1,0(a2) ; T1 = V2
+    lw s7,0(a2) ; S7 = Texcoord2+Texpage
     addiu a2,4  ; A2 += 4
-
-    lw t2,0(a2) ; T2 = U3
-    addiu a2,4  ; A2 += 4
-    lw t3,0(a2) ; T3 = V3
+    lw s8,0(a2) ; S8 = Texcoord3
     addiu a2,4  ; A2 += 4
 
-    lw t4,0(a2) ; T4 = PAL
-    addiu a2,4  ; A2 += 4
-    lw t5,0(a2) ; T5 = TEX
-    addiu a2,4  ; A2 += 4
-
-    lw t6,0(a2) ; T6 = COLOR1
-    addiu a2,4  ; A2 += 4
-    lw t7,0(a2) ; T7 = COLOR2
-    addiu a2,4  ; A2 += 4
-    lw t8,0(a2) ; T8 = COLOR3
-    addiu a2,4  ; A2 += 4
-
-    ShadeTexTriV t6,s0,s1,s6,s7,t4,t7,s2,s3,s8,t1,t5,t8,s4,s5,t2,t3 ; Shaded Texture Triangle: Color1,X1,Y1,U1,V1,Palette,Color2,X2,Y2,U2,V2,Texpage,Color3,X3,Y3,U3,V3 
+    sw s3,GP0(a0) ; Write GP0 Command Word (Color1+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
+    sw s4,GP0(a0) ; Write GP0  Packet Word (Color2)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s7,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
+    sw s5,GP0(a0) ; Write GP0  Packet Word (Color3)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s8,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -528,37 +685,44 @@
 
     CullFace s0,s1,s2,s3,s4,s5 ; Back Face Cull: X1,Y1,X2,Y2,X3,Y3
     bgez t0,Skip ; IF ((X3-X1 * Y2-Y1) - (Y3-Y1 * X2-X1)) >= 0 Skip
-    addiu a2,44  ; A2 += 44 (Delay Slot)
-    subiu a2,44  ; A2 -= 44
+    addiu a2,24  ; A2 += 24 (Delay Slot)
+    subiu a2,24  ; A2 -= 24
 
-    lw s6,0(a2) ; S6 = U1
-    addiu a2,4  ; A2 += 4
-    lw s7,0(a2) ; S7 = V1
-    addiu a2,4  ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    lw s8,0(a2) ; S8 = U2
-    addiu a2,4  ; A2 += 4
-    lw t1,0(a2) ; T1 = V2
-    addiu a2,4  ; A2 += 4
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
 
-    lw t2,0(a2) ; T2 = U3
-    addiu a2,4  ; A2 += 4
-    lw t3,0(a2) ; T3 = V3
-    addiu a2,4  ; A2 += 4
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
 
-    lw t4,0(a2) ; T4 = PAL
+    lw s3,0(a2) ; S3 = Color1+Command
     addiu a2,4  ; A2 += 4
-    lw t5,0(a2) ; T5 = TEX
+    lw s4,0(a2) ; S4 = Color2
     addiu a2,4  ; A2 += 4
-
-    lw t6,0(a2) ; T6 = COLOR1
-    addiu a2,4  ; A2 += 4
-    lw t7,0(a2) ; T7 = COLOR2
-    addiu a2,4  ; A2 += 4
-    lw t8,0(a2) ; T8 = COLOR3
+    lw s5,0(a2) ; S5 = Color3
     addiu a2,4  ; A2 += 4
 
-    ShadeTexTriV t6,s0,s1,s6,s7,t4,t7,s2,s3,s8,t1,t5,t8,s4,s5,t2,t3 ; Shaded Texture Triangle: Color1,X1,Y1,U1,V1,Palette,Color2,X2,Y2,U2,V2,Texpage,Color3,X3,Y3,U3,V3 
+    lw s6,0(a2) ; S6 = Texcoord1+Palette
+    addiu a2,4  ; A2 += 4
+    lw s7,0(a2) ; S7 = Texcoord2+Texpage
+    addiu a2,4  ; A2 += 4
+    lw s8,0(a2) ; S8 = Texcoord3
+    addiu a2,4  ; A2 += 4
+
+    sw s3,GP0(a0) ; Write GP0 Command Word (Color1+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
+    sw s4,GP0(a0) ; Write GP0  Packet Word (Color2)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s7,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
+    sw s5,GP0(a0) ; Write GP0  Packet Word (Color3)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s8,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -575,37 +739,44 @@
 
     CullFace s0,s1,s2,s3,s4,s5 ; Front Face Cull: X1,Y1,X2,Y2,X3,Y3
     blez t0,Skip ; IF ((X3-X1 * Y2-Y1) - (Y3-Y1 * X2-X1)) <= 0 Skip
-    addiu a2,44  ; A2 += 44 (Delay Slot)
-    subiu a2,44  ; A2 -= 44
+    addiu a2,24  ; A2 += 24 (Delay Slot)
+    subiu a2,24  ; A2 -= 24
 
-    lw s6,0(a2) ; S6 = U1
-    addiu a2,4  ; A2 += 4
-    lw s7,0(a2) ; S7 = V1
-    addiu a2,4  ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    lw s8,0(a2) ; S8 = U2
-    addiu a2,4  ; A2 += 4
-    lw t1,0(a2) ; T1 = V2
-    addiu a2,4  ; A2 += 4
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
 
-    lw t2,0(a2) ; T2 = U3
-    addiu a2,4  ; A2 += 4
-    lw t3,0(a2) ; T3 = V3
-    addiu a2,4  ; A2 += 4
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
 
-    lw t4,0(a2) ; T4 = PAL
+    lw s3,0(a2) ; S3 = Color1+Command
     addiu a2,4  ; A2 += 4
-    lw t5,0(a2) ; T5 = TEX
+    lw s4,0(a2) ; S4 = Color2
     addiu a2,4  ; A2 += 4
-
-    lw t6,0(a2) ; T6 = COLOR1
-    addiu a2,4  ; A2 += 4
-    lw t7,0(a2) ; T7 = COLOR2
-    addiu a2,4  ; A2 += 4
-    lw t8,0(a2) ; T8 = COLOR3
+    lw s5,0(a2) ; S5 = Color3
     addiu a2,4  ; A2 += 4
 
-    ShadeTexTriV t6,s0,s1,s6,s7,t4,t7,s2,s3,s8,t1,t5,t8,s4,s5,t2,t3 ; Shaded Texture Triangle: Color1,X1,Y1,U1,V1,Palette,Color2,X2,Y2,U2,V2,Texpage,Color3,X3,Y3,U3,V3 
+    lw s6,0(a2) ; S6 = Texcoord1+Palette
+    addiu a2,4  ; A2 += 4
+    lw s7,0(a2) ; S7 = Texcoord2+Texpage
+    addiu a2,4  ; A2 += 4
+    lw s8,0(a2) ; S8 = Texcoord3
+    addiu a2,4  ; A2 += 4
+
+    sw s3,GP0(a0) ; Write GP0 Command Word (Color1+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
+    sw s4,GP0(a0) ; Write GP0  Packet Word (Color2)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s7,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
+    sw s5,GP0(a0) ; Write GP0  Packet Word (Color3)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s8,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -621,10 +792,32 @@
     LoadXYZ s4,s5,s6 ; S4 = 2D X3, S5 = 2D Y3
     LoadXYZ s6,s7,s8 ; S6 = 2D X4, S7 = 2D Y4
 
-    lw s8,0(a2) ; S8 = Face Color
-    addiu a2,4 ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    FillQuadLineV s8,s0,s1,s2,s3,s6,s7,s4,s5 ; Fill Quad Line: X1,Y1,X2,Y2,X3,Y3,X4,Y4,Color
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    sll s7,16      ; Y4 <<= 16
+    andi s6,0xFFFF ; X4 &= 0xFFFF
+    or s3,s6,s7    ; X4 |= Y4
+
+    lw s4,0(a2) ; S4 = Color+Command
+    addiu a2,4  ; A2 += 4
+
+    sw s4,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s3,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex4)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex5)
+    WRIOW GP0,0x55555555 ; Write GP0  Packet Word (Termination Code)
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -645,10 +838,32 @@
 
     LoadXYZ s6,s7,s8 ; S6 = 2D X4, S7 = 2D Y4
 
-    lw s8,0(a2) ; S8 = Face Color
-    addiu a2,4 ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    FillQuadLineV s8,s0,s1,s2,s3,s6,s7,s4,s5 ; Fill Quad Line: X1,Y1,X2,Y2,X3,Y3,X4,Y4,Color
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    sll s7,16      ; Y4 <<= 16
+    andi s6,0xFFFF ; X4 &= 0xFFFF
+    or s3,s6,s7    ; X4 |= Y4
+
+    lw s4,0(a2) ; S4 = Color+Command
+    addiu a2,4  ; A2 += 4
+
+    sw s4,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s3,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex4)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex5)
+    WRIOW GP0,0x55555555 ; Write GP0  Packet Word (Termination Code)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -670,10 +885,32 @@
 
     LoadXYZ s6,s7,s8 ; S6 = 2D X4, S7 = 2D Y4
 
-    lw s8,0(a2) ; S8 = Face Color
-    addiu a2,4 ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    FillQuadLineV s8,s0,s1,s2,s3,s6,s7,s4,s5 ; Fill Quad Line: X1,Y1,X2,Y2,X3,Y3,X4,Y4,Color
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    sll s7,16      ; Y4 <<= 16
+    andi s6,0xFFFF ; X4 &= 0xFFFF
+    or s3,s6,s7    ; X4 |= Y4
+
+    lw s4,0(a2) ; S4 = Color+Command
+    addiu a2,4  ; A2 += 4
+
+    sw s4,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s3,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex4)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex5)
+    WRIOW GP0,0x55555555 ; Write GP0  Packet Word (Termination Code)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -689,10 +926,30 @@
     LoadXYZ s4,s5,s6 ; S4 = 2D X3, S5 = 2D Y3
     LoadXYZ s6,s7,s8 ; S6 = 2D X4, S7 = 2D Y4
 
-    lw s8,0(a2) ; S8 = Face Color
-    addiu a2,4 ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    FillQuadV s8,s0,s1,s2,s3,s4,s5,s6,s7 ; Fill Quad: Color,X1,Y1,X2,Y2,X3,Y3,X4,Y4
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    sll s7,16      ; Y4 <<= 16
+    andi s6,0xFFFF ; X4 &= 0xFFFF
+    or s3,s6,s7    ; X4 |= Y4
+
+    lw s4,0(a2) ; S4 = Color+Command
+    addiu a2,4  ; A2 += 4
+
+    sw s4,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s3,GP0(a0) ; Write GP0  Packet Word (Vertex4)
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -713,10 +970,30 @@
 
     LoadXYZ s6,s7,s8 ; S6 = 2D X4, S7 = 2D Y4
 
-    lw s8,0(a2) ; S8 = Face Color
-    addiu a2,4 ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    FillQuadV s8,s0,s1,s2,s3,s4,s5,s6,s7 ; Fill Quad: Color,X1,Y1,X2,Y2,X3,Y3,X4,Y4
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    sll s7,16      ; Y4 <<= 16
+    andi s6,0xFFFF ; X4 &= 0xFFFF
+    or s3,s6,s7    ; X4 |= Y4
+
+    lw s4,0(a2) ; S4 = Color+Command
+    addiu a2,4  ; A2 += 4
+
+    sw s4,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s3,GP0(a0) ; Write GP0  Packet Word (Vertex4)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -738,10 +1015,30 @@
 
     LoadXYZ s6,s7,s8 ; S6 = 2D X4, S7 = 2D Y4
 
-    lw s8,0(a2) ; S8 = Face Color
-    addiu a2,4 ; A2 += 4
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
 
-    FillQuadV s8,s0,s1,s2,s3,s4,s5,s6,s7 ; Fill Quad: Color,X1,Y1,X2,Y2,X3,Y3,X4,Y4
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    sll s7,16      ; Y4 <<= 16
+    andi s6,0xFFFF ; X4 &= 0xFFFF
+    or s3,s6,s7    ; X4 |= Y4
+
+    lw s4,0(a2) ; S4 = Color+Command
+    addiu a2,4  ; A2 += 4
+
+    sw s4,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s3,GP0(a0) ; Write GP0  Packet Word (Vertex4)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -757,32 +1054,43 @@
     LoadXYZ s4,s5,s6 ; S4 = 2D X3, S5 = 2D Y3
     LoadXYZ s6,s7,s8 ; S6 = 2D X4, S7 = 2D Y4
 
-    lw s8,0(a2) ; S8 = U1
-    addiu a2,4  ; A2 += 4
-    lw t1,0(a2) ; T1 = V1
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
+
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    sll s7,16      ; Y4 <<= 16
+    andi s6,0xFFFF ; X4 &= 0xFFFF
+    or s3,s6,s7    ; X4 |= Y4
+
+    lw s4,0(a2) ; S4 = Command
     addiu a2,4  ; A2 += 4
 
-    lw t2,0(a2) ; T2 = U2
+    lw s5,0(a2) ; S5 = Texcoord1+Palette
     addiu a2,4  ; A2 += 4
-    lw t3,0(a2) ; T3 = V2
+    lw s6,0(a2) ; S6 = Texcoord2+Texpage
     addiu a2,4  ; A2 += 4
-
-    lw t4,0(a2) ; T4 = U3
+    lw s7,0(a2) ; S7 = Texcoord3
     addiu a2,4  ; A2 += 4
-    lw t5,0(a2) ; T5 = V3
-    addiu a2,4  ; A2 += 4
-
-    lw t6,0(a2) ; T6 = U4
-    addiu a2,4  ; A2 += 4
-    lw t7,0(a2) ; T7 = V4
+    lw s8,0(a2) ; S8 = Texcoord4
     addiu a2,4  ; A2 += 4
 
-    lw t8,0(a2) ; T8 = PAL
-    addiu a2,4  ; A2 += 4
-    lw t9,0(a2) ; T9 = TEX
-    addiu a2,4  ; A2 += 4
-
-    TexQuadRawV s0,s1,s8,t1,t8,s2,s3,t2,t3,t9,s4,s5,t4,t5,s6,s7,t6,t7 ; Texture Quad RAW: X1,Y1,U1,V1,Palette,X2,Y2,U2,V2,Texpage,X3,Y3,U3,V3,X4,Y4,U4,V4 
+    sw s4,GP0(a0) ; Write GP0 Command Word (Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s5,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s7,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
+    sw s3,GP0(a0) ; Write GP0  Packet Word (Vertex4)
+    sw s8,GP0(a0) ; Write GP0  Packet Word (Texcoord4)
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -798,37 +1106,48 @@
 
     CullFace s0,s1,s2,s3,s4,s5 ; Back Face Cull: X1,Y1,X2,Y2,X3,Y3
     bgez t0,Skip ; IF ((X3-X1 * Y2-Y1) - (Y3-Y1 * X2-X1)) >= 0 Skip
-    addiu a2,52  ; A2 += 52 (Delay Slot)
-    subiu a2,52  ; A2 -= 52
+    addiu a2,32  ; A2 += 32 (Delay Slot)
+    subiu a2,32  ; A2 -= 32
 
     LoadXYZ s6,s7,s8 ; S6 = 2D X4, S7 = 2D Y4
 
-    lw s8,0(a2) ; S8 = U1
-    addiu a2,4  ; A2 += 4
-    lw t1,0(a2) ; T1 = V1
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
+
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    sll s7,16      ; Y4 <<= 16
+    andi s6,0xFFFF ; X4 &= 0xFFFF
+    or s3,s6,s7    ; X4 |= Y4
+
+    lw s4,0(a2) ; S4 = Command
     addiu a2,4  ; A2 += 4
 
-    lw t2,0(a2) ; T2 = U2
+    lw s5,0(a2) ; S5 = Texcoord1+Palette
     addiu a2,4  ; A2 += 4
-    lw t3,0(a2) ; T3 = V2
+    lw s6,0(a2) ; S6 = Texcoord2+Texpage
     addiu a2,4  ; A2 += 4
-
-    lw t4,0(a2) ; T4 = U3
+    lw s7,0(a2) ; S7 = Texcoord3
     addiu a2,4  ; A2 += 4
-    lw t5,0(a2) ; T5 = V3
-    addiu a2,4  ; A2 += 4
-
-    lw t6,0(a2) ; T6 = U4
-    addiu a2,4  ; A2 += 4
-    lw t7,0(a2) ; T7 = V4
+    lw s8,0(a2) ; S8 = Texcoord4
     addiu a2,4  ; A2 += 4
 
-    lw t8,0(a2) ; T8 = PAL
-    addiu a2,4  ; A2 += 4
-    lw t9,0(a2) ; T9 = TEX
-    addiu a2,4  ; A2 += 4
-
-    TexQuadRawV s0,s1,s8,t1,t8,s2,s3,t2,t3,t9,s4,s5,t4,t5,s6,s7,t6,t7 ; Texture Quad RAW: X1,Y1,U1,V1,Palette,X2,Y2,U2,V2,Texpage,X3,Y3,U3,V3,X4,Y4,U4,V4 
+    sw s4,GP0(a0) ; Write GP0 Command Word (Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s5,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s7,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
+    sw s3,GP0(a0) ; Write GP0  Packet Word (Vertex4)
+    sw s8,GP0(a0) ; Write GP0  Packet Word (Texcoord4)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -845,37 +1164,48 @@
 
     CullFace s0,s1,s2,s3,s4,s5 ; Front Face Cull: X1,Y1,X2,Y2,X3,Y3
     blez t0,Skip ; IF ((X3-X1 * Y2-Y1) - (Y3-Y1 * X2-X1)) <= 0 Skip
-    addiu a2,52  ; A2 += 52 (Delay Slot)
-    subiu a2,52  ; A2 -= 52
+    addiu a2,32  ; A2 += 32 (Delay Slot)
+    subiu a2,32  ; A2 -= 32
 
     LoadXYZ s6,s7,s8 ; S6 = 2D X4, S7 = 2D Y4
 
-    lw s8,0(a2) ; S8 = U1
-    addiu a2,4  ; A2 += 4
-    lw t1,0(a2) ; T1 = V1
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
+
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    sll s7,16      ; Y4 <<= 16
+    andi s6,0xFFFF ; X4 &= 0xFFFF
+    or s3,s6,s7    ; X4 |= Y4
+
+    lw s4,0(a2) ; S4 = Command
     addiu a2,4  ; A2 += 4
 
-    lw t2,0(a2) ; T2 = U2
+    lw s5,0(a2) ; S5 = Texcoord1+Palette
     addiu a2,4  ; A2 += 4
-    lw t3,0(a2) ; T3 = V2
+    lw s6,0(a2) ; S6 = Texcoord2+Texpage
     addiu a2,4  ; A2 += 4
-
-    lw t4,0(a2) ; T4 = U3
+    lw s7,0(a2) ; S7 = Texcoord3
     addiu a2,4  ; A2 += 4
-    lw t5,0(a2) ; T5 = V3
-    addiu a2,4  ; A2 += 4
-
-    lw t6,0(a2) ; T6 = U4
-    addiu a2,4  ; A2 += 4
-    lw t7,0(a2) ; T7 = V4
+    lw s8,0(a2) ; S8 = Texcoord4
     addiu a2,4  ; A2 += 4
 
-    lw t8,0(a2) ; T8 = PAL
-    addiu a2,4  ; A2 += 4
-    lw t9,0(a2) ; T9 = TEX
-    addiu a2,4  ; A2 += 4
-
-    TexQuadRawV s0,s1,s8,t1,t8,s2,s3,t2,t3,t9,s4,s5,t4,t5,s6,s7,t6,t7 ; Texture Quad RAW: X1,Y1,U1,V1,Palette,X2,Y2,U2,V2,Texpage,X3,Y3,U3,V3,X4,Y4,U4,V4 
+    sw s4,GP0(a0) ; Write GP0 Command Word (Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s5,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s7,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
+    sw s3,GP0(a0) ; Write GP0  Packet Word (Vertex4)
+    sw s8,GP0(a0) ; Write GP0  Packet Word (Texcoord4)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -891,35 +1221,43 @@
     LoadXYZ s4,s5,s6 ; S4 = 2D X3, S5 = 2D Y3
     LoadXYZ s6,s7,s8 ; S6 = 2D X4, S7 = 2D Y4
 
-    lw s8,0(a2) ; S8 = U1
-    addiu a2,4  ; A2 += 4
-    lw t1,0(a2) ; T1 = V1
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
+
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    sll s7,16      ; Y4 <<= 16
+    andi s6,0xFFFF ; X4 &= 0xFFFF
+    or s3,s6,s7    ; X4 |= Y4
+
+    lw s4,0(a2) ; S4 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    lw t2,0(a2) ; T2 = U2
+    lw s5,0(a2) ; S5 = Texcoord1+Palette
     addiu a2,4  ; A2 += 4
-    lw t3,0(a2) ; T3 = V2
+    lw s6,0(a2) ; S6 = Texcoord2+Texpage
     addiu a2,4  ; A2 += 4
-
-    lw t4,0(a2) ; T4 = U3
+    lw s7,0(a2) ; S7 = Texcoord3
     addiu a2,4  ; A2 += 4
-    lw t5,0(a2) ; T5 = V3
-    addiu a2,4  ; A2 += 4
-
-    lw t6,0(a2) ; T6 = U4
-    addiu a2,4  ; A2 += 4
-    lw t7,0(a2) ; T7 = V4
+    lw s8,0(a2) ; S8 = Texcoord4
     addiu a2,4  ; A2 += 4
 
-    lw t8,0(a2) ; T8 = PAL
-    addiu a2,4  ; A2 += 4
-    lw t9,0(a2) ; T9 = TEX
-    addiu a2,4  ; A2 += 4
-
-    lw k0,0(a2) ; K0 = COLOR
-    addiu a2,4  ; A2 += 4
-
-    TexQuadBlendV k0,s0,s1,s8,t1,t8,s2,s3,t2,t3,t9,s4,s5,t4,t5,s6,s7,t6,t7 ; Texture Quad Blend: Color,X1,Y1,U1,V1,Palette,X2,Y2,U2,V2,Texpage,X3,Y3,U3,V3,X4,Y4,U4,V4 
+    sw s4,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s5,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s7,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
+    sw s3,GP0(a0) ; Write GP0  Packet Word (Vertex4)
+    sw s8,GP0(a0) ; Write GP0  Packet Word (Texcoord4)
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -935,40 +1273,48 @@
 
     CullFace s0,s1,s2,s3,s4,s5 ; Back Face Cull: X1,Y1,X2,Y2,X3,Y3
     bgez t0,Skip ; IF ((X3-X1 * Y2-Y1) - (Y3-Y1 * X2-X1)) >= 0 Skip
-    addiu a2,56  ; A2 += 56 (Delay Slot)
-    subiu a2,56  ; A2 -= 56
+    addiu a2,32  ; A2 += 32 (Delay Slot)
+    subiu a2,32  ; A2 -= 32
 
     LoadXYZ s6,s7,s8 ; S6 = 2D X4, S7 = 2D Y4
 
-    lw s8,0(a2) ; S8 = U1
-    addiu a2,4  ; A2 += 4
-    lw t1,0(a2) ; T1 = V1
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
+
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    sll s7,16      ; Y4 <<= 16
+    andi s6,0xFFFF ; X4 &= 0xFFFF
+    or s3,s6,s7    ; X4 |= Y4
+
+    lw s4,0(a2) ; S4 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    lw t2,0(a2) ; T2 = U2
+    lw s5,0(a2) ; S5 = Texcoord1+Palette
     addiu a2,4  ; A2 += 4
-    lw t3,0(a2) ; T3 = V2
+    lw s6,0(a2) ; S6 = Texcoord2+Texpage
     addiu a2,4  ; A2 += 4
-
-    lw t4,0(a2) ; T4 = U3
+    lw s7,0(a2) ; S7 = Texcoord3
     addiu a2,4  ; A2 += 4
-    lw t5,0(a2) ; T5 = V3
-    addiu a2,4  ; A2 += 4
-
-    lw t6,0(a2) ; T6 = U4
-    addiu a2,4  ; A2 += 4
-    lw t7,0(a2) ; T7 = V4
+    lw s8,0(a2) ; S8 = Texcoord4
     addiu a2,4  ; A2 += 4
 
-    lw t8,0(a2) ; T8 = PAL
-    addiu a2,4  ; A2 += 4
-    lw t9,0(a2) ; T9 = TEX
-    addiu a2,4  ; A2 += 4
-
-    lw k0,0(a2) ; K0 = COLOR
-    addiu a2,4  ; A2 += 4
-
-    TexQuadBlendV k0,s0,s1,s8,t1,t8,s2,s3,t2,t3,t9,s4,s5,t4,t5,s6,s7,t6,t7 ; Texture Quad Blend: Color,X1,Y1,U1,V1,Palette,X2,Y2,U2,V2,Texpage,X3,Y3,U3,V3,X4,Y4,U4,V4 
+    sw s4,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s5,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s7,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
+    sw s3,GP0(a0) ; Write GP0  Packet Word (Vertex4)
+    sw s8,GP0(a0) ; Write GP0  Packet Word (Texcoord4)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -985,40 +1331,48 @@
 
     CullFace s0,s1,s2,s3,s4,s5 ; Front Face Cull: X1,Y1,X2,Y2,X3,Y3
     blez t0,Skip ; IF ((X3-X1 * Y2-Y1) - (Y3-Y1 * X2-X1)) <= 0 Skip
-    addiu a2,56  ; A2 += 56 (Delay Slot)
-    subiu a2,56  ; A2 -= 56
+    addiu a2,32  ; A2 += 32 (Delay Slot)
+    subiu a2,32  ; A2 -= 32
 
     LoadXYZ s6,s7,s8 ; S6 = 2D X4, S7 = 2D Y4
 
-    lw s8,0(a2) ; S8 = U1
-    addiu a2,4  ; A2 += 4
-    lw t1,0(a2) ; T1 = V1
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
+
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    sll s7,16      ; Y4 <<= 16
+    andi s6,0xFFFF ; X4 &= 0xFFFF
+    or s3,s6,s7    ; X4 |= Y4
+
+    lw s4,0(a2) ; S4 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    lw t2,0(a2) ; T2 = U2
+    lw s5,0(a2) ; S5 = Texcoord1+Palette
     addiu a2,4  ; A2 += 4
-    lw t3,0(a2) ; T3 = V2
+    lw s6,0(a2) ; S6 = Texcoord2+Texpage
     addiu a2,4  ; A2 += 4
-
-    lw t4,0(a2) ; T4 = U3
+    lw s7,0(a2) ; S7 = Texcoord3
     addiu a2,4  ; A2 += 4
-    lw t5,0(a2) ; T5 = V3
-    addiu a2,4  ; A2 += 4
-
-    lw t6,0(a2) ; T6 = U4
-    addiu a2,4  ; A2 += 4
-    lw t7,0(a2) ; T7 = V4
+    lw s8,0(a2) ; S8 = Texcoord4
     addiu a2,4  ; A2 += 4
 
-    lw t8,0(a2) ; T8 = PAL
-    addiu a2,4  ; A2 += 4
-    lw t9,0(a2) ; T9 = TEX
-    addiu a2,4  ; A2 += 4
-
-    lw k0,0(a2) ; K0 = COLOR
-    addiu a2,4  ; A2 += 4
-
-    TexQuadBlendV k0,s0,s1,s8,t1,t8,s2,s3,t2,t3,t9,s4,s5,t4,t5,s6,s7,t6,t7 ; Texture Quad Blend: Color,X1,Y1,U1,V1,Palette,X2,Y2,U2,V2,Texpage,X3,Y3,U3,V3,X4,Y4,U4,V4 
+    sw s4,GP0(a0) ; Write GP0 Command Word (Color+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s5,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw s6,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw s7,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
+    sw s3,GP0(a0) ; Write GP0  Packet Word (Vertex4)
+    sw s8,GP0(a0) ; Write GP0  Packet Word (Texcoord4)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -1034,41 +1388,52 @@
     LoadXYZ s4,s5,s6 ; S4 = 2D X3, S5 = 2D Y3
     LoadXYZ s6,s7,s8 ; S6 = 2D X4, S7 = 2D Y4
 
-    lw s8,0(a2) ; S8 = U1
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
+
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    sll s7,16      ; Y4 <<= 16
+    andi s6,0xFFFF ; X4 &= 0xFFFF
+    or s3,s6,s7    ; X4 |= Y4
+
+    lw s4,0(a2) ; S4 = Color1+Command
     addiu a2,4  ; A2 += 4
-    lw t1,0(a2) ; T1 = V1
+    lw s5,0(a2) ; S5 = Color2
+    addiu a2,4  ; A2 += 4
+    lw s6,0(a2) ; S6 = Color3
+    addiu a2,4  ; A2 += 4
+    lw s7,0(a2) ; S7 = Color4
     addiu a2,4  ; A2 += 4
 
-    lw t2,0(a2) ; T2 = U2
+    lw s8,0(a2) ; S8 = Texcoord1+Palette
     addiu a2,4  ; A2 += 4
-    lw t3,0(a2) ; T3 = V2
+    lw t0,0(a2) ; T0 = Texcoord2+Texpage
     addiu a2,4  ; A2 += 4
-
-    lw t4,0(a2) ; T4 = U3
+    lw t1,0(a2) ; T1 = Texcoord3
     addiu a2,4  ; A2 += 4
-    lw t5,0(a2) ; T5 = V3
-    addiu a2,4  ; A2 += 4
-
-    lw t6,0(a2) ; T6 = U4
-    addiu a2,4  ; A2 += 4
-    lw t7,0(a2) ; T7 = V4
+    lw t2,0(a2) ; T2 = Texcoord4
     addiu a2,4  ; A2 += 4
 
-    lw t8,0(a2) ; T8 = PAL
-    addiu a2,4  ; A2 += 4
-    lw t9,0(a2) ; T9 = TEX
-    addiu a2,4  ; A2 += 4
-
-    lw k0,0(a2) ; K0 = COLOR1
-    addiu a2,4  ; A2 += 4
-    lw k1,0(a2) ; K1 = COLOR2
-    addiu a2,4  ; A2 += 4
-    lw at,0(a2) ; AT = COLOR3
-    addiu a2,4  ; A2 += 4
-    lw v0,0(a2) ; V0 = COLOR4
-    addiu a2,4  ; A2 += 4
-
-    ShadeTexQuadV k0,s0,s1,s8,t1,t8,k1,s2,s3,t2,t3,t9,at,s4,s5,t4,t5,v0,s6,s7,t6,t7 ; Shaded Texture Quad: Color1,X1,Y1,U1,V1,Palette,Color2,X2,Y2,U2,V2,Texpage,Color3,X3,Y3,U3,V3,Color4,X4,Y4,U4,V4 
+    sw s4,GP0(a0) ; Write GP0 Command Word (Color1+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s8,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
+    sw s5,GP0(a0) ; Write GP0  Packet Word (Color2)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw t0,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
+    sw s6,GP0(a0) ; Write GP0  Packet Word (Color3)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw t1,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
+    sw s7,GP0(a0) ; Write GP0  Packet Word (Color4)
+    sw s3,GP0(a0) ; Write GP0  Packet Word (Vertex4)
+    sw t2,GP0(a0) ; Write GP0  Packet Word (Texcoord4)
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -1084,46 +1449,57 @@
 
     CullFace s0,s1,s2,s3,s4,s5 ; Back Face Cull: X1,Y1,X2,Y2,X3,Y3
     bgez t0,Skip ; IF ((X3-X1 * Y2-Y1) - (Y3-Y1 * X2-X1)) >= 0 Skip
-    addiu a2,68  ; A2 += 68 (Delay Slot)
-    subiu a2,68  ; A2 -= 68
+    addiu a2,44  ; A2 += 44 (Delay Slot)
+    subiu a2,44  ; A2 -= 44
 
     LoadXYZ s6,s7,s8 ; S6 = 2D X4, S7 = 2D Y4
 
-    lw s8,0(a2) ; S8 = U1
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
+
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    sll s7,16      ; Y4 <<= 16
+    andi s6,0xFFFF ; X4 &= 0xFFFF
+    or s3,s6,s7    ; X4 |= Y4
+
+    lw s4,0(a2) ; S4 = Color1+Command
     addiu a2,4  ; A2 += 4
-    lw t1,0(a2) ; T1 = V1
+    lw s5,0(a2) ; S5 = Color2
+    addiu a2,4  ; A2 += 4
+    lw s6,0(a2) ; S6 = Color3
+    addiu a2,4  ; A2 += 4
+    lw s7,0(a2) ; S7 = Color4
     addiu a2,4  ; A2 += 4
 
-    lw t2,0(a2) ; T2 = U2
+    lw s8,0(a2) ; S8 = Texcoord1+Palette
     addiu a2,4  ; A2 += 4
-    lw t3,0(a2) ; T3 = V2
+    lw t0,0(a2) ; T0 = Texcoord2+Texpage
     addiu a2,4  ; A2 += 4
-
-    lw t4,0(a2) ; T4 = U3
+    lw t1,0(a2) ; T1 = Texcoord3
     addiu a2,4  ; A2 += 4
-    lw t5,0(a2) ; T5 = V3
-    addiu a2,4  ; A2 += 4
-
-    lw t6,0(a2) ; T6 = U4
-    addiu a2,4  ; A2 += 4
-    lw t7,0(a2) ; T7 = V4
+    lw t2,0(a2) ; T2 = Texcoord4
     addiu a2,4  ; A2 += 4
 
-    lw t8,0(a2) ; T8 = PAL
-    addiu a2,4  ; A2 += 4
-    lw t9,0(a2) ; T9 = TEX
-    addiu a2,4  ; A2 += 4
-
-    lw k0,0(a2) ; K0 = COLOR1
-    addiu a2,4  ; A2 += 4
-    lw k1,0(a2) ; K1 = COLOR2
-    addiu a2,4  ; A2 += 4
-    lw at,0(a2) ; AT = COLOR3
-    addiu a2,4  ; A2 += 4
-    lw v0,0(a2) ; V0 = COLOR4
-    addiu a2,4  ; A2 += 4
-
-    ShadeTexQuadV k0,s0,s1,s8,t1,t8,k1,s2,s3,t2,t3,t9,at,s4,s5,t4,t5,v0,s6,s7,t6,t7 ; Shaded Texture Quad: Color1,X1,Y1,U1,V1,Palette,Color2,X2,Y2,U2,V2,Texpage,Color3,X3,Y3,U3,V3,Color4,X4,Y4,U4,V4 
+    sw s4,GP0(a0) ; Write GP0 Command Word (Color1+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s8,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
+    sw s5,GP0(a0) ; Write GP0  Packet Word (Color2)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw t0,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
+    sw s6,GP0(a0) ; Write GP0  Packet Word (Color3)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw t1,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
+    sw s7,GP0(a0) ; Write GP0  Packet Word (Color4)
+    sw s3,GP0(a0) ; Write GP0  Packet Word (Vertex4)
+    sw t2,GP0(a0) ; Write GP0  Packet Word (Texcoord4)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -1140,46 +1516,57 @@
 
     CullFace s0,s1,s2,s3,s4,s5 ; Front Face Cull: X1,Y1,X2,Y2,X3,Y3
     blez t0,Skip ; IF ((X3-X1 * Y2-Y1) - (Y3-Y1 * X2-X1)) <= 0 Skip
-    addiu a2,68  ; A2 += 68 (Delay Slot)
-    subiu a2,68  ; A2 -= 68
+    addiu a2,44  ; A2 += 44 (Delay Slot)
+    subiu a2,44  ; A2 -= 44
 
     LoadXYZ s6,s7,s8 ; S6 = 2D X4, S7 = 2D Y4
 
-    lw s8,0(a2) ; S8 = U1
+    sll s1,16      ; Y1 <<= 16
+    andi s0,0xFFFF ; X1 &= 0xFFFF
+    or s0,s1       ; X1 |= Y1
+
+    sll s3,16      ; Y2 <<= 16
+    andi s2,0xFFFF ; X2 &= 0xFFFF
+    or s1,s2,s3    ; X2 |= Y2
+
+    sll s5,16      ; Y3 <<= 16
+    andi s4,0xFFFF ; X3 &= 0xFFFF
+    or s2,s4,s5    ; X3 |= Y3
+
+    sll s7,16      ; Y4 <<= 16
+    andi s6,0xFFFF ; X4 &= 0xFFFF
+    or s3,s6,s7    ; X4 |= Y4
+
+    lw s4,0(a2) ; S4 = Color1+Command
     addiu a2,4  ; A2 += 4
-    lw t1,0(a2) ; T1 = V1
+    lw s5,0(a2) ; S5 = Color2
+    addiu a2,4  ; A2 += 4
+    lw s6,0(a2) ; S6 = Color3
+    addiu a2,4  ; A2 += 4
+    lw s7,0(a2) ; S7 = Color4
     addiu a2,4  ; A2 += 4
 
-    lw t2,0(a2) ; T2 = U2
+    lw s8,0(a2) ; S8 = Texcoord1+Palette
     addiu a2,4  ; A2 += 4
-    lw t3,0(a2) ; T3 = V2
+    lw t0,0(a2) ; T0 = Texcoord2+Texpage
     addiu a2,4  ; A2 += 4
-
-    lw t4,0(a2) ; T4 = U3
+    lw t1,0(a2) ; T1 = Texcoord3
     addiu a2,4  ; A2 += 4
-    lw t5,0(a2) ; T5 = V3
-    addiu a2,4  ; A2 += 4
-
-    lw t6,0(a2) ; T6 = U4
-    addiu a2,4  ; A2 += 4
-    lw t7,0(a2) ; T7 = V4
+    lw t2,0(a2) ; T2 = Texcoord4
     addiu a2,4  ; A2 += 4
 
-    lw t8,0(a2) ; T8 = PAL
-    addiu a2,4  ; A2 += 4
-    lw t9,0(a2) ; T9 = TEX
-    addiu a2,4  ; A2 += 4
-
-    lw k0,0(a2) ; K0 = COLOR1
-    addiu a2,4  ; A2 += 4
-    lw k1,0(a2) ; K1 = COLOR2
-    addiu a2,4  ; A2 += 4
-    lw at,0(a2) ; AT = COLOR3
-    addiu a2,4  ; A2 += 4
-    lw v0,0(a2) ; V0 = COLOR4
-    addiu a2,4  ; A2 += 4
-
-    ShadeTexQuadV k0,s0,s1,s8,t1,t8,k1,s2,s3,t2,t3,t9,at,s4,s5,t4,t5,v0,s6,s7,t6,t7 ; Shaded Texture Quad: Color1,X1,Y1,U1,V1,Palette,Color2,X2,Y2,U2,V2,Texpage,Color3,X3,Y3,U3,V3,Color4,X4,Y4,U4,V4 
+    sw s4,GP0(a0) ; Write GP0 Command Word (Color1+Command)
+    sw s0,GP0(a0) ; Write GP0  Packet Word (Vertex1)
+    sw s8,GP0(a0) ; Write GP0  Packet Word (Texcoord1+Palette)
+    sw s5,GP0(a0) ; Write GP0  Packet Word (Color2)
+    sw s1,GP0(a0) ; Write GP0  Packet Word (Vertex2)
+    sw t0,GP0(a0) ; Write GP0  Packet Word (Texcoord2+Texpage)
+    sw s6,GP0(a0) ; Write GP0  Packet Word (Color3)
+    sw s2,GP0(a0) ; Write GP0  Packet Word (Vertex3)
+    sw t1,GP0(a0) ; Write GP0  Packet Word (Texcoord3)
+    sw s7,GP0(a0) ; Write GP0  Packet Word (Color4)
+    sw s3,GP0(a0) ; Write GP0  Packet Word (Vertex4)
+    sw t2,GP0(a0) ; Write GP0  Packet Word (Texcoord4)
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
