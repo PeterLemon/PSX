@@ -250,7 +250,7 @@ AVSZ3OTZEND:
 
 PrintString 0,56, 8,8, FontRed,TEXTAVSZ4,4 ; Print Text String To VRAM Using Width,Height Font At X,Y Position
 
-; Load GTE SZ1..3 Registers (R17..R19) For Quad
+; Load GTE SZ0..3 Registers (R16..R19) For Quad
 la a1,VALUESZ0 ; A1 = Word Data Offset
 lwc2 SZ0,0(a1) ; GTE SZ0 = VALUESZ0
 nop ; Delay Slot
