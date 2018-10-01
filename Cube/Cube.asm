@@ -220,7 +220,7 @@ PRESSR2:
   sw t0,0(a1)
 PRESSEND:
 
-ShadeTexQuadCullBack ShadeTexCubeQuad,ShadeTexCubeQuadEnd ; Shaded Texture Quad Back Face Cull: Object Start Address, Object End Address
+ShadeTexQuadCullBackZSort ShadeTexCubeQuad,ShadeTexCubeQuadEnd,PolySort ; Shaded Texture Quad Back Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
 
   b Refresh
   nop ; Delay Slot
@@ -267,5 +267,7 @@ TextureE:
   .incbin "GFX/E.bin" ; Include 256x256 15BPP Texture Data (131072 Bytes)
 TextureF:
   .incbin "GFX/F.bin" ; Include 256x256 15BPP Texture Data (131072 Bytes)
+
+PolySort: ; Polygon Sorting Area
 
 .close
