@@ -575,6 +575,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -623,6 +625,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro WireTriCullFrontZSort,START,END,SORT ; Wire Triangle Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
@@ -682,6 +686,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -730,6 +736,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro FillTriCullNone,START,END ; Fill Triangle Face Cull None: Object Start Address, Object End Address
@@ -984,6 +992,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -1032,6 +1042,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro FillTriCullFrontZSort,START,END,SORT ; Fill Triangle Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
@@ -1084,6 +1096,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -1132,6 +1146,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro ShadeTriCullNone,START,END ; Shaded Triangle Face Cull None: Object Start Address, Object End Address
@@ -1420,6 +1436,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -1468,6 +1486,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro ShadeTriCullFrontZSort,START,END,SORT ; Shaded Triangle Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
@@ -1528,6 +1548,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -1576,6 +1598,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro TexTriCullNone,START,END ; Texture Triangle Face Cull None: Object Start Address, Object End Address
@@ -1886,6 +1910,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -1934,6 +1960,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro TexTriCullFrontZSort,START,END,SORT ; Texture Triangle Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
@@ -1999,6 +2027,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -2047,6 +2077,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro ShadeTexTriCullNone,START,END ; Shaded Texture Triangle Face Cull None: Object Start Address, Object End Address
@@ -2391,6 +2423,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -2439,6 +2473,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro ShadeTexTriCullFrontZSort,START,END,SORT ; Shaded Texture Triangle Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
@@ -2512,6 +2548,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -2560,6 +2598,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro WireQuadCullNone,START,END ; Wire Quad Face Cull None: Object Start Address, Object End Address
@@ -2872,6 +2912,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -2920,6 +2962,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro WireQuadCullFrontZSort,START,END,SORT ; Wire Quad Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
@@ -2988,6 +3032,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -3036,6 +3082,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro FillQuadCullNone,START,END ; Fill Quad Face Cull None: Object Start Address, Object End Address
@@ -3328,6 +3376,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -3376,6 +3426,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro FillQuadCullFrontZSort,START,END,SORT ; Fill Quad Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
@@ -3437,6 +3489,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -3485,6 +3539,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro ShadeQuadCullNone,START,END ; Shaded Quad Face Cull None: Object Start Address, Object End Address
@@ -3828,6 +3884,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -3876,6 +3934,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro ShadeQuadCullFrontZSort,START,END,SORT ; Shaded Quad Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
@@ -3949,6 +4009,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -3997,6 +4059,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro TexQuadCullNone,START,END ; Texture Quad Face Cull None: Object Start Address, Object End Address
@@ -4362,6 +4426,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -4410,6 +4476,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro TexQuadCullFrontZSort,START,END,SORT ; Texture Quad Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
@@ -4488,6 +4556,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -4536,6 +4606,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro ShadeTexQuadCullNone,START,END ; Shaded Texture Quad Face Cull None: Object Start Address, Object End Address
@@ -4952,6 +5024,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -5000,6 +5074,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro ShadeTexQuadCullFrontZSort,START,END,SORT ; Shaded Texture Quad Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
@@ -5090,6 +5166,8 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
+  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
     li t0,0 ; T0 = MaxZ
@@ -5138,6 +5216,8 @@
       subiu t0,1 ; T0-- (Delay Slot)
     bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
+
+  SkipObject:
 .endmacro
 
 .macro XPos,X ; Object X Translation: X
