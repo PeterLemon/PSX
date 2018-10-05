@@ -117,7 +117,7 @@
 .macro PointZSort,START,END,SORT ; Point Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s0,s1,s2 ; S0 = 2D X, S1 = 2D Y, S2 = 3D Z
 
@@ -125,16 +125,16 @@
     andi s0,0xFFFF ; X &= 0xFFFF
     or s0,s1       ; X |= Y
 
-    sw s2,0(k0) ; Store Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s2,0(v0) ; Store Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     lw s1,0(a2) ; S1 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    sw s1,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s0,0(k0) ; Store Vertex To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s1,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s0,0(v0) ; Store Vertex To Sort Address
+    addiu v0,4  ; V0 += 4
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -150,30 +150,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,12 ; A3 += 12
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,12 ; A2 += 12 (Delay Slot)
     subiu a2,12 ; A2 -= 12
 
     li t0,(12/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -187,7 +187,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 .endmacro
 
@@ -220,7 +220,7 @@
 .macro LineZSort,START,END,SORT ; Line Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s0,s1,s2 ; S0 = 2D X1, S1 = 2D Y1, S2 = 3D Z1
     LoadXYZ s3,s4,s5 ; S3 = 2D X2, S4 = 2D Y2, S5 = 3D Z2
@@ -234,19 +234,19 @@
     or s1,s3,s4    ; X2 |= Y2
 
     add s2,s5   ; Z1 += Z2
-    sw s2,0(k0) ; Store Z1+Z2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s2,0(v0) ; Store Z1+Z2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     lw s2,0(a2) ; S2 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    sw s2,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s0,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s2,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s0,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s1,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s1,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -262,30 +262,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,16 ; A3 += 16
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,16 ; A2 += 16 (Delay Slot)
     subiu a2,16 ; A2 -= 16
 
     li t0,(16/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -299,7 +299,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 .endmacro
 
@@ -420,7 +420,7 @@
 .macro WireTriCullNoneZSort,START,END,SORT ; Wire Triangle Face Cull None Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -439,29 +439,29 @@
     or s5,s7,s8    ; X3 |= Y3
 
     AverageZTri s0,s1,s2 ; Average Z Triangle: Z1,Z2,Z3
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     lw s0,0(a2) ; S0 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s3,0(k0) ; Store Vertex4 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s3,0(v0) ; Store Vertex4 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     li t0,0x55555555 ; T0 = Termination Code
-    sw t0,0(k0) ; Store Termination Code To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Termination Code To Sort Address
+    addiu v0,4  ; V0 += 4
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -477,30 +477,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,28 ; A3 += 28
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,28 ; A2 += 28 (Delay Slot)
     subiu a2,28 ; A2 -= 28
 
     li t0,(28/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -514,14 +514,14 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 .endmacro
 
 .macro WireTriCullBackZSort,START,END,SORT ; Wire Triangle Back Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -545,29 +545,29 @@
     or s5,s7,s8    ; X3 |= Y3
 
     AverageZTri s0,s1,s2 ; Average Z Triangle: Z1,Z2,Z3
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     lw s0,0(a2) ; S0 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s3,0(k0) ; Store Vertex4 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s3,0(v0) ; Store Vertex4 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     li t0,0x55555555 ; T0 = Termination Code
-    sw t0,0(k0) ; Store Termination Code To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Termination Code To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -575,7 +575,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -586,30 +586,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,28 ; A3 += 28
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,28 ; A2 += 28 (Delay Slot)
     subiu a2,28 ; A2 -= 28
 
     li t0,(28/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -623,7 +623,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -632,7 +632,7 @@
 .macro WireTriCullFrontZSort,START,END,SORT ; Wire Triangle Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -656,29 +656,29 @@
     or s5,s7,s8    ; X3 |= Y3
 
     AverageZTri s0,s1,s2 ; Average Z Triangle: Z1,Z2,Z3
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     lw s0,0(a2) ; S0 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s3,0(k0) ; Store Vertex4 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s3,0(v0) ; Store Vertex4 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     li t0,0x55555555 ; T0 = Termination Code
-    sw t0,0(k0) ; Store Termination Code To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Termination Code To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -686,7 +686,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -697,30 +697,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,28 ; A3 += 28
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,28 ; A2 += 28 (Delay Slot)
     subiu a2,28 ; A2 -= 28
 
     li t0,(28/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -734,7 +734,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -851,7 +851,7 @@
 .macro FillTriCullNoneZSort,START,END,SORT ; Fill Triangle Face Cull None Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -870,22 +870,22 @@
     or s5,s7,s8    ; X3 |= Y3
 
     AverageZTri s0,s1,s2 ; Average Z Triangle: Z1,Z2,Z3
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     lw s0,0(a2) ; S0 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -901,30 +901,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,20 ; A3 += 20
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,20 ; A2 += 20 (Delay Slot)
     subiu a2,20 ; A2 -= 20
 
     li t0,(20/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -938,14 +938,14 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 .endmacro
 
 .macro FillTriCullBackZSort,START,END,SORT ; Fill Triangle Back Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -969,22 +969,22 @@
     or s5,s7,s8    ; X3 |= Y3
 
     AverageZTri s0,s1,s2 ; Average Z Triangle: Z1,Z2,Z3
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     lw s0,0(a2) ; S0 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -992,7 +992,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -1003,30 +1003,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,20 ; A3 += 20
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,20 ; A2 += 20 (Delay Slot)
     subiu a2,20 ; A2 -= 20
 
     li t0,(20/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -1040,7 +1040,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -1049,7 +1049,7 @@
 .macro FillTriCullFrontZSort,START,END,SORT ; Fill Triangle Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -1073,22 +1073,22 @@
     or s5,s7,s8    ; X3 |= Y3
 
     AverageZTri s0,s1,s2 ; Average Z Triangle: Z1,Z2,Z3
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     lw s0,0(a2) ; S0 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -1096,7 +1096,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -1107,30 +1107,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,20 ; A3 += 20
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,20 ; A2 += 20 (Delay Slot)
     subiu a2,20 ; A2 -= 20
 
     li t0,(20/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -1144,7 +1144,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -1279,7 +1279,7 @@
 .macro ShadeTriCullNoneZSort,START,END,SORT ; Shaded Triangle Face Cull None Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -1298,8 +1298,8 @@
     or s5,s7,s8    ; X3 |= Y3
 
     AverageZTri s0,s1,s2 ; Average Z Triangle: Z1,Z2,Z3
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     lw s0,0(a2) ; S0 = Color1+Command
     addiu a2,4  ; A2 += 4
@@ -1308,20 +1308,20 @@
     lw s2,0(a2) ; S2 = Color3
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color1+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color1+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s1,0(k0) ; Store Color2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s1,0(v0) ; Store Color2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s2,0(k0) ; Store Color3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s2,0(v0) ; Store Color3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -1337,30 +1337,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,28 ; A3 += 28
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,28 ; A2 += 28 (Delay Slot)
     subiu a2,28 ; A2 -= 28
 
     li t0,(28/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -1374,14 +1374,14 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 .endmacro
 
 .macro ShadeTriCullBackZSort,START,END,SORT ; Shaded Triangle Back Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -1405,8 +1405,8 @@
     or s5,s7,s8    ; X3 |= Y3
 
     AverageZTri s0,s1,s2 ; Average Z Triangle: Z1,Z2,Z3
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     lw s0,0(a2) ; S0 = Color1+Command
     addiu a2,4  ; A2 += 4
@@ -1415,20 +1415,20 @@
     lw s2,0(a2) ; S2 = Color3
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color1+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color1+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s1,0(k0) ; Store Color2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s1,0(v0) ; Store Color2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s2,0(k0) ; Store Color3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s2,0(v0) ; Store Color3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -1436,7 +1436,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -1447,30 +1447,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,28 ; A3 += 28
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,28 ; A2 += 28 (Delay Slot)
     subiu a2,28 ; A2 -= 28
 
     li t0,(28/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -1484,7 +1484,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -1493,7 +1493,7 @@
 .macro ShadeTriCullFrontZSort,START,END,SORT ; Shaded Triangle Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -1517,8 +1517,8 @@
     or s5,s7,s8    ; X3 |= Y3
 
     AverageZTri s0,s1,s2 ; Average Z Triangle: Z1,Z2,Z3
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     lw s0,0(a2) ; S0 = Color1+Command
     addiu a2,4  ; A2 += 4
@@ -1527,20 +1527,20 @@
     lw s2,0(a2) ; S2 = Color3
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color1+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color1+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s1,0(k0) ; Store Color2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s1,0(v0) ; Store Color2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s2,0(k0) ; Store Color3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s2,0(v0) ; Store Color3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -1548,7 +1548,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -1559,30 +1559,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,28 ; A3 += 28
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,28 ; A2 += 28 (Delay Slot)
     subiu a2,28 ; A2 -= 28
 
     li t0,(28/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -1596,7 +1596,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -1743,7 +1743,7 @@
 .macro TexTriCullNoneZSort,START,END,SORT ; Texture Triangle Face Cull None Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -1762,8 +1762,8 @@
     or s5,s7,s8    ; X3 |= Y3
 
     AverageZTri s0,s1,s2 ; Average Z Triangle: Z1,Z2,Z3
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     lw s0,0(a2) ; S0 = Color+Command
     addiu a2,4  ; A2 += 4
@@ -1775,22 +1775,22 @@
     lw s6,0(a2) ; S6 = Texcoord3
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s1,0(k0) ; Store Texcoord1+Palette To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s1,0(v0) ; Store Texcoord1+Palette To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s2,0(k0) ; Store Texcoord2+TexPage To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s2,0(v0) ; Store Texcoord2+TexPage To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s6,0(k0) ; Store Texcoord3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s6,0(v0) ; Store Texcoord3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -1806,30 +1806,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,32 ; A3 += 32
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,32 ; A2 += 32 (Delay Slot)
     subiu a2,32 ; A2 -= 32
 
     li t0,(32/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -1843,14 +1843,14 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 .endmacro
 
 .macro TexTriCullBackZSort,START,END,SORT ; Texture Triangle Back Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -1874,8 +1874,8 @@
     or s5,s7,s8    ; X3 |= Y3
 
     AverageZTri s0,s1,s2 ; Average Z Triangle: Z1,Z2,Z3
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     lw s0,0(a2) ; S0 = Color+Command
     addiu a2,4  ; A2 += 4
@@ -1887,22 +1887,22 @@
     lw s6,0(a2) ; S6 = Texcoord3
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s1,0(k0) ; Store Texcoord1+Palette To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s1,0(v0) ; Store Texcoord1+Palette To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s2,0(k0) ; Store Texcoord2+TexPage To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s2,0(v0) ; Store Texcoord2+TexPage To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s6,0(k0) ; Store Texcoord3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s6,0(v0) ; Store Texcoord3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -1910,7 +1910,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -1921,30 +1921,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,32 ; A3 += 32
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,32 ; A2 += 32 (Delay Slot)
     subiu a2,32 ; A2 -= 32
 
     li t0,(32/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -1958,7 +1958,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -1967,7 +1967,7 @@
 .macro TexTriCullFrontZSort,START,END,SORT ; Texture Triangle Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -1991,8 +1991,8 @@
     or s5,s7,s8    ; X3 |= Y3
 
     AverageZTri s0,s1,s2 ; Average Z Triangle: Z1,Z2,Z3
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     lw s0,0(a2) ; S0 = Color+Command
     addiu a2,4  ; A2 += 4
@@ -2004,22 +2004,22 @@
     lw s6,0(a2) ; S6 = Texcoord3
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s1,0(k0) ; Store Texcoord1+Palette To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s1,0(v0) ; Store Texcoord1+Palette To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s2,0(k0) ; Store Texcoord2+TexPage To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s2,0(v0) ; Store Texcoord2+TexPage To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s6,0(k0) ; Store Texcoord3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s6,0(v0) ; Store Texcoord3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -2027,7 +2027,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -2038,30 +2038,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,32 ; A3 += 32
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,32 ; A2 += 32 (Delay Slot)
     subiu a2,32 ; A2 -= 32
 
     li t0,(32/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -2075,7 +2075,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -2240,7 +2240,7 @@
 .macro ShadeTexTriCullNoneZSort,START,END,SORT ; Shaded Texture Triangle Face Cull None Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -2259,8 +2259,8 @@
     or s5,s7,s8    ; X3 |= Y3
 
     AverageZTri s0,s1,s2 ; Average Z Triangle: Z1,Z2,Z3
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     lw s0,0(a2) ; S0 = Color1+Command
     addiu a2,4  ; A2 += 4
@@ -2276,26 +2276,26 @@
     lw s8,0(a2) ; S8 = Texcoord3
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color1+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s6,0(k0) ; Store Texcoord1+Palette To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color1+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s6,0(v0) ; Store Texcoord1+Palette To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s1,0(k0) ; Store Color2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s7,0(k0) ; Store Texcoord2+TexPage To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s1,0(v0) ; Store Color2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s7,0(v0) ; Store Texcoord2+TexPage To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s2,0(k0) ; Store Color3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s8,0(k0) ; Store Texcoord3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s2,0(v0) ; Store Color3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s8,0(v0) ; Store Texcoord3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -2311,30 +2311,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,40 ; A3 += 40
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,40 ; A2 += 40 (Delay Slot)
     subiu a2,40 ; A2 -= 40
 
     li t0,(40/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -2348,14 +2348,14 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 .endmacro
 
 .macro ShadeTexTriCullBackZSort,START,END,SORT ; Shaded Texture Triangle Back Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -2379,8 +2379,8 @@
     or s5,s7,s8    ; X3 |= Y3
 
     AverageZTri s0,s1,s2 ; Average Z Triangle: Z1,Z2,Z3
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     lw s0,0(a2) ; S0 = Color1+Command
     addiu a2,4  ; A2 += 4
@@ -2396,26 +2396,26 @@
     lw s8,0(a2) ; S8 = Texcoord3
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color1+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s6,0(k0) ; Store Texcoord1+Palette To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color1+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s6,0(v0) ; Store Texcoord1+Palette To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s1,0(k0) ; Store Color2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s7,0(k0) ; Store Texcoord2+TexPage To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s1,0(v0) ; Store Color2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s7,0(v0) ; Store Texcoord2+TexPage To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s2,0(k0) ; Store Color3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s8,0(k0) ; Store Texcoord3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s2,0(v0) ; Store Color3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s8,0(v0) ; Store Texcoord3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -2423,7 +2423,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -2434,30 +2434,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,40 ; A3 += 40
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,40 ; A2 += 40 (Delay Slot)
     subiu a2,40 ; A2 -= 40
 
     li t0,(40/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -2471,7 +2471,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -2480,7 +2480,7 @@
 .macro ShadeTexTriCullFrontZSort,START,END,SORT ; Shaded Texture Triangle Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -2504,8 +2504,8 @@
     or s5,s7,s8    ; X3 |= Y3
 
     AverageZTri s0,s1,s2 ; Average Z Triangle: Z1,Z2,Z3
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     lw s0,0(a2) ; S0 = Color1+Command
     addiu a2,4  ; A2 += 4
@@ -2521,26 +2521,26 @@
     lw s8,0(a2) ; S8 = Texcoord3
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color1+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s6,0(k0) ; Store Texcoord1+Palette To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color1+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s6,0(v0) ; Store Texcoord1+Palette To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s1,0(k0) ; Store Color2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s7,0(k0) ; Store Texcoord2+TexPage To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s1,0(v0) ; Store Color2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s7,0(v0) ; Store Texcoord2+TexPage To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s2,0(k0) ; Store Color3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s8,0(k0) ; Store Texcoord3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s2,0(v0) ; Store Color3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s8,0(v0) ; Store Texcoord3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -2548,7 +2548,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -2559,30 +2559,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,40 ; A3 += 40
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,40 ; A2 += 40 (Delay Slot)
     subiu a2,40 ; A2 -= 40
 
     li t0,(40/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -2596,7 +2596,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -2739,7 +2739,7 @@
 .macro WireQuadCullNoneZSort,START,END,SORT ; Wire Quad Face Cull None Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -2760,8 +2760,8 @@
     LoadXYZ s7,s8,s6 ; S7 = 2D X4, S8 = 2D Y4, S6 = 3D Z4
 
     AverageZQuad s0,s1,s2,s6 ; Average Z Quad: Z1,Z2,Z3,Z4
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     sll s8,16      ; Y4 <<= 16
     andi s7,0xFFFF ; X4 &= 0xFFFF
@@ -2770,26 +2770,26 @@
     lw s0,0(a2) ; S0 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s7,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s7,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s5,0(k0) ; Store Vertex4 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s5,0(v0) ; Store Vertex4 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s3,0(k0) ; Store Vertex5 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s3,0(v0) ; Store Vertex5 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     li t0,0x55555555 ; T0 = Termination Code
-    sw t0,0(k0) ; Store Termination Code To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Termination Code To Sort Address
+    addiu v0,4  ; V0 += 4
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -2805,30 +2805,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,32 ; A3 += 32
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,32 ; A2 += 32 (Delay Slot)
     subiu a2,32 ; A2 -= 32
 
     li t0,(32/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -2842,14 +2842,14 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 .endmacro
 
 .macro WireQuadCullBackZSort,START,END,SORT ; Wire Quad Back Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -2875,8 +2875,8 @@
     LoadXYZ s7,s8,s6 ; S7 = 2D X4, S8 = 2D Y4, S6 = 3D Z4
 
     AverageZQuad s0,s1,s2,s6 ; Average Z Quad: Z1,Z2,Z3,Z4
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     sll s8,16      ; Y4 <<= 16
     andi s7,0xFFFF ; X4 &= 0xFFFF
@@ -2885,26 +2885,26 @@
     lw s0,0(a2) ; S0 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s7,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s7,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s5,0(k0) ; Store Vertex4 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s5,0(v0) ; Store Vertex4 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s3,0(k0) ; Store Vertex5 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s3,0(v0) ; Store Vertex5 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     li t0,0x55555555 ; T0 = Termination Code
-    sw t0,0(k0) ; Store Termination Code To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Termination Code To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -2912,7 +2912,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -2923,30 +2923,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,32 ; A3 += 32
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,32 ; A2 += 32 (Delay Slot)
     subiu a2,32 ; A2 -= 32
 
     li t0,(32/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -2960,7 +2960,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -2969,7 +2969,7 @@
 .macro WireQuadCullFrontZSort,START,END,SORT ; Wire Quad Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -2995,8 +2995,8 @@
     LoadXYZ s7,s8,s6 ; S7 = 2D X4, S8 = 2D Y4, S6 = 3D Z4
 
     AverageZQuad s0,s1,s2,s6 ; Average Z Quad: Z1,Z2,Z3,Z4
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     sll s8,16      ; Y4 <<= 16
     andi s7,0xFFFF ; X4 &= 0xFFFF
@@ -3005,26 +3005,26 @@
     lw s0,0(a2) ; S0 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s7,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s7,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s5,0(k0) ; Store Vertex4 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s5,0(v0) ; Store Vertex4 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s3,0(k0) ; Store Vertex5 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s3,0(v0) ; Store Vertex5 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     li t0,0x55555555 ; T0 = Termination Code
-    sw t0,0(k0) ; Store Termination Code To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Termination Code To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -3032,7 +3032,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -3043,30 +3043,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,32 ; A3 += 32
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,32 ; A2 += 32 (Delay Slot)
     subiu a2,32 ; A2 -= 32
 
     li t0,(32/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -3080,7 +3080,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -3217,7 +3217,7 @@
 .macro FillQuadCullNoneZSort,START,END,SORT ; Fill Quad Face Cull None Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -3238,8 +3238,8 @@
     LoadXYZ s7,s8,s6 ; S7 = 2D X4, S8 = 2D Y4, S6 = 3D Z4
 
     AverageZQuad s0,s1,s2,s6 ; Average Z Quad: Z1,Z2,Z3,Z4
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     sll s8,16      ; Y4 <<= 16
     andi s7,0xFFFF ; X4 &= 0xFFFF
@@ -3248,19 +3248,19 @@
     lw s0,0(a2) ; S0 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s7,0(k0) ; Store Vertex4 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s7,0(v0) ; Store Vertex4 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -3276,30 +3276,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,24 ; A3 += 24
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,24 ; A2 += 24 (Delay Slot)
     subiu a2,24 ; A2 -= 24
 
     li t0,(24/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -3313,14 +3313,14 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 .endmacro
 
 .macro FillQuadCullBackZSort,START,END,SORT ; Fill Quad Back Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -3346,8 +3346,8 @@
     LoadXYZ s7,s8,s6 ; S7 = 2D X4, S8 = 2D Y4, S6 = 3D Z4
 
     AverageZQuad s0,s1,s2,s6 ; Average Z Quad: Z1,Z2,Z3,Z4
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     sll s8,16      ; Y4 <<= 16
     andi s7,0xFFFF ; X4 &= 0xFFFF
@@ -3356,19 +3356,19 @@
     lw s0,0(a2) ; S0 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s7,0(k0) ; Store Vertex4 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s7,0(v0) ; Store Vertex4 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -3376,7 +3376,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -3387,30 +3387,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,24 ; A3 += 24
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,24 ; A2 += 24 (Delay Slot)
     subiu a2,24 ; A2 -= 24
 
     li t0,(24/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -3424,7 +3424,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -3433,7 +3433,7 @@
 .macro FillQuadCullFrontZSort,START,END,SORT ; Fill Quad Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -3459,8 +3459,8 @@
     LoadXYZ s7,s8,s6 ; S7 = 2D X4, S8 = 2D Y4, S6 = 3D Z4
 
     AverageZQuad s0,s1,s2,s6 ; Average Z Quad: Z1,Z2,Z3,Z4
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     sll s8,16      ; Y4 <<= 16
     andi s7,0xFFFF ; X4 &= 0xFFFF
@@ -3469,19 +3469,19 @@
     lw s0,0(a2) ; S0 = Color+Command
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s7,0(k0) ; Store Vertex4 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s7,0(v0) ; Store Vertex4 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -3489,7 +3489,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -3500,30 +3500,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,24 ; A3 += 24
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,24 ; A2 += 24 (Delay Slot)
     subiu a2,24 ; A2 -= 24
 
     li t0,(24/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -3537,7 +3537,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -3701,7 +3701,7 @@
 .macro ShadeQuadCullNoneZSort,START,END,SORT ; Shaded Quad Face Cull None Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -3722,8 +3722,8 @@
     LoadXYZ s7,s8,s6 ; S7 = 2D X4, S8 = 2D Y4, S6 = 3D Z4
 
     AverageZQuad s0,s1,s2,s6 ; Average Z Quad: Z1,Z2,Z3,Z4
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     sll s8,16      ; Y4 <<= 16
     andi s7,0xFFFF ; X4 &= 0xFFFF
@@ -3738,25 +3738,25 @@
     lw s6,0(a2) ; S6 = Color4
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color1+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color1+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s1,0(k0) ; Store Color2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s1,0(v0) ; Store Color2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s2,0(k0) ; Store Color3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s2,0(v0) ; Store Color3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s6,0(k0) ; Store Color4 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s7,0(k0) ; Store Vertex4 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s6,0(v0) ; Store Color4 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s7,0(v0) ; Store Vertex4 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -3772,30 +3772,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,36 ; A3 += 36
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,36 ; A2 += 36 (Delay Slot)
     subiu a2,36 ; A2 -= 36
 
     li t0,(36/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -3809,14 +3809,14 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 .endmacro
 
 .macro ShadeQuadCullBackZSort,START,END,SORT ; Shaded Quad Back Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -3842,8 +3842,8 @@
     LoadXYZ s7,s8,s6 ; S7 = 2D X4, S8 = 2D Y4, S6 = 3D Z4
 
     AverageZQuad s0,s1,s2,s6 ; Average Z Quad: Z1,Z2,Z3,Z4
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     sll s8,16      ; Y4 <<= 16
     andi s7,0xFFFF ; X4 &= 0xFFFF
@@ -3858,25 +3858,25 @@
     lw s6,0(a2) ; S6 = Color4
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color1+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color1+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s1,0(k0) ; Store Color2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s1,0(v0) ; Store Color2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s2,0(k0) ; Store Color3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s2,0(v0) ; Store Color3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s6,0(k0) ; Store Color4 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s7,0(k0) ; Store Vertex4 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s6,0(v0) ; Store Color4 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s7,0(v0) ; Store Vertex4 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -3884,7 +3884,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -3895,30 +3895,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,36 ; A3 += 36
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,36 ; A2 += 36 (Delay Slot)
     subiu a2,36 ; A2 -= 36
 
     li t0,(36/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -3932,7 +3932,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -3941,7 +3941,7 @@
 .macro ShadeQuadCullFrontZSort,START,END,SORT ; Shaded Quad Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -3967,8 +3967,8 @@
     LoadXYZ s7,s8,s6 ; S7 = 2D X4, S8 = 2D Y4, S6 = 3D Z4
 
     AverageZQuad s0,s1,s2,s6 ; Average Z Quad: Z1,Z2,Z3,Z4
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     sll s8,16      ; Y4 <<= 16
     andi s7,0xFFFF ; X4 &= 0xFFFF
@@ -3983,25 +3983,25 @@
     lw s6,0(a2) ; S6 = Color4
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color1+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color1+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s1,0(k0) ; Store Color2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s1,0(v0) ; Store Color2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s2,0(k0) ; Store Color3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s2,0(v0) ; Store Color3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s6,0(k0) ; Store Color4 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s7,0(k0) ; Store Vertex4 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s6,0(v0) ; Store Color4 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s7,0(v0) ; Store Vertex4 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -4009,7 +4009,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -4020,30 +4020,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,36 ; A3 += 36
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,36 ; A2 += 36 (Delay Slot)
     subiu a2,36 ; A2 -= 36
 
     li t0,(36/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -4057,7 +4057,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -4233,7 +4233,7 @@
 .macro TexQuadCullNoneZSort,START,END,SORT ; Texture Quad Face Cull None Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -4254,8 +4254,8 @@
     LoadXYZ s7,s8,s6 ; S7 = 2D X4, S8 = 2D Y4, S6 = 3D Z4
 
     AverageZQuad s0,s1,s2,s6 ; Average Z Quad: Z1,Z2,Z3,Z4
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     sll s8,16      ; Y4 <<= 16
     andi s7,0xFFFF ; X4 &= 0xFFFF
@@ -4273,27 +4273,27 @@
     lw s8,0(a2) ; S8 = Texcoord4
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s1,0(k0) ; Store Texcoord1+Palette To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s1,0(v0) ; Store Texcoord1+Palette To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s2,0(k0) ; Store Texcoord2+TexPage To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s2,0(v0) ; Store Texcoord2+TexPage To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s6,0(k0) ; Store Texcoord3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s6,0(v0) ; Store Texcoord3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s7,0(k0) ; Store Vertex4 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s8,0(k0) ; Store Texcoord4 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s7,0(v0) ; Store Vertex4 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s8,0(v0) ; Store Texcoord4 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -4309,30 +4309,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,40 ; A3 += 40
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,40 ; A2 += 40 (Delay Slot)
     subiu a2,40 ; A2 -= 40
 
     li t0,(40/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -4346,14 +4346,14 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 .endmacro
 
 .macro TexQuadCullBackZSort,START,END,SORT ; Texture Quad Back Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -4379,8 +4379,8 @@
     LoadXYZ s7,s8,s6 ; S7 = 2D X4, S8 = 2D Y4, S6 = 3D Z4
 
     AverageZQuad s0,s1,s2,s6 ; Average Z Quad: Z1,Z2,Z3,Z4
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     sll s8,16      ; Y4 <<= 16
     andi s7,0xFFFF ; X4 &= 0xFFFF
@@ -4398,27 +4398,27 @@
     lw s8,0(a2) ; S8 = Texcoord4
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s1,0(k0) ; Store Texcoord1+Palette To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s1,0(v0) ; Store Texcoord1+Palette To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s2,0(k0) ; Store Texcoord2+TexPage To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s2,0(v0) ; Store Texcoord2+TexPage To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s6,0(k0) ; Store Texcoord3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s6,0(v0) ; Store Texcoord3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s7,0(k0) ; Store Vertex4 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s8,0(k0) ; Store Texcoord4 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s7,0(v0) ; Store Vertex4 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s8,0(v0) ; Store Texcoord4 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -4426,7 +4426,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -4437,30 +4437,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,40 ; A3 += 40
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,40 ; A2 += 40 (Delay Slot)
     subiu a2,40 ; A2 -= 40
 
     li t0,(40/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -4474,7 +4474,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -4483,7 +4483,7 @@
 .macro TexQuadCullFrontZSort,START,END,SORT ; Texture Quad Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -4509,8 +4509,8 @@
     LoadXYZ s7,s8,s6 ; S7 = 2D X4, S8 = 2D Y4, S6 = 3D Z4
 
     AverageZQuad s0,s1,s2,s6 ; Average Z Quad: Z1,Z2,Z3,Z4
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     sll s8,16      ; Y4 <<= 16
     andi s7,0xFFFF ; X4 &= 0xFFFF
@@ -4528,27 +4528,27 @@
     lw s8,0(a2) ; S8 = Texcoord4
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s1,0(k0) ; Store Texcoord1+Palette To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s1,0(v0) ; Store Texcoord1+Palette To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s2,0(k0) ; Store Texcoord2+TexPage To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s2,0(v0) ; Store Texcoord2+TexPage To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s6,0(k0) ; Store Texcoord3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s6,0(v0) ; Store Texcoord3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s7,0(k0) ; Store Vertex4 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s8,0(k0) ; Store Texcoord4 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s7,0(v0) ; Store Vertex4 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s8,0(v0) ; Store Texcoord4 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -4556,7 +4556,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -4567,30 +4567,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,40 ; A3 += 40
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,40 ; A2 += 40 (Delay Slot)
     subiu a2,40 ; A2 -= 40
 
     li t0,(40/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -4604,7 +4604,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -4807,7 +4807,7 @@
 .macro ShadeTexQuadCullNoneZSort,START,END,SORT ; Shaded Texture Quad Face Cull None Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -4828,8 +4828,8 @@
     LoadXYZ s7,s8,s6 ; S7 = 2D X4, S8 = 2D Y4, S6 = 3D Z4
 
     AverageZQuad s0,s1,s2,s6 ; Average Z Quad: Z1,Z2,Z3,Z4
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     sll s8,16      ; Y4 <<= 16
     andi s7,0xFFFF ; X4 &= 0xFFFF
@@ -4853,33 +4853,33 @@
     lw t2,0(a2) ; T2 = Texcoord4
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color1+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s8,0(k0) ; Store Texcoord1+Palette To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color1+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s8,0(v0) ; Store Texcoord1+Palette To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s1,0(k0) ; Store Color2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw t0,0(k0) ; Store Texcoord2+TexPage To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s1,0(v0) ; Store Color2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw t0,0(v0) ; Store Texcoord2+TexPage To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s2,0(k0) ; Store Color3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw t1,0(k0) ; Store Texcoord3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s2,0(v0) ; Store Color3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw t1,0(v0) ; Store Texcoord3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s6,0(k0) ; Store Color4 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s7,0(k0) ; Store Vertex4 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw t2,0(k0) ; Store Texcoord4 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s6,0(v0) ; Store Color4 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s7,0(v0) ; Store Vertex4 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw t2,0(v0) ; Store Texcoord4 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
     nop ; Delay Slot
@@ -4895,30 +4895,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,52 ; A3 += 52
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,52 ; A2 += 52 (Delay Slot)
     subiu a2,52 ; A2 -= 52
 
     li t0,(52/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -4932,14 +4932,14 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 .endmacro
 
 .macro ShadeTexQuadCullBackZSort,START,END,SORT ; Shaded Texture Quad Back Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -4965,8 +4965,8 @@
     LoadXYZ s7,s8,s6 ; S7 = 2D X4, S8 = 2D Y4, S6 = 3D Z4
 
     AverageZQuad s0,s1,s2,s6 ; Average Z Quad: Z1,Z2,Z3,Z4
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     sll s8,16      ; Y4 <<= 16
     andi s7,0xFFFF ; X4 &= 0xFFFF
@@ -4990,33 +4990,33 @@
     lw t2,0(a2) ; T2 = Texcoord4
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color1+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s8,0(k0) ; Store Texcoord1+Palette To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color1+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s8,0(v0) ; Store Texcoord1+Palette To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s1,0(k0) ; Store Color2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw t0,0(k0) ; Store Texcoord2+TexPage To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s1,0(v0) ; Store Color2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw t0,0(v0) ; Store Texcoord2+TexPage To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s2,0(k0) ; Store Color3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw t1,0(k0) ; Store Texcoord3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s2,0(v0) ; Store Color3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw t1,0(v0) ; Store Texcoord3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s6,0(k0) ; Store Color4 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s7,0(k0) ; Store Vertex4 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw t2,0(k0) ; Store Texcoord4 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s6,0(v0) ; Store Color4 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s7,0(v0) ; Store Vertex4 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw t2,0(v0) ; Store Texcoord4 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -5024,7 +5024,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -5035,30 +5035,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,52 ; A3 += 52
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,52 ; A2 += 52 (Delay Slot)
     subiu a2,52 ; A2 -= 52
 
     li t0,(52/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -5072,7 +5072,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
@@ -5081,7 +5081,7 @@
 .macro ShadeTexQuadCullFrontZSort,START,END,SORT ; Shaded Texture Quad Front Face Cull Z Sort: Object Start Address, Object End Address, Sort Address
   la a2,START ; A2 = Object Start Address
   la a3,END   ; A3 = Object End Address
-  la k0,SORT  ; K0 = Sort Address
+  la v0,SORT  ; V0 = Sort Address
   Loop:
     LoadXYZ s3,s4,s0 ; S3 = 2D X1, S4 = 2D Y1, S0 = 3D Z1
     LoadXYZ s5,s6,s1 ; S5 = 2D X2, S6 = 2D Y2, S1 = 3D Z2
@@ -5107,8 +5107,8 @@
     LoadXYZ s7,s8,s6 ; S7 = 2D X4, S8 = 2D Y4, S6 = 3D Z4
 
     AverageZQuad s0,s1,s2,s6 ; Average Z Quad: Z1,Z2,Z3,Z4
-    sw t0,0(k0) ; Store Average Z To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw t0,0(v0) ; Store Average Z To Sort Address
+    addiu v0,4  ; V0 += 4
 
     sll s8,16      ; Y4 <<= 16
     andi s7,0xFFFF ; X4 &= 0xFFFF
@@ -5132,33 +5132,33 @@
     lw t2,0(a2) ; T2 = Texcoord4
     addiu a2,4  ; A2 += 4
 
-    sw s0,0(k0) ; Store Color1+Command To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s3,0(k0) ; Store Vertex1 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s8,0(k0) ; Store Texcoord1+Palette To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s0,0(v0) ; Store Color1+Command To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s3,0(v0) ; Store Vertex1 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s8,0(v0) ; Store Texcoord1+Palette To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s1,0(k0) ; Store Color2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s4,0(k0) ; Store Vertex2 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw t0,0(k0) ; Store Texcoord2+TexPage To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s1,0(v0) ; Store Color2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s4,0(v0) ; Store Vertex2 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw t0,0(v0) ; Store Texcoord2+TexPage To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s2,0(k0) ; Store Color3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s5,0(k0) ; Store Vertex3 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw t1,0(k0) ; Store Texcoord3 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s2,0(v0) ; Store Color3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s5,0(v0) ; Store Vertex3 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw t1,0(v0) ; Store Texcoord3 To Sort Address
+    addiu v0,4  ; V0 += 4
 
-    sw s6,0(k0) ; Store Color4 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw s7,0(k0) ; Store Vertex4 To Sort Address
-    addiu k0,4  ; K0 += 4
-    sw t2,0(k0) ; Store Texcoord4 To Sort Address
-    addiu k0,4  ; K0 += 4
+    sw s6,0(v0) ; Store Color4 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw s7,0(v0) ; Store Vertex4 To Sort Address
+    addiu v0,4  ; V0 += 4
+    sw t2,0(v0) ; Store Texcoord4 To Sort Address
+    addiu v0,4  ; V0 += 4
 
     Skip:
     bne a2,a3,Loop ; IF (Object Start Offset != Object End Offset) Loop
@@ -5166,7 +5166,7 @@
 
   ; Sort List (Selection Sort)
   la a2,SORT ; A2 = Sort Start Address
-  beq a2,k0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
+  beq a2,v0,SkipObject ; IF (Sort Start Offset == Sort End Offset) Skip Object
   nop ; Delay Slot
   SelectionSort:
     or a3,a2,r0 ; A3 = Sort Current Address
@@ -5177,30 +5177,30 @@
       blt t1,t0,ZLT ; IF (Average Z Value < MaxZ) Z Less Than
       nop ; Delay Slot
       or t0,t1,r0 ; ELSE (MaxZ = Average Z Value)
-      or k1,a3,r0 ; K1 = MaxZ Address
+      or v1,a3,r0 ; V1 = MaxZ Address
       ZLT:
       addiu a3,52 ; A3 += 52
 
-      bne a3,k0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
+      bne a3,v0,SortLoop ; IF (Sort Current Offset != Sort End Offset) Sort Loop
       nop ; Delay Slot
 
-    beq k1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
+    beq v1,a2,NoSwap ; IF (MaxZ Address == Sort Start Address) No Swap
     addiu a2,52 ; A2 += 52 (Delay Slot)
     subiu a2,52 ; A2 -= 52
 
     li t0,(52/4)-1 ; T0 = Swap Count
     Swap:
       lw t1,0(a2)
-      lw t2,0(k1)
-      sw t1,0(k1)
+      lw t2,0(v1)
+      sw t1,0(v1)
       sw t2,0(a2)
       addiu a2,4 ; A2 += 4
-      addiu k1,4 ; K1 += 4
+      addiu v1,4 ; V1 += 4
       bnez t0,Swap ; IF (Swap Count != 0) Swap
       subiu t0,1 ; T0-- (Delay Slot)
 
     NoSwap:
-    bne a2,k0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
+    bne a2,v0,SelectionSort ; IF (Sort Start Offset != Sort End Offset) Selection Sort
     nop ; Delay Slot
 
   ; Render Sort List
@@ -5214,7 +5214,7 @@
       sw t1,GP0(a0) ; Write GP0 Command/Packet Word
       bnez t0,Render ; IF (Render Count != 0) Render
       subiu t0,1 ; T0-- (Delay Slot)
-    bne a1,k0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
+    bne a1,v0,RenderLoop ; IF (Sort Start Offset != Sort End Offset) Render Loop
     nop ; Delay Slot
 
   SkipObject:
