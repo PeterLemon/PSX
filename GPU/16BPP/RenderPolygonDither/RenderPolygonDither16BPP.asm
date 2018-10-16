@@ -23,19 +23,19 @@ WRGP0 GPUDRAWABR,0x03BD3F ; Write GP0 Command Word (Set Drawing Area Bottom Righ
 WRGP0 GPUDRAWOFS,0x000000 ; Write GP0 Command Word (Set Drawing Offset X=0, Y=0)
 
 ; Render Polygons
-WRGP0 GPUDRAWM,0x000400   ; Write GP0 Command Word (Drawing To Display Area Allowed Bit 10, Dither Disabled Bit 9)
+WRGP0 GPUDRAWM,0x000400 ; Write GP0 Command Word (Drawing To Display Area Allowed Bit 10, Dither Disabled Bit 9)
 ShadeQuad 0x000000,8,8, 0x0000FF,312,8, 0x000000,8,32, 0x0000FF,312,32 ; Shaded Quad: Color1,X1,Y1, Color2,X2,Y2, Color3,X3,Y3, Color4,X4,Y4
 
 WRGP0 GPUDRAWM,0x000600 ; Write GP0 Command Word (Drawing To Display Area Allowed Bit 10, Dither Enabled Bit 9)
 ShadeQuad 0x000000,8,40, 0x0000FF,312,40, 0x000000,8,64, 0x0000FF,312,64 ; Shaded Quad: Color1,X1,Y1, Color2,X2,Y2, Color3,X3,Y3, Color4,X4,Y4
 
-WRGP0 GPUDRAWM,0x000400   ; Write GP0 Command Word (Drawing To Display Area Allowed Bit 10, Dither Disabled Bit 9)
+WRGP0 GPUDRAWM,0x000400 ; Write GP0 Command Word (Drawing To Display Area Allowed Bit 10, Dither Disabled Bit 9)
 ShadeQuad 0x000000,8,72, 0x00FF00,312,72, 0x000000,8,96, 0x00FF00,312,96 ; Shaded Quad: Color1,X1,Y1, Color2,X2,Y2, Color3,X3,Y3, Color4,X4,Y4
 
 WRGP0 GPUDRAWM,0x000600 ; Write GP0 Command Word (Drawing To Display Area Allowed Bit 10, Dither Enabled Bit 9)
 ShadeQuad 0x000000,8,104, 0x00FF00,312,104, 0x000000,8,128, 0x00FF00,312,128 ; Shaded Quad: Color1,X1,Y1, Color2,X2,Y2, Color3,X3,Y3, Color4,X4,Y4
 
-WRGP0 GPUDRAWM,0x000400   ; Write GP0 Command Word (Drawing To Display Area Allowed Bit 10, Dither Disabled Bit 9)
+WRGP0 GPUDRAWM,0x000400 ; Write GP0 Command Word (Drawing To Display Area Allowed Bit 10, Dither Disabled Bit 9)
 ShadeQuad 0x000000,8,136, 0xFF0000,312,136, 0x000000,8,160, 0xFF0000,312,160 ; Shaded Quad: Color1,X1,Y1, Color2,X2,Y2, Color3,X3,Y3, Color4,X4,Y4
 
 WRGP0 GPUDRAWM,0x000600 ; Write GP0 Command Word (Drawing To Display Area Allowed Bit 10, Dither Enabled Bit 9)
