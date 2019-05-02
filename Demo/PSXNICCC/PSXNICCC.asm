@@ -32,11 +32,10 @@ LoopFrames:
   la a3,PadBuffer ; Load Pad Buffer Address
   Wait:           ; Wait For Vertical Retrace Period & Store XOR Pad Data
     lw t0,0(a3)   ; Load Pad Buffer
-    lui t1,0xFFFF ; Load XOR Reverse Pad Upper Bits
+    nop           ; Delay Slot
     beqz t0,Wait  ; IF (Pad Buffer == 0) Wait
-    ori t1,0xFFFF ; Load XOR Reverse Pad Lower Bits (Delay Slot)
+    nor t0,r0     ; NOR Compliment Pad Data Bits (Delay Slot)
     sw r0,0(a3)   ; Store Zero To Pad Buffer
-    xor t0,t1     ; XOR Reverse Pad Data Bits
     la a3,PadData ; Load Pad Data Address
     sw t0,0(a3)   ; Store Pad Data
 

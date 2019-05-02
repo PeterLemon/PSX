@@ -34,16 +34,15 @@ JOY_LEFT   equ 0x8000 ; Joypad Input: Left     (Bit 15)
 .endmacro
 
 .macro WaitVSync,BUFFER,DATA ; Wait For Vertical Retrace Period & Store XOR Pad Data: Buffer Address, Data Address
-  la a1,BUFFER ; Load Pad Buffer Address
-  Wait: ; Wait For Vertical Retrace Period & Store XOR Pad Data
-    lw t0,0(a1) ; Load Pad Buffer
-    lui t1,0xFFFF ; Load XOR Reverse Pad Upper Bits
+  la a1,BUFFER   ; Load Pad Buffer Address
+  Wait:          ; Wait For Vertical Retrace Period & Store XOR Pad Data
+    lw t0,0(a1)  ; Load Pad Buffer
+    nop          ; Delay Slot
     beqz t0,Wait ; IF (Pad Buffer == 0) Wait
-    ori t1,0xFFFF ; Load XOR Reverse Pad Lower Bits (Delay Slot)
-    sw r0,0(a1) ; Store Zero To Pad Buffer
-    xor t0,t1 ; XOR Reverse Pad Data Bits
-    la a1,DATA ; Load Pad Data Address
-    sw t0,0(a1) ; Store Pad Data
+    nor t0,r0    ; NOR Compliment Pad Data Bits (Delay Slot)
+    sw r0,0(a1)  ; Store Zero To Pad Buffer
+    la a1,DATA   ; Load Pad Data Address
+    sw t0,0(a1)  ; Store Pad Data
 .endmacro
 
 .macro IsJoyDown,INPUT,DATA ; Is Joypad Digital Button Pressed Down: Input, Input Data Address
