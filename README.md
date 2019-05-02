@@ -14,8 +14,11 @@ http://hitmen.c02.at/html/psx_sources.html<br />
 Also I'd like to thank ARM9, who made the bin2exe.py file, to convert my PSX binaries into PSX exectuables.<br />
 https://github.com/ARM9/psxdev/blob/master/libpsx/tools/bin2exe.py<br />
 <br />
-Please check out NO$PSX, a PSX Emulator by Martin Korth:<br />
+Please check out NO$PSX, a PSX emulator/debugger by Martin Korth:<br />
 http://problemkaputt.de/psx.htm<br />
+<br />
+Also MAME has a great PSX emulator/debugger by smf:<br />
+https://www.mamedev.org/<br />
 <br />
 Howto Compile:<br />
 All the code compiles into a single binary & executable (NAME.EXE) file.<br />
@@ -24,4 +27,5 @@ Using Armips Run: make.bat<br />
 Howto Run:<br />
 I only test with a real PSX.<br />
 <br />
-You can also use PSX emulators like NO$PSX.
+You can also use PSX emulators like NO$PSX which can load PSX executable files directly, & MAME using this command:<br />
+mame pse -quik NAME.EXE
