@@ -27,5 +27,5 @@ Using Armips Run: make.bat<br />
 Howto Run:<br />
 I only test with a real PSX.<br />
 <br />
-You can also use PSX emulators like NO$PSX which can load PSX executable files directly, & MAME using this command:<br />
+You can also use PSX emulators like NO$PSX which can load PSX executables directly, & MAME using this command:<br />
 mame pse -quik NAME.EXE
