@@ -39,8 +39,30 @@ LoopFrames:
     la a3,PadData ; Load Pad Data Address
     sw t0,0(a3)   ; Store Pad Data
 
-  ; Frame Clear Screen
-  FillRect 0x000000, 0,0, 256,240 ; Fill Rectangle (Variable Size): Color, X,Y, Width,Height
+  ; Swap Display/Render Buffers
+  la a3,DoubleBuffer ; A2 = Double Buffer Address
+  lw t0,0(a3) ; T0 = Double Buffer Word
+  nop ; Delay Slot
+  beqz t0,FrameB ; IF (Double Buffer == 0) Frame B
+  nop ; Delay Slot
+  WRGP1 GPUVRAM,0x000100    ; Write GP1 Command Word (Start Of Display Area: X = 256, Y = 0)
+  WRGP0 GPUDRAWATL,0x000000 ; Write GP0 Command Word (Set Drawing Area Top Left X1=0, Y1=0)
+  WRGP0 GPUDRAWABR,0x03BCFF ; Write GP0 Command Word (Set Drawing Area Bottom Right X2=255, Y2=239)
+  WRGP0 GPUDRAWOFS,0x000000 ; Write GP0 Command Word (Set Drawing Offset X=0, Y=0)
+  FillRectVRAM 0x000000, 0,0, 256,240 ; Fill Rectangle In VRAM: Color, X,Y, Width,Height
+  sw r0,0(a3) ; Double Buffer = 0
+  j FrameEnd
+  nop ; Delay Slot
+
+  FrameB:
+  WRGP1 GPUVRAM,0x000000    ; Write GP1 Command Word (Start Of Display Area: X = 0, Y = 0)
+  WRGP0 GPUDRAWATL,0x000100 ; Write GP0 Command Word (Set Drawing Area Top Left X1=256, Y1=0)
+  WRGP0 GPUDRAWABR,0x03B27F ; Write GP0 Command Word (Set Drawing Area Bottom Right X2=511, Y2=239)
+  WRGP0 GPUDRAWOFS,0x000100 ; Write GP0 Command Word (Set Drawing Offset X=256, Y=0)
+  FillRectVRAM 0x000000, 256,0, 256,240 ; Fill Rectangle In VRAM: Color, X,Y, Width,Height
+  li t0,1 ; T0 = 1
+  sw t0,0(a3) ; Double Buffer = 1
+  FrameEnd:
 
   lbu t0,0(a1) ; T0 = Frame Data Byte Flags (Bit 0: Frame Clear Screen, Bit 1: Frame Contains Palette Data, Bit 2: Frame Indexed Mode)
   addiu a1,1   ; Increment Scene Data Address
@@ -1163,6 +1185,9 @@ PlotFillTriangle: ; Plot Fill Triangle (S0=X0, S1=Y0, S2=X1, S3=Y1, S4=X2, S5=Y2
 
   jr ra ; Return
   nop   ; Delay Slot
+
+DoubleBuffer:
+  dw 0 ; Double Buffer (0 = Frame Buffer A, 1 = Frame Buffer B)
 
 PadBuffer:
   dw 0 ; Pad Buffer (Automatically Stored Every Frame)
