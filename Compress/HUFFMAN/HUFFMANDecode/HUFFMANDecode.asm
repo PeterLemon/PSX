@@ -23,7 +23,7 @@ WRGP0 GPUDRAWABR,0x03BD3F ; Write GP0 Command Word (Set Drawing Area Bottom Righ
 WRGP0 GPUDRAWOFS,0x000000 ; Write GP0 Command Word (Set Drawing Offset X=0, Y=0)
 
 la a1,Huff    ; A1 = Source Address
-lui a2,0xA010 ; A2 = Destination Address (RAM Start Offset)
+lui a2,0x8010 ; A2 = Destination Address (RAM Start Offset)
 
 lbu t0,3(a1) ; T0 = HI Data Length Byte
 lbu t1,2(a1) ; T1 = MID Data Length Byte
