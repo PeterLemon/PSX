@@ -25,28 +25,23 @@ WRGP0 GPUDRAWOFS,0x000000 ; Write GP0 Command Word (Set Drawing Offset X=0, Y=0)
 la a1,Huff    ; A1 = Source Address
 lui a2,0x8010 ; A2 = Destination Address (RAM Start Offset)
 
-lbu t0,3(a1) ; T0 = HI Data Length Byte
-lbu t1,2(a1) ; T1 = MID Data Length Byte
-sll t0,8
-or t0,t1
-lbu t1,1(a1) ; T1 = LO Data Length Byte
-sll t0,8
-or t0,t1     ; T0 = Data Length
-add t0,a2    ; T0 = Destination End Offset (RAM End Offset)
-addi a1,4    ; Add 4 To Huffman Offset
+lw t0,0(a1) ; T0 = Data Length & Header Info
+addiu a1,4  ; Add 4 To Huffman Offset
+srl t0,8    ; T0 = Data Length
+addu t0,a2  ; T0 = Destination End Offset (RAM End Offset)
 
 lbu t1,0(a1) ; T1 = (Tree Table Size / 2) - 1
-addi a1,1    ; A1 = Tree Table
+addiu a1,1   ; A1 = Tree Table Offset
 sll t1,1
-addi t1,1    ; T1 = Tree Table Size
-add t1,a1    ; T1 = Compressed Bitstream Offset
+addiu t1,1   ; T1 = Tree Table Size
+addu t1,a1   ; T1 = Compressed Bitstream Offset
 
-subi a1,5   ; A1 = Source Address
+subiu a1,5  ; A1 = Source Address
 ori t6,r0,0 ; T6 = Branch/Leaf Flag (0 = Branch 1 = Leaf)
 ori t7,r0,5 ; T7 = Tree Table Offset (Reset)
 HuffChunkLoop:
   lw t2,0(t1)   ; T2 = Node Bits (Bit31 = First Bit)
-  addi t1,4     ; Add 4 To Compressed Bitstream Offset
+  addiu t1,4    ; Add 4 To Compressed Bitstream Offset
   lui t3,0x8000 ; T3 = Node Bit Shifter
 
   HuffByteLoop: 
@@ -57,20 +52,20 @@ HuffChunkLoop:
     beqz t6,HuffBranch ; Test T6 Branch/Leaf Flag (0 = Branch 1 = Leaf)
     andi t5,t4,0x3F ; T5 = Offset To Next Child Node (Delay Slot)
     sb t4,0(a2)     ; Store Data Byte To Destination IF Leaf
-    addi a2,1       ; Add 1 To RAM Offset
+    addiu a2,1      ; Add 1 To RAM Offset
     ori t7,r0,5     ; T7 = Tree Table Offset (Reset)
     j HuffByteLoop
     ori t6,r0,0 ; T6 = Branch (Delay Slot)
 
     HuffBranch:
       sll t5,1
-      addi t5,2    ; T5 = Node0 Child Offset * 2 + 2
+      addiu t5,2   ; T5 = Node0 Child Offset * 2 + 2
       andi t7,-2   ; T7 = Tree Offset NOT 1
-      add t7,t5    ; T7 = Node0 Child Offset
+      addu t7,t5   ; T7 = Node0 Child Offset
       and t8,t2,t3 ; Test Node Bit (0 = Node0, 1 = Node1)
       beqz t8,HuffNode0
       srl t3,1     ; Shift T3 To Next Node Bit (Delay Slot)
-      addi t7,1    ; T7 = Node1 Child Offset
+      addiu t7,1   ; T7 = Node1 Child Offset
       j HuffNodeEnd
       ori t8,r0,0x40 ; T8 = Test Node1 End Flag (Delay Slot)
       HuffNode0:

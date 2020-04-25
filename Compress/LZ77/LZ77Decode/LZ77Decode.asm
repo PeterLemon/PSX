@@ -22,17 +22,13 @@ WRGP0 GPUDRAWATL,0x000000 ; Write GP0 Command Word (Set Drawing Area Top Left X1
 WRGP0 GPUDRAWABR,0x03BD3F ; Write GP0 Command Word (Set Drawing Area Bottom Right X2=319, Y2=239)
 WRGP0 GPUDRAWOFS,0x000000 ; Write GP0 Command Word (Set Drawing Offset X=0, Y=0)
 
-la a1,LZ+4    ; A1 = Source Address
+la a1,LZ      ; A1 = Source Address
 lui a2,0x8010 ; A2 = Destination Address (RAM Start Offset)
 
-lbu t0,-1(a1) ; T0 = HI Data Length Byte
-lbu t1,-2(a1) ; T1 = MID Data Length Byte
-sll t0,8
-or t0,t1
-lbu t1,-3(a1) ; T1 = LO Data Length Byte
-sll t0,8
-or t0,t1      ; T0 = Data Length
-addu t0,a2    ; T0 = Destination End Offset (RAM End Offset)
+lw t0,0(a1) ; T0 = Data Length & Header Info
+addiu a1,4  ; Add 4 To LZ Offset
+srl t0,8    ; T0 = Data Length
+addu t0,a2  ; T0 = Destination End Offset (RAM End Offset)
 
 LZLoop:
   lbu t1,0(a1)        ; T1 = Flag Data For Next 8 Blocks (0 = Uncompressed Byte, 1 = Compressed Bytes)
