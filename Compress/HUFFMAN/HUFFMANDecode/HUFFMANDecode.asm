@@ -46,7 +46,7 @@ HuffChunkLoop:
 
   HuffByteLoop: 
     beq a2,t0,HuffEnd ; IF (Destination Address == Destination End Offset) HuffEnd
-    add t8,a1,t7 ; T8 = Tree Table Offset (Delay Slot)
+    addu t8,a1,t7 ; T8 = Tree Table Offset (Delay Slot)
     beqz t3,HuffChunkLoop ; IF (Node Bit Shifter == 0) HuffChunkLoop
     lbu t4,0(t8) ; T4 = Next Node (Delay Slot)
     beqz t6,HuffBranch ; Test T6 Branch/Leaf Flag (0 = Branch 1 = Leaf)
