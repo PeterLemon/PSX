@@ -45,63 +45,42 @@ subi a1,5   ; A1 = Source Address
 ori t6,r0,0 ; T6 = Branch/Leaf Flag (0 = Branch 1 = Leaf)
 ori t7,r0,5 ; T7 = Tree Table Offset (Reset)
 HuffChunkLoop:
-  lbu t2,3(t1) ; T2 = Data Length Byte 0
-  lbu t8,2(t1) ; T8 = Data Length Byte 1
-  sll t2,8
-  or t2,t8
-  lbu t8,1(t1) ; T8 = Data Length Byte 2
-  sll t2,8
-  or t2,t8
-  lbu t8,0(t1)  ; T8 = Data Length Byte 3
-  sll t2,8
-  or t2,t8      ; T2 = Node Bits (Bit31 = First Bit)
+  lw t2,0(t1)   ; T2 = Node Bits (Bit31 = First Bit)
   addi t1,4     ; Add 4 To Compressed Bitstream Offset
   lui t3,0x8000 ; T3 = Node Bit Shifter
 
   HuffByteLoop: 
     beq a2,t0,HuffEnd ; IF (Destination Address == Destination End Offset) HuffEnd
-    nop ; Delay Slot
+    add t8,a1,t7 ; T8 = Tree Table Offset (Delay Slot)
     beqz t3,HuffChunkLoop ; IF (Node Bit Shifter == 0) HuffChunkLoop
-    nop ; Delay Slot
-
-    add t8,a1,t7
-    lbu t4,0(t8) ; T4 = Next Node
-    andi t8,t6,1 ; Test T6 == Leaf
-    beqz t8,HuffBranch
-    nop ; Delay Slot
-    sb t4,0(a2) ; Store Data Byte To Destination IF Leaf
-    addi a2,1   ; Add 1 To RAM Offset
-    ori t6,r0,0 ; T6 = Branch
-    ori t7,r0,5 ; T7 = Tree Table Offset (Reset)
+    lbu t4,0(t8) ; T4 = Next Node (Delay Slot)
+    beqz t6,HuffBranch ; Test T6 Branch/Leaf Flag (0 = Branch 1 = Leaf)
+    andi t5,t4,0x3F ; T5 = Offset To Next Child Node (Delay Slot)
+    sb t4,0(a2)     ; Store Data Byte To Destination IF Leaf
+    addi a2,1       ; Add 1 To RAM Offset
+    ori t7,r0,5     ; T7 = Tree Table Offset (Reset)
     j HuffByteLoop
-    nop ; Delay Slot
+    ori t6,r0,0 ; T6 = Branch (Delay Slot)
 
     HuffBranch:
-      andi t5,t4,0x3F ; T5 = Offset To Next Child Node
       sll t5,1
-      addi t5,2        ; T5 = Node0 Child Offset * 2 + 2
-      li t8,0xFFFFFFFE ; T7 = Tree Offset NOT 1
-      and t7,t8
-      add t7,t5 ; T7 = Node0 Child Offset
-
+      addi t5,2    ; T5 = Node0 Child Offset * 2 + 2
+      andi t7,-2   ; T7 = Tree Offset NOT 1
+      add t7,t5    ; T7 = Node0 Child Offset
       and t8,t2,t3 ; Test Node Bit (0 = Node0, 1 = Node1)
-      srl t3,1     ; Shift T3 To Next Node Bit
       beqz t8,HuffNode0
-      nop ; Delay Slot
-      addi t7,1      ; T7 = Node1 Child Offset
-      ori t8,r0,0x40 ; T8 = Test Node1 End Flag
+      srl t3,1     ; Shift T3 To Next Node Bit (Delay Slot)
+      addi t7,1    ; T7 = Node1 Child Offset
       j HuffNodeEnd
-      nop ; Delay Slot
+      ori t8,r0,0x40 ; T8 = Test Node1 End Flag (Delay Slot)
       HuffNode0:
         ori t8,r0,0x80 ; T8 = Test Node0 End Flag
       HuffNodeEnd:
-
-      and t9,t4,t8 ; Test Node End Flag (1 = Next Child Node Is Data)
-      beqz t9,HuffByteLoop
-      nop ; Delay Slot
-      ori t6,r0,1 ; T6 = Leaf
-      j HuffByteLoop
-      nop ; Delay Slot
+        and t8,t4 ; Test Node End Flag (1 = Next Child Node Is Data)
+        beqz t8,HuffByteLoop
+        nop ; Delay Slot
+        j HuffByteLoop
+        ori t6,r0,1 ; T6 = Leaf (Delay Slot)
   HuffEnd:
 
 ; Memory Transfer
