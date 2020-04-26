@@ -32,7 +32,7 @@ addu t0,a2  ; T0 = Destination End Offset (RAM End Offset)
 
 lbu t1,0(a1) ; T1 = (Tree Table Size / 2) - 1
 addiu a1,1   ; A1 = Tree Table Offset
-sll t1,1
+sll t1,1     ; T1 <<= 1
 addiu t1,1   ; T1 = Tree Table Size
 addu t1,a1   ; T1 = Compressed Bitstream Offset
 
@@ -58,7 +58,7 @@ HuffChunkLoop:
     ori t6,r0,0 ; T6 = Branch (Delay Slot)
 
     HuffBranch:
-      sll t5,1
+      sll t5,1     ; T5 <<= 1
       addiu t5,2   ; T5 = Node0 Child Offset * 2 + 2
       andi t7,-2   ; T7 = Tree Offset NOT 1
       addu t7,t5   ; T7 = Node0 Child Offset
