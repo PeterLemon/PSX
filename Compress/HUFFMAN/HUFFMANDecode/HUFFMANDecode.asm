@@ -66,7 +66,7 @@ HuffChunkLoop:
       beqz t5,HuffNodeEnd
       andi t5,t4,0x80 ; T5 = Test Node0 End Flag (Delay Slot)
       andi t5,t4,0x40 ; T5 = Test Node1 End Flag
-      addiu t7,1      ; T7 = Node1 Child Offset
+      addiu t7,1      ; T7 = Node1 Child Offset + 1
       HuffNodeEnd:
         beqz t5,HuffByteLoop ; Test Node End Flag (1 = Next Child Node Is Data)
         srl t3,1 ; Shift T3 To Next Node Bit (Delay Slot)
