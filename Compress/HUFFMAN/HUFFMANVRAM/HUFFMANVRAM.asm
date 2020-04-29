@@ -58,10 +58,10 @@ HuffChunkLoop:
     andi t5,t4,0x3F ; T5 = Offset To Next Child Node (Delay Slot)
 
     ; Write Bytes As GP0 Packet Words
-    sllv t4,s1      ; Data Byte <<= Shift Amount
+    sllv t4,s1      ; Data Byte <<= DATA Word Byte Shift Amount
     or s0,t4        ; Store Data Byte To DATA Word IF Leaf
     bne s1,s2,SkipGP0Write
-    addiu s1,8      ; DATA Word Byte Count/Shift Amount += 8 (Delay Slot)
+    addiu s1,8      ; DATA Word Byte Shift Amount += 8 (Delay Slot)
     sw s0,GP0(a0)   ; Write GP0 Packet Word
     ori s0,r0,0     ; Reset DATA Word
     ori s1,r0,0     ; Reset DATA Word Byte Shift Amount
