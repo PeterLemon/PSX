@@ -1,0 +1,2 @@
+armips HUFFMANVRAM.asm
+bin2exe.py HUFFMANVRAM.bin HUFFMANVRAM.exe
