@@ -33,7 +33,6 @@ la a1,Huff  ; A1 = Source Address
 lw t0,0(a1) ; T0 = Data Length & Header Info
 addiu a1,4  ; Add 4 To Huffman Offset
 srl t0,8    ; T0 = Data Length
-addu t0,a2  ; T0 = Destination End Offset (RAM End Offset)
 
 lbu t1,0(a1) ; T1 = (Tree Table Size / 2) - 1
 addiu a1,1   ; A1 = Tree Table Offset
@@ -50,7 +49,7 @@ HuffChunkLoop:
   lui t3,0x8000 ; T3 = Node Bit Shifter
 
   HuffByteLoop: 
-    beq a2,t0,HuffEnd ; IF (Destination Address == Destination End Offset) HuffEnd
+    beqz t0,HuffEnd ; IF (Data Length == 0) HuffEnd
     addu t4,a1,t7 ; T4 = Tree Table Offset (Delay Slot)
     beqz t3,HuffChunkLoop ; IF (Node Bit Shifter == 0) HuffChunkLoop
     lbu t4,0(t4) ; T4 = Next Node (Delay Slot)
@@ -67,8 +66,8 @@ HuffChunkLoop:
     ori s1,r0,0     ; Reset DATA Word Byte Shift Amount
     SkipGP0Write:
 
-    addiu a2,1      ; Add 1 To RAM Offset
-    ori t7,r0,5     ; T7 = Tree Table Offset (Reset)
+    subiu t0,1  ; Data Length--
+    ori t7,r0,5 ; T7 = Tree Table Offset (Reset)
     j HuffByteLoop
     ori t6,r0,0 ; T6 = Branch (Delay Slot)
 
