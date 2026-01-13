@@ -1,0 +1,2 @@
+armips RenderRectangleClip16BPP.asm
+bin2exe.py RenderRectangleClip16BPP.bin RenderRectangleClip16BPP.exe
