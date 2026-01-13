@@ -1,0 +1,2 @@
+armips RenderPolygonClip16BPP.asm
+bin2exe.py RenderPolygonClip16BPP.bin RenderPolygonClip16BPP.exe

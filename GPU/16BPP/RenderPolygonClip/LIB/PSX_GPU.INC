@@ -2250,7 +2250,7 @@ GPUDRAWABR equ 0xE4 ; GPU Rendering Attributes (GP0): $E4 - Set Drawing Area Bot
 GPUDRAWOFS equ 0xE5 ; GPU Rendering Attributes (GP0): $E5 - Set Drawing Offset (X,Y)
 GPUMASKBIT equ 0xE6 ; GPU Rendering Attributes (GP0): $E6 - Mask Bit Setting
 
-.macro DrawingArea,X1,Y1,X2,Y2 ; GP0($E3) GP0($E4) - Set Drawing Area
+.macro DrawingArea,X1,Y1,X2,Y2 ; GP0($E3) GP0($E4) - Set Drawing rea
   WRGP0 GPUDRAWATL,(Y1<<10)+X1 ; Write GP0 Command Word - Set Drawing Area Top Left (X1,Y1)
   WRGP0 GPUDRAWABR,(Y2<<10)+X2 ; Write GP0 Command Word - Set Drawing Area Bottom Right (X2,Y2)
 .endmacro
