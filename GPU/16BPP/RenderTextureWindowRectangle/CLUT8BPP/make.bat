@@ -1,0 +1,2 @@
+armips RenderTextureWindowRectangleCLUT8BPP.asm
+bin2exe.py RenderTextureWindowRectangleCLUT8BPP.bin RenderTextureWindowRectangleCLUT8BPP.exe
