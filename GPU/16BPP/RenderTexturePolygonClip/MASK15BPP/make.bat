@@ -1,0 +1,2 @@
+armips RenderTexturePolygonClipMASK15BPP.asm
+bin2exe.py RenderTexturePolygonClipMASK15BPP.bin RenderTexturePolygonClipMASK15BPP.exe

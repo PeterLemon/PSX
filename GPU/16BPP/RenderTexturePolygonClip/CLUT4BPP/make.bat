@@ -1,0 +1,2 @@
+armips RenderTexturePolygonClipCLUT4BPP.asm
+bin2exe.py RenderTexturePolygonClipCLUT4BPP.bin RenderTexturePolygonClipCLUT4BPP.exe
